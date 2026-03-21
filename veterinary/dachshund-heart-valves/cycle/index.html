@@ -368,49 +368,190 @@
       text-transform: uppercase;
     }
 
+    .page {
+      width: 100%;
+      max-width: none;
+      min-height: 100dvh;
+      padding: 18px;
+      display: flex;
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    .embed-shell {
+      width: min(100%, 1440px);
+      height: min(calc(100dvh - 36px), 820px);
+      margin: auto;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .panel {
+      background: rgba(255, 250, 242, 0.9);
+      border: 1px solid rgba(105, 95, 86, 0.14);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .intro-card,
+    .top-actions,
+    .status-card {
+      padding: 18px 20px;
+    }
+
+    .intro-card h1 {
+      margin-bottom: 8px;
+      font-size: clamp(2rem, 3.8vw, 3.3rem);
+    }
+
+    .intro-card .subtitle,
+    .top-actions .subtitle,
+    .status-card .phase-copy,
+    .legend-note,
+    .legend-chip,
+    .microcopy {
+      font-size: 0.97rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .top-actions {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .top-actions .controls {
+      margin: 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 16px;
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    .diagram-wrap {
+      height: 100%;
+      padding: 18px;
+      display: flex;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .diagram-wrap svg {
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+    }
+
+    .panel-stack {
+      min-height: 0;
+    }
+
+    .status-card {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      height: 100%;
+    }
+
+    .status-list {
+      margin-top: 2px;
+    }
+
+    .legend-compact {
+      display: grid;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .legend-chip {
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(105, 95, 86, 0.12);
+    }
+
+    .legend-chip strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+
     @media (max-width: 1080px) {
-      .hero,
+      .topbar,
       .layout {
         grid-template-columns: 1fr;
       }
 
-      .timeline-track,
-      .legend-grid {
-        grid-template-columns: 1fr;
+      .page {
+        min-height: auto;
+        padding: 12px;
+      }
+
+      body {
+        overflow: auto;
+      }
+
+      .embed-shell {
+        height: auto;
+        min-height: 0;
+      }
+
+      .diagram-wrap {
+        min-height: 420px;
       }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <section class="hero">
-      <div class="hero-panel">
+    <section class="embed-shell">
+      <section class="topbar">
+        <div class="panel intro-card">
         <div class="kicker">Study Visual</div>
         <h1>Dachshund Heart Valve Cycle</h1>
         <p class="subtitle">
-          A maximalist teaching view: one simplified canine-heart cutaway, one moving cardiac cycle,
-          and one side panel that tells you exactly which valves are open, closed, and why.
+          One fixed canine-heart view. The controls only change valve state, blood flow direction,
+          and the pressure rule for the current phase.
         </p>
-        <div class="controls">
-          <button id="play-toggle" class="active" type="button">Pause Autoplay</button>
-          <button data-phase="0" class="phase-button active" type="button">1. Filling</button>
-          <button data-phase="1" class="phase-button" type="button">2. AV Close</button>
-          <button data-phase="2" class="phase-button" type="button">3. Ejection</button>
-          <button data-phase="3" class="phase-button" type="button">4. Semilunar Close</button>
         </div>
-      </div>
 
-      <aside class="notes">
-        <div class="kicker">Scope</div>
-        <p class="subtitle">
+        <aside class="panel top-actions">
+          <div>
+            <div class="kicker">Scope</div>
+            <p class="subtitle">
           Normal valve mechanics here are general canine anatomy, not dachshund-specific anatomy.
           The dachshund relevance is clinical: small breeds are commonly affected by degenerative mitral valve disease.
         </p>
-      </aside>
-    </section>
+          </div>
+          <div class="controls">
+            <button id="play-toggle" class="active" type="button">Pause Autoplay</button>
+            <button data-phase="0" class="phase-button active" type="button">1. Filling</button>
+            <button data-phase="1" class="phase-button" type="button">2. AV Close</button>
+            <button data-phase="2" class="phase-button" type="button">3. Ejection</button>
+            <button data-phase="3" class="phase-button" type="button">4. Semilunar Close</button>
+          </div>
+        </aside>
+      </section>
 
-    <section class="layout">
-      <div class="diagram-wrap">
+      <section class="layout">
+      <div class="diagram-wrap panel">
         <svg viewBox="0 0 1180 860" role="img" aria-labelledby="title desc">
           <title id="title">Animated canine heart valve cycle</title>
           <desc id="desc">A simplified cutaway showing right and left heart chambers, the four valves, and animated blood flow during the cardiac cycle.</desc>
@@ -513,7 +654,7 @@
       </div>
 
       <div class="panel-stack">
-        <section class="status-card">
+        <section class="status-card panel">
           <h2>Current Phase</h2>
           <p id="phase-name" class="phase-name">Ventricular filling</p>
           <p id="phase-copy" class="phase-copy">
@@ -524,50 +665,24 @@
             <li><span class="swatch" style="background:#8f8b85"></span><span id="sl-status">Semilunar valves: closed</span></li>
             <li><span class="swatch" style="background:#c08f2f"></span><span id="pressure-status">Pressure rule: atria > ventricles</span></li>
           </ul>
-        </section>
-
-        <section class="legend">
-          <h2>Legend</h2>
-          <div class="legend-grid">
-            <div class="legend-item">
-              <p><strong>Blue side</strong><br />Right heart: venous blood heading to the lungs.</p>
+          <div class="legend-compact">
+            <div class="legend-chip">
+              <strong>Blue side</strong>
+              Right heart: venous blood heading to the lungs.
             </div>
-            <div class="legend-item">
-              <p><strong>Red side</strong><br />Left heart: oxygenated blood heading to the body.</p>
+            <div class="legend-chip">
+              <strong>Red side</strong>
+              Left heart: oxygenated blood heading to the body.
             </div>
-            <div class="legend-item">
-              <p><strong>Valve rings</strong><br />Green means functionally open, gray means closed.</p>
+            <div class="legend-chip">
+              <strong>Valve rings</strong>
+              Green means functionally open, gray means functionally closed.
             </div>
+            <p class="microcopy">Use the phase buttons above if the autoplay pace is too fast in the Notion embed.</p>
           </div>
         </section>
       </div>
-    </section>
-
-    <section class="timeline" style="margin-top:20px;">
-      <h2>Beat Sequence</h2>
-      <p>The same drawing updates across the four main teaching phases so you can map event order onto one anatomy view instead of re-learning a new picture each time.</p>
-      <div class="timeline-track">
-        <article class="timeline-step active" data-step="0">
-          <span class="step-index">Phase 1</span>
-          <h3 class="step-title">Ventricular filling</h3>
-          <p>AV valves open. Blood falls into the relaxed ventricles.</p>
-        </article>
-        <article class="timeline-step" data-step="1">
-          <span class="step-index">Phase 2</span>
-          <h3 class="step-title">AV valve closure</h3>
-          <p>Ventricular contraction begins and pressure overtakes the atria.</p>
-        </article>
-        <article class="timeline-step" data-step="2">
-          <span class="step-index">Phase 3</span>
-          <h3 class="step-title">Ejection</h3>
-          <p>Semilunar valves open and blood exits to lungs and body.</p>
-        </article>
-        <article class="timeline-step" data-step="3">
-          <span class="step-index">Phase 4</span>
-          <h3 class="step-title">Semilunar closure</h3>
-          <p>Arterial pressure becomes higher than ventricular pressure and the exit valves shut.</p>
-        </article>
-      </div>
+      </section>
     </section>
   </div>
 
@@ -587,7 +702,7 @@
         tag: { text: "AV valves open", color: "#2f7d4b" },
         valves: { tricuspid: true, mitral: true, pulmonic: false, aortic: false },
         flows: ["flow-ra-rv", "flow-la-lv"],
-        dots: ["dot-ra-rv", "dot-la-lv"]
+        dots: ["dot-ra-rv", "dot-ra-rv-2", "dot-ra-rv-3", "dot-la-lv", "dot-la-lv-2", "dot-la-lv-3"]
       },
       {
         name: "AV valve closure",
@@ -619,7 +734,7 @@
         tag: { text: "Semilunar valves open", color: "#2f7d4b" },
         valves: { tricuspid: false, mitral: false, pulmonic: true, aortic: true },
         flows: ["flow-rv-lungs", "flow-lv-body"],
-        dots: ["dot-rv-lungs", "dot-lv-body"]
+        dots: ["dot-rv-lungs", "dot-rv-lungs-2", "dot-rv-lungs-3", "dot-lv-body", "dot-lv-body-2", "dot-lv-body-3"]
       },
       {
         name: "Semilunar closure",

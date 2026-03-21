@@ -392,101 +392,173 @@
       to { stroke-dashoffset: -32; }
     }
 
+    .page {
+      width: 100%;
+      max-width: none;
+      min-height: 100dvh;
+      padding: 18px;
+      display: flex;
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    .embed-shell {
+      width: min(100%, 1460px);
+      height: min(calc(100dvh - 36px), 860px);
+      margin: auto;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .intro-card,
+    .topnote-card,
+    .anatomy-card,
+    .caption-card {
+      padding: 18px 20px;
+    }
+
+    .intro-card h1 {
+      margin-bottom: 8px;
+      font-size: clamp(2rem, 3.8vw, 3.4rem);
+    }
+
+    .topnote-card {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .topnote-card .controls {
+      margin-top: 0;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .sequence-grid {
+      margin-bottom: 0;
+      height: 100%;
+      min-height: 0;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+    }
+
+    .panel-card {
+      min-height: 0;
+      padding: 14px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      cursor: pointer;
+    }
+
+    .panel-card svg {
+      width: 100%;
+      height: auto;
+      max-height: 182px;
+      align-self: center;
+    }
+
+    .panel-copy {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      line-height: 1.34;
+    }
+
+    .side-stack {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) minmax(0, 0.95fr);
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .anatomy-card,
+    .caption-card {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .anatomy-card svg {
+      max-height: 270px;
+    }
+
+    .anatomy-note,
+    .topnote-card .copy,
+    .panel-copy {
+      color: var(--muted);
+    }
+
     @media (max-width: 1160px) {
-      .hero,
-      .top-grid,
+      .topbar,
+      .main-grid,
       .sequence-grid,
-      .rules {
+      .side-stack {
         grid-template-columns: 1fr;
+      }
+
+      .page {
+        min-height: auto;
+        padding: 12px;
+      }
+
+      body {
+        overflow: auto;
+      }
+
+      .embed-shell {
+        height: auto;
+        min-height: 0;
+      }
+
+      .sequence-grid {
+        grid-template-rows: none;
       }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <section class="hero">
-      <div class="card hero-main">
-        <div class="kicker">Maximal Study Version</div>
+    <section class="embed-shell">
+      <section class="topbar">
+        <div class="card intro-card">
+        <div class="kicker">Maximal Study Visual</div>
         <h1>Dachshund Heart Valve Cycle</h1>
         <p class="subtitle">
-          This version stops trying to be painterly. It uses one clean anatomy reference and four repeated event panels,
-          so the valve sequence stays understandable while still feeling more anatomical than the box-flowchart.
+          One embed-sized teaching board: four repeatable event panels on the left, anatomy orientation and the live phase summary on the right.
         </p>
-        <div class="controls">
-          <button id="play-toggle" class="active" type="button">Pause Autoplay</button>
-          <button class="phase-button active" data-phase="0" type="button">1. Filling</button>
-          <button class="phase-button" data-phase="1" type="button">2. AV Close</button>
-          <button class="phase-button" data-phase="2" type="button">3. Ejection</button>
-          <button class="phase-button" data-phase="3" type="button">4. Semilunar Close</button>
         </div>
-      </div>
 
-      <aside class="card hero-side">
-        <div class="kicker">Reading Order</div>
+        <aside class="card topnote-card">
+          <div class="kicker">Reading Order</div>
         <p class="copy">
-          Start with the anatomy plate. Then watch the active panel move from left to right:
-          AV valves open, AV valves close, semilunar valves open, semilunar valves close.
+            Read the four panels left-to-right, top-to-bottom. The highlighted panel and the summary card always match.
         </p>
-      </aside>
-    </section>
-
-    <section class="top-grid">
-      <section class="card anatomy-card">
-        <h2>Anatomy Orientation</h2>
-        <svg viewBox="0 0 560 520" role="img" aria-label="Canine heart anatomy reference">
-          <path class="heart-shell" d="M278 66 C225 64 176 88 140 130 C87 191 66 287 94 364 C121 437 184 480 267 482 C365 485 451 431 484 349 C515 271 500 183 448 124 C406 77 344 66 278 66 Z" />
-          <path class="vessel" d="M60 138 C42 151 34 170 34 196 L34 282 C34 310 53 331 81 336 L106 339 L106 140 Z" />
-          <path class="vessel" d="M451 85 C485 95 511 123 518 160 L523 247 C525 279 507 307 479 322 L455 334 L433 101 Z" />
-          <path class="vessel" d="M248 97 C281 72 330 61 389 68" fill="none" stroke="#f6f0e8" stroke-width="24" stroke-linecap="round" />
-          <path class="vessel" d="M186 196 C205 144 229 112 259 93" fill="none" stroke="#f6f0e8" stroke-width="20" stroke-linecap="round" />
-          <ellipse class="ra" cx="196" cy="202" rx="78" ry="64" />
-          <ellipse class="rv" cx="223" cy="350" rx="112" ry="103" />
-          <ellipse class="la" cx="347" cy="206" rx="83" ry="67" />
-          <ellipse class="lv" cx="347" cy="349" rx="107" ry="111" />
-          <path class="septum" d="M279 136 C272 188 269 242 274 300 C278 340 288 379 303 424" />
-          <line class="valve neutral" x1="214" y1="258" x2="249" y2="285" />
-          <line class="valve neutral" x1="338" y1="258" x2="308" y2="285" />
-          <line class="valve neutral" x1="228" y1="132" x2="244" y2="110" />
-          <line class="valve neutral" x1="281" y1="108" x2="301" y2="88" />
-          <text x="160" y="188" class="ref-label">Right atrium</text>
-          <text x="179" y="208" class="ref-sub">from body veins</text>
-          <text x="160" y="351" class="ref-label">Right ventricle</text>
-          <text x="196" y="371" class="ref-sub">to lungs</text>
-          <text x="315" y="193" class="ref-label">Left atrium</text>
-          <text x="319" y="213" class="ref-sub">from lungs</text>
-          <text x="309" y="352" class="ref-label">Left ventricle</text>
-          <text x="334" y="372" class="ref-sub">to body</text>
-          <text x="113" y="135" class="small-label">Body veins</text>
-          <text x="375" y="62" class="small-label">Aorta</text>
-          <text x="151" y="125" class="small-label">Pulmonary trunk</text>
-          <text x="163" y="246" class="small-label">Tricuspid valve</text>
-          <text x="306" y="246" class="small-label">Mitral valve</text>
-          <text x="212" y="102" class="small-label">Pulmonic valve</text>
-          <text x="284" y="72" class="small-label">Aortic valve</text>
-        </svg>
-        <p class="anatomy-note">Orientation only. This top plate marks valve locations in neutral gray and does not show one specific open/closed phase.</p>
-      </section>
-
-      <section class="card caption-card">
-        <h2>Active Phase</h2>
-        <div class="caption-grid">
-          <div>
-            <p id="phase-title" class="phase-title">Ventricular filling</p>
-            <p id="phase-copy" class="copy">
-              Atrial pressure is higher than ventricular pressure, so blood passes through the open tricuspid and mitral valves.
-            </p>
-            <ul class="phase-meta">
-              <li><span class="swatch" style="background:#2f7d4b"></span><span id="av-state">AV valves: open</span></li>
-              <li><span class="swatch" style="background:#8d877f"></span><span id="sl-state">Semilunar valves: closed</span></li>
-              <li><span class="swatch" style="background:#af8224"></span><span id="pressure-rule">Pressure rule: atria &gt; ventricles</span></li>
-            </ul>
+          <div class="controls">
+            <button id="play-toggle" class="active" type="button">Pause Autoplay</button>
+            <button class="phase-button active" data-phase="0" type="button">1. Filling</button>
+            <button class="phase-button" data-phase="1" type="button">2. AV Close</button>
+            <button class="phase-button" data-phase="2" type="button">3. Ejection</button>
+            <button class="phase-button" data-phase="3" type="button">4. Semilunar Close</button>
           </div>
-          <div class="phase-number" id="phase-number">1</div>
-        </div>
+        </aside>
       </section>
-    </section>
 
-    <section class="sequence-grid">
+      <section class="main-grid">
+        <section class="sequence-grid">
       <article class="card panel-card active" data-step="0">
         <div class="panel-head">
           <h3>1. Ventricular filling</h3>
@@ -622,20 +694,63 @@
         </svg>
         <p class="panel-copy">As the ventricles relax, pressure in the great vessels becomes higher than ventricular pressure. The exit valves snap shut, producing S2.</p>
       </article>
-    </section>
+        </section>
 
-    <section class="rules">
-      <section class="card rule-card">
-        <h2>Rule 1</h2>
-        <p>AV valves open when atrial pressure is higher than ventricular pressure.</p>
-      </section>
-      <section class="card rule-card">
-        <h2>Rule 2</h2>
-        <p>AV valves close before semilunar valves open. There is no normal phase where both are open together.</p>
-      </section>
-      <section class="card rule-card">
-        <h2>Rule 3</h2>
-        <p>Semilunar valves close when arterial pressure becomes higher than the relaxing ventricles.</p>
+        <div class="side-stack">
+          <section class="card anatomy-card">
+            <h2>Anatomy Orientation</h2>
+            <svg viewBox="0 0 560 520" role="img" aria-label="Canine heart anatomy reference">
+              <path class="heart-shell" d="M278 66 C225 64 176 88 140 130 C87 191 66 287 94 364 C121 437 184 480 267 482 C365 485 451 431 484 349 C515 271 500 183 448 124 C406 77 344 66 278 66 Z" />
+              <path class="vessel" d="M60 138 C42 151 34 170 34 196 L34 282 C34 310 53 331 81 336 L106 339 L106 140 Z" />
+              <path class="vessel" d="M451 85 C485 95 511 123 518 160 L523 247 C525 279 507 307 479 322 L455 334 L433 101 Z" />
+              <path class="vessel" d="M248 97 C281 72 330 61 389 68" fill="none" stroke="#f6f0e8" stroke-width="24" stroke-linecap="round" />
+              <path class="vessel" d="M186 196 C205 144 229 112 259 93" fill="none" stroke="#f6f0e8" stroke-width="20" stroke-linecap="round" />
+              <ellipse class="ra" cx="196" cy="202" rx="78" ry="64" />
+              <ellipse class="rv" cx="223" cy="350" rx="112" ry="103" />
+              <ellipse class="la" cx="347" cy="206" rx="83" ry="67" />
+              <ellipse class="lv" cx="347" cy="349" rx="107" ry="111" />
+              <path class="septum" d="M279 136 C272 188 269 242 274 300 C278 340 288 379 303 424" />
+              <line class="valve neutral" x1="214" y1="258" x2="249" y2="285" />
+              <line class="valve neutral" x1="338" y1="258" x2="308" y2="285" />
+              <line class="valve neutral" x1="228" y1="132" x2="244" y2="110" />
+              <line class="valve neutral" x1="281" y1="108" x2="301" y2="88" />
+              <text x="160" y="188" class="ref-label">Right atrium</text>
+              <text x="179" y="208" class="ref-sub">from body veins</text>
+              <text x="160" y="351" class="ref-label">Right ventricle</text>
+              <text x="196" y="371" class="ref-sub">to lungs</text>
+              <text x="315" y="193" class="ref-label">Left atrium</text>
+              <text x="319" y="213" class="ref-sub">from lungs</text>
+              <text x="309" y="352" class="ref-label">Left ventricle</text>
+              <text x="334" y="372" class="ref-sub">to body</text>
+              <text x="113" y="135" class="small-label">Body veins</text>
+              <text x="375" y="62" class="small-label">Aorta</text>
+              <text x="151" y="125" class="small-label">Pulmonary trunk</text>
+              <text x="163" y="246" class="small-label">Tricuspid valve</text>
+              <text x="306" y="246" class="small-label">Mitral valve</text>
+              <text x="212" y="102" class="small-label">Pulmonic valve</text>
+              <text x="284" y="72" class="small-label">Aortic valve</text>
+            </svg>
+            <p class="anatomy-note">Orientation only. Valve markers stay neutral here so the active state is read from the highlighted panel.</p>
+          </section>
+
+          <section class="card caption-card">
+            <h2>Active Phase</h2>
+            <div class="caption-grid">
+              <div>
+                <p id="phase-title" class="phase-title">Ventricular filling</p>
+                <p id="phase-copy" class="copy">
+                  Atrial pressure is higher than ventricular pressure, so blood passes through the open tricuspid and mitral valves.
+                </p>
+                <ul class="phase-meta">
+                  <li><span class="swatch" style="background:#2f7d4b"></span><span id="av-state">AV valves: open</span></li>
+                  <li><span class="swatch" style="background:#8d877f"></span><span id="sl-state">Semilunar valves: closed</span></li>
+                  <li><span class="swatch" style="background:#af8224"></span><span id="pressure-rule">Pressure rule: atria &gt; ventricles</span></li>
+                </ul>
+              </div>
+              <div class="phase-number" id="phase-number">1</div>
+            </div>
+          </section>
+        </div>
       </section>
     </section>
   </div>
