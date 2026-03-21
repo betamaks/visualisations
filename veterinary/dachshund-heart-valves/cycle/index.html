@@ -372,8 +372,10 @@
       width: 100%;
       max-width: none;
       min-height: 100dvh;
-      padding: 18px;
+      padding: 12px;
       display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
     body {
@@ -382,12 +384,12 @@
     }
 
     .embed-shell {
-      width: min(100%, 1440px);
-      height: min(calc(100dvh - 36px), 820px);
-      margin: auto;
+      width: min(100%, 1460px);
+      height: min(calc(100dvh - 24px), 760px);
+      margin: 0 auto;
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
-      gap: 16px;
+      gap: 12px;
     }
 
     .panel {
@@ -398,43 +400,36 @@
       backdrop-filter: blur(14px);
     }
 
-    .topbar {
+    .control-bar {
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-      gap: 16px;
-      align-items: start;
+      grid-template-columns: minmax(220px, 0.5fr) minmax(0, 1.5fr);
+      gap: 14px;
+      align-items: center;
+      padding: 14px 18px;
     }
 
-    .intro-card,
-    .top-actions,
-    .status-card {
-      padding: 18px 20px;
+    .mini-intro {
+      display: grid;
+      gap: 4px;
+      align-content: center;
     }
 
-    .intro-card h1 {
-      margin-bottom: 8px;
-      font-size: clamp(2rem, 3.8vw, 3.3rem);
-    }
-
-    .intro-card .subtitle,
-    .top-actions .subtitle,
+    .mini-copy,
     .status-card .phase-copy,
-    .legend-note,
-    .legend-chip,
-    .microcopy {
-      font-size: 0.97rem;
-      line-height: 1.45;
+    .legend-compact,
+    .legend-line {
+      font-size: 0.95rem;
+      line-height: 1.42;
       color: var(--muted);
     }
 
-    .top-actions {
-      display: grid;
-      gap: 14px;
-      align-content: start;
+    .mini-copy {
+      margin: 0;
     }
 
-    .top-actions .controls {
+    .control-bar .controls {
       margin: 0;
+      justify-content: flex-end;
     }
 
     .layout {
@@ -447,7 +442,7 @@
 
     .diagram-wrap {
       height: 100%;
-      padding: 18px;
+      padding: 14px;
       display: flex;
       align-items: stretch;
       min-height: 0;
@@ -465,9 +460,10 @@
 
     .status-card {
       display: grid;
-      gap: 14px;
+      gap: 12px;
       align-content: start;
       height: 100%;
+      padding: 16px 18px;
     }
 
     .status-list {
@@ -476,25 +472,18 @@
 
     .legend-compact {
       display: grid;
-      gap: 10px;
-      margin-top: 2px;
+      gap: 8px;
+      margin-top: 4px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(105, 95, 86, 0.12);
     }
 
-    .legend-chip {
-      padding: 12px 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.74);
-      border: 1px solid rgba(105, 95, 86, 0.12);
-    }
-
-    .legend-chip strong {
-      display: block;
-      margin-bottom: 4px;
+    .legend-line strong {
       color: var(--ink);
     }
 
     @media (max-width: 1080px) {
-      .topbar,
+      .control-bar,
       .layout {
         grid-template-columns: 1fr;
       }
@@ -516,38 +505,28 @@
       .diagram-wrap {
         min-height: 420px;
       }
+
+      .control-bar .controls {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
 <body>
   <div class="page">
     <section class="embed-shell">
-      <section class="topbar">
-        <div class="panel intro-card">
-        <div class="kicker">Study Visual</div>
-        <h1>Dachshund Heart Valve Cycle</h1>
-        <p class="subtitle">
-          One fixed canine-heart view. The controls only change valve state, blood flow direction,
-          and the pressure rule for the current phase.
-        </p>
+      <section class="control-bar panel">
+        <div class="mini-intro">
+          <div class="kicker">Study Visual</div>
+          <p class="mini-copy">4-step canine valve cycle. Use the buttons if the autoplay pace is too fast.</p>
         </div>
-
-        <aside class="panel top-actions">
-          <div>
-            <div class="kicker">Scope</div>
-            <p class="subtitle">
-          Normal valve mechanics here are general canine anatomy, not dachshund-specific anatomy.
-          The dachshund relevance is clinical: small breeds are commonly affected by degenerative mitral valve disease.
-        </p>
-          </div>
-          <div class="controls">
+        <div class="controls">
             <button id="play-toggle" class="active" type="button">Pause Autoplay</button>
             <button data-phase="0" class="phase-button active" type="button">1. Filling</button>
             <button data-phase="1" class="phase-button" type="button">2. AV Close</button>
             <button data-phase="2" class="phase-button" type="button">3. Ejection</button>
             <button data-phase="3" class="phase-button" type="button">4. Semilunar Close</button>
-          </div>
-        </aside>
+        </div>
       </section>
 
       <section class="layout">
@@ -666,19 +645,9 @@
             <li><span class="swatch" style="background:#c08f2f"></span><span id="pressure-status">Pressure rule: atria > ventricles</span></li>
           </ul>
           <div class="legend-compact">
-            <div class="legend-chip">
-              <strong>Blue side</strong>
-              Right heart: venous blood heading to the lungs.
-            </div>
-            <div class="legend-chip">
-              <strong>Red side</strong>
-              Left heart: oxygenated blood heading to the body.
-            </div>
-            <div class="legend-chip">
-              <strong>Valve rings</strong>
-              Green means functionally open, gray means functionally closed.
-            </div>
-            <p class="microcopy">Use the phase buttons above if the autoplay pace is too fast in the Notion embed.</p>
+            <div class="legend-line"><strong>Blue:</strong> right heart to lungs.</div>
+            <div class="legend-line"><strong>Red:</strong> left heart to body.</div>
+            <div class="legend-line"><strong>Green rings:</strong> open. <strong>Gray rings:</strong> closed.</div>
           </div>
         </section>
       </div>
