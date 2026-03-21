@@ -332,6 +332,52 @@
       stroke-linecap: round;
     }
 
+    .leaflet {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.98);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
+    }
+
+    .leaflet.open,
+    .leaflet.closed,
+    .leaflet.neutral {
+      stroke: rgba(255, 255, 255, 0.98);
+    }
+
+    .chordae {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.8);
+      stroke-width: 1.7;
+      opacity: 0.55;
+    }
+
+    .papillary {
+      fill: none;
+      stroke: rgba(132, 84, 72, 0.6);
+      stroke-width: 6;
+      stroke-linecap: round;
+    }
+
+    .ventricle-cavity {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    .contracting {
+      transform: scale(0.95, 0.92);
+    }
+
+    .contracted {
+      transform: scale(0.91, 0.88);
+    }
+
+    .relaxing {
+      transform: scale(0.97, 0.95);
+    }
+
     .open {
       stroke: var(--open);
     }
@@ -641,14 +687,26 @@
           <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
           <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
           <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
-          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="rv ventricle-cavity" cx="137" cy="188" rx="69" ry="61" />
           <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
-          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <ellipse class="lv ventricle-cavity" cx="214" cy="188" rx="65" ry="67" />
           <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
-          <line class="valve open pulse-valve" x1="132" y1="137" x2="153" y2="154" />
-          <line class="valve open pulse-valve" x1="208" y1="137" x2="190" y2="154" />
-          <line class="valve closed" x1="138" y1="67" x2="148" y2="53" />
-          <line class="valve closed" x1="173" y1="51" x2="185" y2="38" />
+          <path class="papillary" d="M118 212 Q125 198 131 187" />
+          <path class="papillary" d="M155 209 Q149 197 144 186" />
+          <path class="papillary" d="M192 210 Q198 197 205 186" />
+          <path class="papillary" d="M226 208 Q220 196 214 185" />
+          <path class="leaflet open pulse-valve" d="M137 143 Q132 151 128 160" />
+          <path class="leaflet open pulse-valve" d="M153 143 Q158 151 162 160" />
+          <path class="leaflet open pulse-valve" d="M190 143 Q185 151 181 160" />
+          <path class="leaflet open pulse-valve" d="M206 143 Q211 151 215 160" />
+          <path class="chordae" d="M128 160 Q124 177 125 196" />
+          <path class="chordae" d="M162 160 Q155 176 148 195" />
+          <path class="chordae" d="M181 160 Q188 176 196 194" />
+          <path class="chordae" d="M215 160 Q212 176 208 194" />
+          <path class="leaflet closed" d="M139 62 Q145 58 145 53" />
+          <path class="leaflet closed" d="M151 62 Q145 58 145 53" />
+          <path class="leaflet closed" d="M174 47 Q181 42 181 38" />
+          <path class="leaflet closed" d="M188 47 Q181 42 181 38" />
           <path class="flow blue active-flow" d="M119 108 C128 120 136 130 143 144" stroke-width="12" />
           <path class="flow red active-flow" d="M218 112 C208 123 200 133 192 145" stroke-width="12" />
           <circle class="flow-dot active-dot" r="5" fill="#2d6f96">
@@ -685,18 +743,26 @@
           <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
           <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
           <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
-          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="rv ventricle-cavity contracting" cx="137" cy="188" rx="69" ry="61" />
           <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
-          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <ellipse class="lv ventricle-cavity contracting" cx="214" cy="188" rx="65" ry="67" />
           <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
-          <g class="closing-snap leaflet-av-left closing-av-left">
-            <line class="valve closed" x1="145" y1="145" x2="153" y2="154" />
-          </g>
-          <g class="closing-snap leaflet-av-right closing-av-right">
-            <line class="valve closed" x1="198" y1="145" x2="190" y2="154" />
-          </g>
-          <line class="valve closed" x1="138" y1="67" x2="148" y2="53" />
-          <line class="valve closed" x1="173" y1="51" x2="185" y2="38" />
+          <path class="papillary" d="M118 212 Q125 198 131 187" />
+          <path class="papillary" d="M155 209 Q149 197 144 186" />
+          <path class="papillary" d="M192 210 Q198 197 205 186" />
+          <path class="papillary" d="M226 208 Q220 196 214 185" />
+          <path class="leaflet closed" d="M137 144 Q142 152 145 158" />
+          <path class="leaflet closed" d="M153 144 Q148 152 145 158" />
+          <path class="leaflet closed" d="M190 144 Q195 152 198 158" />
+          <path class="leaflet closed" d="M206 144 Q201 152 198 158" />
+          <path class="chordae" d="M145 158 Q134 177 128 198" />
+          <path class="chordae" d="M145 158 Q149 177 151 197" />
+          <path class="chordae" d="M198 158 Q192 178 194 198" />
+          <path class="chordae" d="M198 158 Q207 178 216 197" />
+          <path class="leaflet closed" d="M139 62 Q145 58 145 53" />
+          <path class="leaflet closed" d="M151 62 Q145 58 145 53" />
+          <path class="leaflet closed" d="M174 47 Q181 42 181 38" />
+          <path class="leaflet closed" d="M188 47 Q181 42 181 38" />
           <ellipse class="closure-ring" cx="145" cy="146" rx="18" ry="12" />
           <ellipse class="closure-ring" cx="198" cy="146" rx="18" ry="12" style="--delay:0.18s" />
         </svg>
@@ -715,14 +781,26 @@
           <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
           <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
           <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
-          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="rv ventricle-cavity contracted" cx="137" cy="188" rx="69" ry="61" />
           <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
-          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <ellipse class="lv ventricle-cavity contracted" cx="214" cy="188" rx="65" ry="67" />
           <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
-          <line class="valve closed" x1="132" y1="137" x2="153" y2="154" />
-          <line class="valve closed" x1="208" y1="137" x2="190" y2="154" />
-          <line class="valve open pulse-valve" x1="138" y1="67" x2="148" y2="53" />
-          <line class="valve open pulse-valve" x1="173" y1="51" x2="185" y2="38" />
+          <path class="papillary" d="M118 212 Q125 198 131 187" />
+          <path class="papillary" d="M155 209 Q149 197 144 186" />
+          <path class="papillary" d="M192 210 Q198 197 205 186" />
+          <path class="papillary" d="M226 208 Q220 196 214 185" />
+          <path class="leaflet closed" d="M137 144 Q142 152 145 158" />
+          <path class="leaflet closed" d="M153 144 Q148 152 145 158" />
+          <path class="leaflet closed" d="M190 144 Q195 152 198 158" />
+          <path class="leaflet closed" d="M206 144 Q201 152 198 158" />
+          <path class="chordae" d="M145 158 Q134 177 128 198" />
+          <path class="chordae" d="M145 158 Q149 177 151 197" />
+          <path class="chordae" d="M198 158 Q192 178 194 198" />
+          <path class="chordae" d="M198 158 Q207 178 216 197" />
+          <path class="leaflet open pulse-valve" d="M139 62 Q134 55 131 49" />
+          <path class="leaflet open pulse-valve" d="M151 62 Q156 55 159 49" />
+          <path class="leaflet open pulse-valve" d="M174 47 Q170 40 167 34" />
+          <path class="leaflet open pulse-valve" d="M188 47 Q192 40 196 34" />
           <path class="flow blue active-flow" d="M142 182 C140 142 142 108 146 78 C149 62 159 50 176 42" stroke-width="11" />
           <path class="flow red active-flow" d="M214 181 C197 146 185 102 179 56 C181 44 188 35 201 31 C214 28 229 28 247 31" stroke-width="11" />
           <circle class="flow-dot active-dot" r="5" fill="#2d6f96">
@@ -759,18 +837,26 @@
           <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
           <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
           <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
-          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="rv ventricle-cavity relaxing" cx="137" cy="188" rx="69" ry="61" />
           <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
-          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <ellipse class="lv ventricle-cavity relaxing" cx="214" cy="188" rx="65" ry="67" />
           <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
-          <line class="valve closed" x1="132" y1="137" x2="153" y2="154" />
-          <line class="valve closed" x1="208" y1="137" x2="190" y2="154" />
-          <g class="closing-snap leaflet-semi-left closing-semi-left">
-            <line class="valve closed" x1="144" y1="61" x2="148" y2="53" />
-          </g>
-          <g class="closing-snap leaflet-semi-right closing-semi-right">
-            <line class="valve closed" x1="179" y1="46" x2="185" y2="38" />
-          </g>
+          <path class="leaflet closed" d="M137 144 Q142 152 145 158" />
+          <path class="leaflet closed" d="M153 144 Q148 152 145 158" />
+          <path class="leaflet closed" d="M190 144 Q195 152 198 158" />
+          <path class="leaflet closed" d="M206 144 Q201 152 198 158" />
+          <path class="chordae" d="M145 158 Q134 177 128 198" />
+          <path class="chordae" d="M145 158 Q149 177 151 197" />
+          <path class="chordae" d="M198 158 Q192 178 194 198" />
+          <path class="chordae" d="M198 158 Q207 178 216 197" />
+          <path class="papillary" d="M118 212 Q125 198 131 187" />
+          <path class="papillary" d="M155 209 Q149 197 144 186" />
+          <path class="papillary" d="M192 210 Q198 197 205 186" />
+          <path class="papillary" d="M226 208 Q220 196 214 185" />
+          <path class="leaflet closed" d="M139 62 Q145 58 145 53" />
+          <path class="leaflet closed" d="M151 62 Q145 58 145 53" />
+          <path class="leaflet closed" d="M174 47 Q181 42 181 38" />
+          <path class="leaflet closed" d="M188 47 Q181 42 181 38" />
           <ellipse class="closure-ring" cx="145" cy="60" rx="14" ry="11" />
           <ellipse class="closure-ring" cx="181" cy="45" rx="14" ry="11" style="--delay:0.18s" />
         </svg>
@@ -792,10 +878,22 @@
               <ellipse class="la" cx="347" cy="206" rx="83" ry="67" />
               <ellipse class="lv" cx="347" cy="349" rx="107" ry="111" />
               <path class="septum" d="M279 136 C272 188 269 242 274 300 C278 340 288 379 303 424" />
-              <line class="valve neutral" x1="214" y1="258" x2="249" y2="285" />
-              <line class="valve neutral" x1="338" y1="258" x2="308" y2="285" />
-              <line class="valve neutral" x1="228" y1="132" x2="244" y2="110" />
-              <line class="valve neutral" x1="281" y1="108" x2="301" y2="88" />
+              <path class="papillary" d="M189 392 Q201 368 213 342" />
+              <path class="papillary" d="M256 388 Q245 365 234 341" />
+              <path class="papillary" d="M319 390 Q330 366 342 341" />
+              <path class="papillary" d="M387 384 Q375 361 363 338" />
+              <path class="leaflet neutral" d="M206 255 Q196 272 189 286" />
+              <path class="leaflet neutral" d="M238 255 Q248 272 255 286" />
+              <path class="leaflet neutral" d="M321 255 Q311 272 304 286" />
+              <path class="leaflet neutral" d="M289 255 Q299 272 306 286" />
+              <path class="chordae" d="M189 286 Q197 312 203 342" />
+              <path class="chordae" d="M255 286 Q246 313 238 341" />
+              <path class="chordae" d="M304 286 Q312 312 322 340" />
+              <path class="chordae" d="M306 286 Q331 311 363 338" />
+              <path class="leaflet neutral" d="M225 131 Q235 121 243 110" />
+              <path class="leaflet neutral" d="M247 131 Q239 121 231 110" />
+              <path class="leaflet neutral" d="M279 108 Q289 98 299 88" />
+              <path class="leaflet neutral" d="M303 108 Q293 98 283 88" />
               <text x="160" y="188" class="ref-label">Right atrium</text>
               <text x="179" y="208" class="ref-sub">from body veins</text>
               <text x="160" y="351" class="ref-label">Right ventricle</text>

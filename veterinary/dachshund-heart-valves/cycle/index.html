@@ -299,6 +299,99 @@
       transition: stroke 240ms ease, fill 240ms ease, stroke-width 240ms ease, filter 240ms ease;
     }
 
+    .ventricle-cavity {
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: transform 340ms ease;
+    }
+
+    .valve-assembly {
+      pointer-events: none;
+    }
+
+    .papillary {
+      fill: none;
+      stroke: rgba(130, 86, 73, 0.62);
+      stroke-width: 10;
+      stroke-linecap: round;
+      opacity: 0.7;
+    }
+
+    .chordae {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.82);
+      stroke-width: 2.4;
+      opacity: 0.34;
+      transition: opacity 240ms ease;
+    }
+
+    .leaflet {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.98);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 320ms ease, opacity 240ms ease, filter 240ms ease;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.42));
+      transform-box: fill-box;
+    }
+
+    .leaflet-fill {
+      fill: rgba(255, 255, 255, 0.2);
+      stroke: none;
+      transition: transform 320ms ease, opacity 240ms ease;
+      transform-box: fill-box;
+    }
+
+    .valve-assembly.av .leaflet-left,
+    .valve-assembly.av .leaflet-fill-left {
+      transform-origin: 0% 0%;
+    }
+
+    .valve-assembly.av .leaflet-right,
+    .valve-assembly.av .leaflet-fill-right {
+      transform-origin: 100% 0%;
+    }
+
+    .valve-assembly.semi .leaflet-left,
+    .valve-assembly.semi .leaflet-fill-left {
+      transform-origin: 0% 100%;
+    }
+
+    .valve-assembly.semi .leaflet-right,
+    .valve-assembly.semi .leaflet-fill-right {
+      transform-origin: 100% 100%;
+    }
+
+    .valve-assembly.av.open .leaflet-left,
+    .valve-assembly.av.open .leaflet-fill-left {
+      transform: rotate(-26deg);
+    }
+
+    .valve-assembly.av.open .leaflet-right,
+    .valve-assembly.av.open .leaflet-fill-right {
+      transform: rotate(26deg);
+    }
+
+    .valve-assembly.semi.open .leaflet-left,
+    .valve-assembly.semi.open .leaflet-fill-left {
+      transform: rotate(-34deg);
+    }
+
+    .valve-assembly.semi.open .leaflet-right,
+    .valve-assembly.semi.open .leaflet-fill-right {
+      transform: rotate(34deg);
+    }
+
+    .valve-assembly.closed .chordae {
+      opacity: 0.6;
+    }
+
+    .valve-assembly.open .leaflet,
+    .valve-assembly.closed .leaflet {
+      opacity: 1;
+    }
+
     .flow-path {
       fill: none;
       stroke-linecap: round;
@@ -551,10 +644,10 @@
           <path class="vessel" d="M938 118 C1014 104, 1056 145, 1058 210 L1058 318 C1052 378, 995 404, 949 390 L908 378 L908 136 Z" />
 
           <path class="chamber right" d="M262 178 C206 188, 166 252, 180 319 C194 386, 255 428, 324 416 C384 404, 417 349, 406 286 C398 222, 337 165, 262 178 Z" filter="url(#softShadow)"/>
-          <path class="chamber right" d="M276 430 C196 476, 170 590, 226 665 C280 734, 407 736, 480 664 C548 592, 538 479, 460 432 C405 399, 331 399, 276 430 Z" filter="url(#softShadow)"/>
+          <path id="rv-cavity" class="chamber right ventricle-cavity" d="M276 430 C196 476, 170 590, 226 665 C280 734, 407 736, 480 664 C548 592, 538 479, 460 432 C405 399, 331 399, 276 430 Z" filter="url(#softShadow)"/>
 
           <path class="chamber left" d="M824 170 C755 172, 704 216, 694 277 C685 350, 732 414, 807 424 C881 433, 942 392, 960 325 C977 255, 937 190, 824 170 Z" filter="url(#softShadow)"/>
-          <path class="chamber left" d="M724 428 C645 457, 604 543, 626 625 C649 711, 747 760, 844 741 C941 724, 1016 635, 1007 536 C1000 453, 932 394, 847 393 C803 393, 763 403, 724 428 Z" filter="url(#softShadow)"/>
+          <path id="lv-cavity" class="chamber left ventricle-cavity" d="M724 428 C645 457, 604 543, 626 625 C649 711, 747 760, 844 741 C941 724, 1016 635, 1007 536 C1000 453, 932 394, 847 393 C803 393, 763 403, 724 428 Z" filter="url(#softShadow)"/>
 
           <path class="vessel" d="M428 484 C512 470, 604 474, 684 506" fill="none" stroke="#d9c9b8" stroke-width="32" stroke-linecap="round" />
           <path class="vessel" d="M472 216 C555 122, 676 98, 838 118" fill="none" stroke="#d9c9b8" stroke-width="42" stroke-linecap="round" />
@@ -563,6 +656,46 @@
           <circle id="pulmonic-ring" class="valve-ring" cx="456" cy="236" r="24" stroke="#8f8b85" />
           <circle id="mitral-ring" class="valve-ring" cx="677" cy="429" r="28" stroke="#2f7d4b" />
           <circle id="aortic-ring" class="valve-ring" cx="626" cy="182" r="24" stroke="#8f8b85" />
+
+          <g id="tricuspid-assembly" class="valve-assembly av open">
+            <path class="leaflet-fill leaflet-fill-left" d="M337 408 Q344 418 340 440 Q349 432 351 415 Z" />
+            <path class="leaflet-fill leaflet-fill-right" d="M365 408 Q358 418 362 440 Q353 432 351 415 Z" />
+            <path class="leaflet leaflet-left" d="M339 406 Q345 420 341 442" />
+            <path class="leaflet leaflet-right" d="M363 406 Q357 420 361 442" />
+            <path class="papillary" d="M308 556 Q320 536 333 518" />
+            <path class="papillary" d="M384 548 Q375 530 364 515" />
+            <path class="chordae" d="M341 440 Q332 474 327 518" />
+            <path class="chordae" d="M341 440 Q318 476 311 550" />
+            <path class="chordae" d="M361 440 Q368 474 369 515" />
+            <path class="chordae" d="M361 440 Q381 478 386 548" />
+          </g>
+
+          <g id="mitral-assembly" class="valve-assembly av open">
+            <path class="leaflet-fill leaflet-fill-left" d="M662 422 Q670 435 666 459 Q675 448 677 429 Z" />
+            <path class="leaflet-fill leaflet-fill-right" d="M692 422 Q684 435 688 459 Q679 448 677 429 Z" />
+            <path class="leaflet leaflet-left" d="M664 420 Q671 436 667 461" />
+            <path class="leaflet leaflet-right" d="M690 420 Q683 436 687 461" />
+            <path class="papillary" d="M641 621 Q652 600 664 575" />
+            <path class="papillary" d="M733 608 Q719 590 704 569" />
+            <path class="chordae" d="M667 460 Q657 502 654 575" />
+            <path class="chordae" d="M667 460 Q645 514 643 621" />
+            <path class="chordae" d="M687 460 Q695 503 699 569" />
+            <path class="chordae" d="M687 460 Q713 512 734 608" />
+          </g>
+
+          <g id="pulmonic-assembly" class="valve-assembly semi closed">
+            <path class="leaflet-fill leaflet-fill-left" d="M449 236 Q446 225 448 213 Q454 223 456 236 Z" />
+            <path class="leaflet-fill leaflet-fill-right" d="M463 236 Q466 225 464 213 Q458 223 456 236 Z" />
+            <path class="leaflet leaflet-left" d="M449 236 Q446 223 448 210" />
+            <path class="leaflet leaflet-right" d="M463 236 Q466 223 464 210" />
+          </g>
+
+          <g id="aortic-assembly" class="valve-assembly semi closed">
+            <path class="leaflet-fill leaflet-fill-left" d="M619 182 Q616 170 619 159 Q624 169 626 182 Z" />
+            <path class="leaflet-fill leaflet-fill-right" d="M633 182 Q636 170 633 159 Q628 169 626 182 Z" />
+            <path class="leaflet leaflet-left" d="M619 182 Q616 168 619 156" />
+            <path class="leaflet leaflet-right" d="M633 182 Q636 168 633 156" />
+          </g>
 
           <text x="298" y="146" class="label">Right atrium</text>
           <text x="306" y="782" class="label">Right ventricle</text>
@@ -664,6 +797,7 @@
         ],
         tag: { text: "AV valves open", color: "#2f7d4b" },
         valves: { tricuspid: true, mitral: true, pulmonic: false, aortic: false },
+        cavityScale: { rv: [1, 1], lv: [1, 1] },
         flows: ["flow-ra-rv", "flow-la-lv"],
         dots: ["dot-ra-rv", "dot-ra-rv-2", "dot-ra-rv-3", "dot-la-lv", "dot-la-lv-2", "dot-la-lv-3"]
       },
@@ -680,6 +814,7 @@
         ],
         tag: { text: "S1: AV valves close", color: "#ba4d3b" },
         valves: { tricuspid: false, mitral: false, pulmonic: false, aortic: false },
+        cavityScale: { rv: [0.95, 0.92], lv: [0.95, 0.92] },
         flows: [],
         dots: []
       },
@@ -696,6 +831,7 @@
         ],
         tag: { text: "Semilunar valves open", color: "#2f7d4b" },
         valves: { tricuspid: false, mitral: false, pulmonic: true, aortic: true },
+        cavityScale: { rv: [0.91, 0.87], lv: [0.9, 0.86] },
         flows: ["flow-rv-lungs", "flow-lv-body"],
         dots: ["dot-rv-lungs", "dot-rv-lungs-2", "dot-rv-lungs-3", "dot-lv-body", "dot-lv-body-2", "dot-lv-body-3"]
       },
@@ -712,6 +848,7 @@
         ],
         tag: { text: "S2: semilunar valves close", color: "#ba4d3b" },
         valves: { tricuspid: false, mitral: false, pulmonic: false, aortic: false },
+        cavityScale: { rv: [0.97, 0.95], lv: [0.97, 0.95] },
         flows: [],
         dots: []
       }
@@ -722,6 +859,18 @@
       pulmonic: document.getElementById("pulmonic-ring"),
       mitral: document.getElementById("mitral-ring"),
       aortic: document.getElementById("aortic-ring")
+    };
+
+    const valveAssemblyMap = {
+      tricuspid: document.getElementById("tricuspid-assembly"),
+      pulmonic: document.getElementById("pulmonic-assembly"),
+      mitral: document.getElementById("mitral-assembly"),
+      aortic: document.getElementById("aortic-assembly")
+    };
+
+    const ventricleMap = {
+      rv: document.getElementById("rv-cavity"),
+      lv: document.getElementById("lv-cavity")
     };
 
     const playButton = document.getElementById("play-toggle");
@@ -758,6 +907,15 @@
       });
     }
 
+    function setAssemblyState(assembly, isOpen) {
+      assembly.classList.remove("open", "closed");
+      assembly.classList.add(isOpen ? "open" : "closed");
+    }
+
+    function setCavityScale(element, scaleX, scaleY) {
+      element.style.transform = `scale(${scaleX}, ${scaleY})`;
+    }
+
     function renderPhase(index) {
       currentPhase = index;
       const phase = phases[index];
@@ -765,6 +923,13 @@
       Object.entries(valveMap).forEach(([name, element]) => {
         setValveState(element, phase.valves[name]);
       });
+
+      Object.entries(valveAssemblyMap).forEach(([name, element]) => {
+        setAssemblyState(element, phase.valves[name]);
+      });
+
+      setCavityScale(ventricleMap.rv, phase.cavityScale.rv[0], phase.cavityScale.rv[1]);
+      setCavityScale(ventricleMap.lv, phase.cavityScale.lv[0], phase.cavityScale.lv[1]);
 
       updateFlow(phase.flows, phase.dots);
 
