@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dachshund Heart Valve Cycle Maximal</title>
+  <style>
+    :root {
+      --bg: #f4ede4;
+      --paper: rgba(255, 251, 245, 0.92);
+      --ink: #201d1a;
+      --muted: #665c54;
+      --line: #d8c8b7;
+      --blue: #5ea2cb;
+      --blue-deep: #2d6f96;
+      --red: #d56d5a;
+      --red-deep: #a94636;
+      --muscle: #d8a18f;
+      --muscle-deep: #b25f4d;
+      --open: #2f7d4b;
+      --closed: #8d877f;
+      --gold: #af8224;
+      --shadow: 0 18px 44px rgba(64, 39, 25, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(213, 109, 90, 0.16), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(94, 162, 203, 0.18), transparent 24%),
+        linear-gradient(180deg, #f8f1e8 0%, #efe3d2 100%);
+    }
+
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 30px 26px 46px;
+    }
+
+    .hero,
+    .top-grid,
+    .sequence-grid,
+    .rules {
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero {
+      grid-template-columns: 1.15fr 0.85fr;
+      margin-bottom: 18px;
+    }
+
+    .top-grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      margin-bottom: 18px;
+      align-items: start;
+    }
+
+    .sequence-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid rgba(102, 92, 84, 0.14);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-main,
+    .hero-side,
+    .anatomy-card,
+    .caption-card,
+    .rule-card {
+      padding: 22px 24px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(175, 130, 36, 0.12);
+      color: #875229;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2.2rem, 4vw, 3.9rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+    }
+
+    .subtitle,
+    .copy,
+    .rule-card p,
+    .phase-meta li {
+      margin: 0;
+      line-height: 1.48;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(32, 29, 26, 0.14);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 140ms ease, background 140ms ease, color 140ms ease;
+    }
+
+    button:hover,
+    button.active {
+      background: var(--ink);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .caption-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .phase-number {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(102, 92, 84, 0.14);
+      font-size: 1.8rem;
+      font-weight: 700;
+      box-shadow: inset 0 0 0 10px rgba(32, 29, 26, 0.04);
+    }
+
+    .phase-title {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .phase-meta {
+      list-style: none;
+      margin: 14px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .phase-meta li {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .panel-card {
+      padding: 16px;
+      border: 1px solid rgba(102, 92, 84, 0.12);
+      border-radius: 26px;
+      background: rgba(255, 251, 245, 0.74);
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+    }
+
+    .panel-card.active {
+      transform: translateY(-3px);
+      border-color: rgba(32, 29, 26, 0.38);
+      box-shadow: var(--shadow);
+      background: rgba(255, 251, 245, 0.94);
+    }
+
+    .panel-card svg {
+      transition: opacity 180ms ease, filter 180ms ease, transform 180ms ease;
+    }
+
+    .panel-card:not(.active) svg {
+      opacity: 0.58;
+      filter: saturate(0.9);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .panel-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .panel-copy {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.42;
+    }
+
+    .rules {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .callout {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.44;
+    }
+
+    .anatomy-note {
+      margin-top: 12px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.44;
+    }
+
+    .small-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      fill: #655c54;
+    }
+
+    .chamber-label {
+      font-size: 14px;
+      font-weight: 700;
+      fill: #fffdf9;
+    }
+
+    .ref-label {
+      font-size: 20px;
+      font-weight: 700;
+      fill: #fffdf9;
+    }
+
+    .ref-sub {
+      font-size: 13px;
+      font-weight: 700;
+      fill: rgba(255, 253, 249, 0.82);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .heart-shell {
+      fill: #d89d8a;
+      stroke: #b26a58;
+      stroke-width: 3;
+    }
+
+    .septum {
+      fill: none;
+      stroke: rgba(120, 67, 56, 0.55);
+      stroke-width: 10;
+      stroke-linecap: round;
+    }
+
+    .rv,
+    .ra {
+      fill: var(--blue);
+    }
+
+    .lv,
+    .la {
+      fill: var(--red);
+    }
+
+    .vessel {
+      fill: #f6f0e8;
+      stroke: #cab7a5;
+      stroke-width: 3;
+    }
+
+    .valve {
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+
+    .open {
+      stroke: var(--open);
+    }
+
+    .closed {
+      stroke: var(--closed);
+    }
+
+    .neutral {
+      stroke: #7d736a;
+    }
+
+    .flow {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 18 14;
+      opacity: 0.12;
+      transition: opacity 180ms ease, filter 180ms ease, stroke-width 180ms ease;
+    }
+
+    .panel-card.active .flow.active-flow {
+      opacity: 1;
+      stroke-width: 16;
+      filter: drop-shadow(0 0 8px rgba(29, 29, 27, 0.16));
+      animation: pulse 1.15s ease-in-out infinite alternate, flowTravel 1.25s linear infinite;
+    }
+
+    .panel-card.active .pulse-valve {
+      filter: drop-shadow(0 0 8px rgba(47, 125, 75, 0.38));
+      stroke-width: 10;
+    }
+
+    .flow.blue {
+      stroke: var(--blue-deep);
+    }
+
+    .flow.red {
+      stroke: var(--red-deep);
+    }
+
+    .flow-dot {
+      opacity: 0;
+    }
+
+    .panel-card.active .flow-dot.active-dot {
+      opacity: 1;
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.7; }
+      to { opacity: 1; }
+    }
+
+    @keyframes flowTravel {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: -32; }
+    }
+
+    @media (max-width: 1160px) {
+      .hero,
+      .top-grid,
+      .sequence-grid,
+      .rules {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="card hero-main">
+        <div class="kicker">Maximal Study Version</div>
+        <h1>Dachshund Heart Valve Cycle</h1>
+        <p class="subtitle">
+          This version stops trying to be painterly. It uses one clean anatomy reference and four repeated event panels,
+          so the valve sequence stays understandable while still feeling more anatomical than the box-flowchart.
+        </p>
+        <div class="controls">
+          <button id="play-toggle" class="active" type="button">Pause Autoplay</button>
+          <button class="phase-button active" data-phase="0" type="button">1. Filling</button>
+          <button class="phase-button" data-phase="1" type="button">2. AV Close</button>
+          <button class="phase-button" data-phase="2" type="button">3. Ejection</button>
+          <button class="phase-button" data-phase="3" type="button">4. Semilunar Close</button>
+        </div>
+      </div>
+
+      <aside class="card hero-side">
+        <div class="kicker">Reading Order</div>
+        <p class="copy">
+          Start with the anatomy plate. Then watch the active panel move from left to right:
+          AV valves open, AV valves close, semilunar valves open, semilunar valves close.
+        </p>
+      </aside>
+    </section>
+
+    <section class="top-grid">
+      <section class="card anatomy-card">
+        <h2>Anatomy Orientation</h2>
+        <svg viewBox="0 0 560 520" role="img" aria-label="Canine heart anatomy reference">
+          <path class="heart-shell" d="M278 66 C225 64 176 88 140 130 C87 191 66 287 94 364 C121 437 184 480 267 482 C365 485 451 431 484 349 C515 271 500 183 448 124 C406 77 344 66 278 66 Z" />
+          <path class="vessel" d="M60 138 C42 151 34 170 34 196 L34 282 C34 310 53 331 81 336 L106 339 L106 140 Z" />
+          <path class="vessel" d="M451 85 C485 95 511 123 518 160 L523 247 C525 279 507 307 479 322 L455 334 L433 101 Z" />
+          <path class="vessel" d="M248 97 C281 72 330 61 389 68" fill="none" stroke="#f6f0e8" stroke-width="24" stroke-linecap="round" />
+          <path class="vessel" d="M186 196 C205 144 229 112 259 93" fill="none" stroke="#f6f0e8" stroke-width="20" stroke-linecap="round" />
+          <ellipse class="ra" cx="196" cy="202" rx="78" ry="64" />
+          <ellipse class="rv" cx="223" cy="350" rx="112" ry="103" />
+          <ellipse class="la" cx="347" cy="206" rx="83" ry="67" />
+          <ellipse class="lv" cx="347" cy="349" rx="107" ry="111" />
+          <path class="septum" d="M279 136 C272 188 269 242 274 300 C278 340 288 379 303 424" />
+          <line class="valve neutral" x1="214" y1="258" x2="249" y2="285" />
+          <line class="valve neutral" x1="338" y1="258" x2="308" y2="285" />
+          <line class="valve neutral" x1="228" y1="132" x2="244" y2="110" />
+          <line class="valve neutral" x1="281" y1="108" x2="301" y2="88" />
+          <text x="160" y="188" class="ref-label">Right atrium</text>
+          <text x="179" y="208" class="ref-sub">from body veins</text>
+          <text x="160" y="351" class="ref-label">Right ventricle</text>
+          <text x="196" y="371" class="ref-sub">to lungs</text>
+          <text x="315" y="193" class="ref-label">Left atrium</text>
+          <text x="319" y="213" class="ref-sub">from lungs</text>
+          <text x="309" y="352" class="ref-label">Left ventricle</text>
+          <text x="334" y="372" class="ref-sub">to body</text>
+          <text x="113" y="135" class="small-label">Body veins</text>
+          <text x="375" y="62" class="small-label">Aorta</text>
+          <text x="151" y="125" class="small-label">Pulmonary trunk</text>
+          <text x="163" y="246" class="small-label">Tricuspid valve</text>
+          <text x="306" y="246" class="small-label">Mitral valve</text>
+          <text x="212" y="102" class="small-label">Pulmonic valve</text>
+          <text x="284" y="72" class="small-label">Aortic valve</text>
+        </svg>
+        <p class="anatomy-note">Orientation only. This top plate marks valve locations in neutral gray and does not show one specific open/closed phase.</p>
+      </section>
+
+      <section class="card caption-card">
+        <h2>Active Phase</h2>
+        <div class="caption-grid">
+          <div>
+            <p id="phase-title" class="phase-title">Ventricular filling</p>
+            <p id="phase-copy" class="copy">
+              Atrial pressure is higher than ventricular pressure, so blood passes through the open tricuspid and mitral valves.
+            </p>
+            <ul class="phase-meta">
+              <li><span class="swatch" style="background:#2f7d4b"></span><span id="av-state">AV valves: open</span></li>
+              <li><span class="swatch" style="background:#8d877f"></span><span id="sl-state">Semilunar valves: closed</span></li>
+              <li><span class="swatch" style="background:#af8224"></span><span id="pressure-rule">Pressure rule: atria &gt; ventricles</span></li>
+            </ul>
+          </div>
+          <div class="phase-number" id="phase-number">1</div>
+        </div>
+      </section>
+    </section>
+
+    <section class="sequence-grid">
+      <article class="card panel-card active" data-step="0">
+        <div class="panel-head">
+          <h3>1. Ventricular filling</h3>
+          <span class="panel-tag">Diastolic inflow</span>
+        </div>
+        <svg viewBox="0 0 340 260" role="img" aria-label="Phase 1 ventricular filling">
+          <path class="heart-shell" d="M169 28 C139 27 112 40 89 62 C57 93 44 150 61 196 C77 233 114 252 162 252 C219 253 269 223 288 181 C306 139 297 88 267 57 C243 34 209 28 169 28 Z" />
+          <path class="vessel" d="M15 70 C8 75 4 84 4 95 L4 145 C4 157 12 165 24 168 L36 170 L36 72 Z" />
+          <path class="vessel" d="M272 40 C289 45 303 58 307 76 L310 128 C311 142 303 154 289 161 L278 166 L267 48 Z" />
+          <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
+          <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
+          <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
+          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
+          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
+          <line class="valve open pulse-valve" x1="132" y1="137" x2="153" y2="154" />
+          <line class="valve open pulse-valve" x1="208" y1="137" x2="190" y2="154" />
+          <line class="valve closed" x1="138" y1="67" x2="148" y2="53" />
+          <line class="valve closed" x1="173" y1="51" x2="185" y2="38" />
+          <path class="flow blue active-flow" d="M119 108 C128 120 136 130 143 144" stroke-width="12" />
+          <path class="flow red active-flow" d="M218 112 C208 123 200 133 192 145" stroke-width="12" />
+          <circle class="flow-dot active-dot" r="5" fill="#2d6f96">
+            <animateMotion dur="1.5s" repeatCount="indefinite" path="M119 108 C128 120 136 130 143 144" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#2d6f96">
+            <animateMotion begin="-0.5s" dur="1.5s" repeatCount="indefinite" path="M119 108 C128 120 136 130 143 144" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#2d6f96">
+            <animateMotion begin="-1s" dur="1.5s" repeatCount="indefinite" path="M119 108 C128 120 136 130 143 144" />
+          </circle>
+          <circle class="flow-dot active-dot" r="5" fill="#a94636">
+            <animateMotion dur="1.5s" repeatCount="indefinite" path="M218 112 C208 123 200 133 192 145" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#a94636">
+            <animateMotion begin="-0.5s" dur="1.5s" repeatCount="indefinite" path="M218 112 C208 123 200 133 192 145" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#a94636">
+            <animateMotion begin="-1s" dur="1.5s" repeatCount="indefinite" path="M218 112 C208 123 200 133 192 145" />
+          </circle>
+        </svg>
+        <p class="panel-copy">The relaxed ventricles are low pressure spaces, so both AV valves are open and blood falls in from the atria.</p>
+      </article>
+
+      <article class="card panel-card" data-step="1">
+        <div class="panel-head">
+          <h3>2. AV valve closure</h3>
+          <span class="panel-tag">S1</span>
+        </div>
+        <svg viewBox="0 0 340 260" role="img" aria-label="Phase 2 AV valve closure">
+          <path class="heart-shell" d="M169 28 C139 27 112 40 89 62 C57 93 44 150 61 196 C77 233 114 252 162 252 C219 253 269 223 288 181 C306 139 297 88 267 57 C243 34 209 28 169 28 Z" />
+          <path class="vessel" d="M15 70 C8 75 4 84 4 95 L4 145 C4 157 12 165 24 168 L36 170 L36 72 Z" />
+          <path class="vessel" d="M272 40 C289 45 303 58 307 76 L310 128 C311 142 303 154 289 161 L278 166 L267 48 Z" />
+          <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
+          <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
+          <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
+          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
+          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
+          <line class="valve closed" x1="132" y1="137" x2="153" y2="154" />
+          <line class="valve closed" x1="208" y1="137" x2="190" y2="154" />
+          <line class="valve closed" x1="138" y1="67" x2="148" y2="53" />
+          <line class="valve closed" x1="173" y1="51" x2="185" y2="38" />
+        </svg>
+        <p class="panel-copy">Ventricular pressure starts rising. The tricuspid and mitral valves shut first, creating the S1 heart sound.</p>
+      </article>
+
+      <article class="card panel-card" data-step="2">
+        <div class="panel-head">
+          <h3>3. Ejection</h3>
+          <span class="panel-tag">Forward outflow</span>
+        </div>
+        <svg viewBox="0 0 340 260" role="img" aria-label="Phase 3 ejection">
+          <path class="heart-shell" d="M169 28 C139 27 112 40 89 62 C57 93 44 150 61 196 C77 233 114 252 162 252 C219 253 269 223 288 181 C306 139 297 88 267 57 C243 34 209 28 169 28 Z" />
+          <path class="vessel" d="M15 70 C8 75 4 84 4 95 L4 145 C4 157 12 165 24 168 L36 170 L36 72 Z" />
+          <path class="vessel" d="M272 40 C289 45 303 58 307 76 L310 128 C311 142 303 154 289 161 L278 166 L267 48 Z" />
+          <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
+          <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
+          <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
+          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
+          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
+          <line class="valve closed" x1="132" y1="137" x2="153" y2="154" />
+          <line class="valve closed" x1="208" y1="137" x2="190" y2="154" />
+          <line class="valve open pulse-valve" x1="138" y1="67" x2="148" y2="53" />
+          <line class="valve open pulse-valve" x1="173" y1="51" x2="185" y2="38" />
+          <path class="flow blue active-flow" d="M142 182 C140 142 142 108 146 78 C149 62 159 50 176 42" stroke-width="11" />
+          <path class="flow red active-flow" d="M214 181 C197 146 185 102 179 56 C181 44 188 35 201 31 C214 28 229 28 247 31" stroke-width="11" />
+          <circle class="flow-dot active-dot" r="5" fill="#2d6f96">
+            <animateMotion dur="1.5s" repeatCount="indefinite" path="M142 182 C140 142 142 108 146 78 C149 62 159 50 176 42" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#2d6f96">
+            <animateMotion begin="-0.5s" dur="1.5s" repeatCount="indefinite" path="M142 182 C140 142 142 108 146 78 C149 62 159 50 176 42" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#2d6f96">
+            <animateMotion begin="-1s" dur="1.5s" repeatCount="indefinite" path="M142 182 C140 142 142 108 146 78 C149 62 159 50 176 42" />
+          </circle>
+          <circle class="flow-dot active-dot" r="5" fill="#a94636">
+            <animateMotion dur="1.5s" repeatCount="indefinite" path="M214 181 C197 146 185 102 179 56 C181 44 188 35 201 31 C214 28 229 28 247 31" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#a94636">
+            <animateMotion begin="-0.5s" dur="1.5s" repeatCount="indefinite" path="M214 181 C197 146 185 102 179 56 C181 44 188 35 201 31 C214 28 229 28 247 31" />
+          </circle>
+          <circle class="flow-dot active-dot" r="4" fill="#a94636">
+            <animateMotion begin="-1s" dur="1.5s" repeatCount="indefinite" path="M214 181 C197 146 185 102 179 56 C181 44 188 35 201 31 C214 28 229 28 247 31" />
+          </circle>
+        </svg>
+        <p class="panel-copy">Once ventricular pressure exceeds pulmonary artery and aortic pressure, the semilunar valves open and blood is ejected.</p>
+      </article>
+
+      <article class="card panel-card" data-step="3">
+        <div class="panel-head">
+          <h3>4. Semilunar closure</h3>
+          <span class="panel-tag">S2</span>
+        </div>
+        <svg viewBox="0 0 340 260" role="img" aria-label="Phase 4 semilunar closure">
+          <path class="heart-shell" d="M169 28 C139 27 112 40 89 62 C57 93 44 150 61 196 C77 233 114 252 162 252 C219 253 269 223 288 181 C306 139 297 88 267 57 C243 34 209 28 169 28 Z" />
+          <path class="vessel" d="M15 70 C8 75 4 84 4 95 L4 145 C4 157 12 165 24 168 L36 170 L36 72 Z" />
+          <path class="vessel" d="M272 40 C289 45 303 58 307 76 L310 128 C311 142 303 154 289 161 L278 166 L267 48 Z" />
+          <path class="vessel" d="M150 47 C168 33 195 26 228 30" fill="none" stroke="#f6f0e8" stroke-width="16" stroke-linecap="round" />
+          <path class="vessel" d="M113 99 C124 71 137 53 151 45" fill="none" stroke="#f6f0e8" stroke-width="13" stroke-linecap="round" />
+          <ellipse class="ra" cx="121" cy="103" rx="48" ry="38" />
+          <ellipse class="rv" cx="137" cy="188" rx="69" ry="61" />
+          <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
+          <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
+          <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
+          <line class="valve closed" x1="132" y1="137" x2="153" y2="154" />
+          <line class="valve closed" x1="208" y1="137" x2="190" y2="154" />
+          <line class="valve closed pulse-valve" x1="138" y1="67" x2="148" y2="53" />
+          <line class="valve closed pulse-valve" x1="173" y1="51" x2="185" y2="38" />
+        </svg>
+        <p class="panel-copy">As the ventricles relax, pressure in the great vessels becomes higher than ventricular pressure. The exit valves snap shut, producing S2.</p>
+      </article>
+    </section>
+
+    <section class="rules">
+      <section class="card rule-card">
+        <h2>Rule 1</h2>
+        <p>AV valves open when atrial pressure is higher than ventricular pressure.</p>
+      </section>
+      <section class="card rule-card">
+        <h2>Rule 2</h2>
+        <p>AV valves close before semilunar valves open. There is no normal phase where both are open together.</p>
+      </section>
+      <section class="card rule-card">
+        <h2>Rule 3</h2>
+        <p>Semilunar valves close when arterial pressure becomes higher than the relaxing ventricles.</p>
+      </section>
+    </section>
+  </div>
+
+  <script>
+    const phaseData = [
+      {
+        title: "Ventricular filling",
+        copy: "Atrial pressure is higher than ventricular pressure, so blood passes through the open tricuspid and mitral valves.",
+        av: "AV valves: open",
+        sl: "Semilunar valves: closed",
+        pressure: "Pressure rule: atria > ventricles"
+      },
+      {
+        title: "AV valve closure",
+        copy: "Ventricular contraction begins. Pressure overtakes the atria first, so the tricuspid and mitral valves close and create S1.",
+        av: "AV valves: closed",
+        sl: "Semilunar valves: still closed",
+        pressure: "Pressure rule: ventricles > atria, but not yet > arteries"
+      },
+      {
+        title: "Ejection",
+        copy: "When ventricular pressure rises above pulmonary artery and aortic pressure, the pulmonic and aortic valves open and blood is ejected.",
+        av: "AV valves: closed",
+        sl: "Semilunar valves: open",
+        pressure: "Pressure rule: ventricles > arteries"
+      },
+      {
+        title: "Semilunar closure",
+        copy: "The ventricles relax. Arterial pressure becomes higher than ventricular pressure, so the pulmonic and aortic valves close and create S2.",
+        av: "AV valves: about to reopen",
+        sl: "Semilunar valves: closed",
+        pressure: "Pressure rule: arteries > ventricles"
+      }
+    ];
+
+    const playToggle = document.getElementById("play-toggle");
+    const phaseButtons = [...document.querySelectorAll(".phase-button")];
+    const panelCards = [...document.querySelectorAll(".panel-card")];
+    const phaseTitle = document.getElementById("phase-title");
+    const phaseCopy = document.getElementById("phase-copy");
+    const avState = document.getElementById("av-state");
+    const slState = document.getElementById("sl-state");
+    const pressureRule = document.getElementById("pressure-rule");
+    const phaseNumber = document.getElementById("phase-number");
+
+    let current = 0;
+    let autoplay = true;
+    let timer = null;
+
+    function render(index) {
+      current = index;
+      const phase = phaseData[index];
+
+      phaseTitle.textContent = phase.title;
+      phaseCopy.textContent = phase.copy;
+      avState.textContent = phase.av;
+      slState.textContent = phase.sl;
+      pressureRule.textContent = phase.pressure;
+      phaseNumber.textContent = String(index + 1);
+
+      phaseButtons.forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.phase) === index);
+      });
+
+      panelCards.forEach((card) => {
+        card.classList.toggle("active", Number(card.dataset.step) === index);
+      });
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      timer = window.setInterval(() => {
+        render((current + 1) % phaseData.length);
+      }, 2600);
+    }
+
+    function stopAutoplay() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    playToggle.addEventListener("click", () => {
+      autoplay = !autoplay;
+      playToggle.classList.toggle("active", autoplay);
+      playToggle.textContent = autoplay ? "Pause Autoplay" : "Start Autoplay";
+      if (autoplay) {
+        startAutoplay();
+      } else {
+        stopAutoplay();
+      }
+    });
+
+    phaseButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        render(Number(button.dataset.phase));
+        if (autoplay) {
+          startAutoplay();
+        }
+      });
+    });
+
+    panelCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        render(Number(card.dataset.step));
+        if (autoplay) {
+          startAutoplay();
+        }
+      });
+    });
+
+    render(0);
+    startAutoplay();
+  </script>
+</body>
+</html>

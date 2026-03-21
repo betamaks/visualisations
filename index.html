@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veterinary Visualisations</title>
+  <style>
+    :root {
+      --bg: #f4ede4;
+      --panel: rgba(255, 251, 245, 0.92);
+      --ink: #201d1a;
+      --muted: #665c54;
+      --line: #d8c8b7;
+      --accent: #875229;
+      --shadow: 0 18px 44px rgba(64, 39, 25, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(213, 109, 90, 0.16), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(94, 162, 203, 0.18), transparent 24%),
+        linear-gradient(180deg, #f8f1e8 0%, #efe3d2 100%);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 24px 56px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(102, 92, 84, 0.14);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .card {
+      display: grid;
+      gap: 12px;
+      padding: 22px;
+      border: 1px solid rgba(102, 92, 84, 0.14);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(175, 130, 36, 0.12);
+      color: var(--accent);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    a {
+      width: fit-content;
+      text-decoration: none;
+      color: white;
+      background: #201d1a;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 600;
+    }
+
+    a:hover {
+      background: #875229;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <div class="eyebrow">Veterinary Visualisations</div>
+      <h1>Hosted Study Visuals</h1>
+      <p>Interactive study visuals intended for embedding into Notion pages. Start with the dachshund heart valve cycle set below.</p>
+      <div class="grid">
+        <article class="card">
+          <div class="eyebrow">Canine Cardiology</div>
+          <h2>Dachshund Heart Valve Cycle</h2>
+          <p>Single-plate animated study visual focused on valve state, blood flow direction, and event sequence.</p>
+          <a href="./veterinary/dachshund-heart-valves/cycle/">Open Visual</a>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Canine Cardiology</div>
+          <h2>Dachshund Heart Valve Cycle Maximal</h2>
+          <p>Expanded study version with orientation plate, active phase summary, and repeated phase panels.</p>
+          <a href="./veterinary/dachshund-heart-valves/maximal/">Open Visual</a>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

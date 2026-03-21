@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dachshund Heart Valve Cycle</title>
+  <style>
+    :root {
+      --bg: #f5efe6;
+      --panel: #fffaf2;
+      --ink: #1d1d1b;
+      --muted: #695f56;
+      --accent: #99452c;
+      --accent-soft: #d97a51;
+      --blue: #3b82a6;
+      --blue-soft: #b7d5e3;
+      --red: #ba4d3b;
+      --red-soft: #efc0b3;
+      --gold: #c08f2f;
+      --green: #2f7d4b;
+      --line: #d9c9b8;
+      --closed: #8f8b85;
+      --open: #2f7d4b;
+      --shadow: 0 18px 42px rgba(49, 29, 16, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(217, 122, 81, 0.18), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 166, 0.18), transparent 22%),
+        var(--bg);
+    }
+
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 28px 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 20px;
+    }
+
+    .hero-panel,
+    .notes,
+    .timeline,
+    .legend {
+      background: rgba(255, 250, 242, 0.88);
+      border: 1px solid rgba(105, 95, 86, 0.14);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-panel {
+      padding: 24px 26px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.75rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.45;
+      max-width: 56ch;
+    }
+
+    .notes {
+      padding: 24px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(192, 143, 47, 0.12);
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 0;
+    }
+
+    button {
+      border: 1px solid rgba(29, 29, 27, 0.14);
+      background: white;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 140ms ease, background 140ms ease, color 140ms ease;
+    }
+
+    button:hover,
+    button.active {
+      background: var(--ink);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .diagram-wrap {
+      background: rgba(255, 250, 242, 0.88);
+      border: 1px solid rgba(105, 95, 86, 0.14);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .panel-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .status-card {
+      background: var(--panel);
+      border: 1px solid rgba(105, 95, 86, 0.12);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .status-card h2,
+    .timeline h2,
+    .legend h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .phase-name {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .phase-copy,
+    .status-list li,
+    .timeline p,
+    .legend p {
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.98rem;
+    }
+
+    .status-list {
+      list-style: none;
+      margin: 14px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .status-list li {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 0;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .timeline,
+    .legend {
+      padding: 20px 22px;
+    }
+
+    .timeline-track {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .timeline-step {
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(105, 95, 86, 0.12);
+      min-height: 130px;
+      transition: transform 150ms ease, border-color 150ms ease;
+    }
+
+    .timeline-step.active {
+      transform: translateY(-2px);
+      border-color: rgba(29, 29, 27, 0.4);
+    }
+
+    .step-index {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(29, 29, 27, 0.06);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .step-title {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(105, 95, 86, 0.12);
+    }
+
+    .label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      fill: var(--muted);
+    }
+
+    .chamber {
+      stroke: rgba(29, 29, 27, 0.16);
+      stroke-width: 3;
+    }
+
+    .right {
+      fill: var(--blue-soft);
+    }
+
+    .left {
+      fill: var(--red-soft);
+    }
+
+    .vessel {
+      fill: rgba(255, 255, 255, 0.8);
+      stroke: rgba(29, 29, 27, 0.16);
+      stroke-width: 3;
+    }
+
+    .valve-ring {
+      fill: white;
+      stroke-width: 6;
+      transition: stroke 240ms ease, fill 240ms ease, stroke-width 240ms ease, filter 240ms ease;
+    }
+
+    .flow-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 20;
+      stroke-dasharray: 26 18;
+      opacity: 0.1;
+      transition: opacity 240ms ease, stroke 240ms ease, filter 240ms ease, stroke-width 240ms ease;
+    }
+
+    .flow-path.active {
+      opacity: 1;
+      stroke-width: 24;
+      filter: drop-shadow(0 0 10px rgba(29, 29, 27, 0.18));
+      animation: flowPulse 1.1s ease-in-out infinite alternate, flowTravel 1.4s linear infinite;
+    }
+
+    .flow-dot {
+      opacity: 0;
+      transition: opacity 240ms ease;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+    }
+
+    .flow-dot.active {
+      opacity: 1;
+    }
+
+    @keyframes flowPulse {
+      from {
+        opacity: 0.72;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes flowTravel {
+      from {
+        stroke-dashoffset: 0;
+      }
+      to {
+        stroke-dashoffset: -44;
+      }
+    }
+
+    .caption-box {
+      fill: rgba(255, 250, 242, 0.96);
+      stroke: rgba(29, 29, 27, 0.14);
+      stroke-width: 2;
+    }
+
+    .caption-title {
+      font-size: 28px;
+      font-weight: 700;
+      fill: var(--ink);
+    }
+
+    .caption-copy {
+      font-size: 18px;
+      fill: var(--muted);
+    }
+
+    .state-tag {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-track,
+      .legend-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-panel">
+        <div class="kicker">Study Visual</div>
+        <h1>Dachshund Heart Valve Cycle</h1>
+        <p class="subtitle">
+          A maximalist teaching view: one simplified canine-heart cutaway, one moving cardiac cycle,
+          and one side panel that tells you exactly which valves are open, closed, and why.
+        </p>
+        <div class="controls">
+          <button id="play-toggle" class="active" type="button">Pause Autoplay</button>
+          <button data-phase="0" class="phase-button active" type="button">1. Filling</button>
+          <button data-phase="1" class="phase-button" type="button">2. AV Close</button>
+          <button data-phase="2" class="phase-button" type="button">3. Ejection</button>
+          <button data-phase="3" class="phase-button" type="button">4. Semilunar Close</button>
+        </div>
+      </div>
+
+      <aside class="notes">
+        <div class="kicker">Scope</div>
+        <p class="subtitle">
+          Normal valve mechanics here are general canine anatomy, not dachshund-specific anatomy.
+          The dachshund relevance is clinical: small breeds are commonly affected by degenerative mitral valve disease.
+        </p>
+      </aside>
+    </section>
+
+    <section class="layout">
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 1180 860" role="img" aria-labelledby="title desc">
+          <title id="title">Animated canine heart valve cycle</title>
+          <desc id="desc">A simplified cutaway showing right and left heart chambers, the four valves, and animated blood flow during the cardiac cycle.</desc>
+
+          <defs>
+            <linearGradient id="bgFade" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fffaf2" />
+              <stop offset="100%" stop-color="#f2e7db" />
+            </linearGradient>
+            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="rgba(49,29,16,0.18)"/>
+            </filter>
+            <marker id="arrowBlue" markerWidth="14" markerHeight="14" refX="9" refY="4" orient="auto">
+              <path d="M0,0 L10,4 L0,8 z" fill="#3b82a6"></path>
+            </marker>
+            <marker id="arrowRed" markerWidth="14" markerHeight="14" refX="9" refY="4" orient="auto">
+              <path d="M0,0 L10,4 L0,8 z" fill="#ba4d3b"></path>
+            </marker>
+          </defs>
+
+          <rect x="18" y="18" width="1144" height="824" rx="40" fill="url(#bgFade)" />
+
+          <path class="vessel" d="M215 130 C145 115, 120 155, 122 208 L122 330 C126 375, 175 402, 214 390 L248 384 L248 146 Z" />
+          <path class="vessel" d="M938 118 C1014 104, 1056 145, 1058 210 L1058 318 C1052 378, 995 404, 949 390 L908 378 L908 136 Z" />
+
+          <path class="chamber right" d="M262 178 C206 188, 166 252, 180 319 C194 386, 255 428, 324 416 C384 404, 417 349, 406 286 C398 222, 337 165, 262 178 Z" filter="url(#softShadow)"/>
+          <path class="chamber right" d="M276 430 C196 476, 170 590, 226 665 C280 734, 407 736, 480 664 C548 592, 538 479, 460 432 C405 399, 331 399, 276 430 Z" filter="url(#softShadow)"/>
+
+          <path class="chamber left" d="M824 170 C755 172, 704 216, 694 277 C685 350, 732 414, 807 424 C881 433, 942 392, 960 325 C977 255, 937 190, 824 170 Z" filter="url(#softShadow)"/>
+          <path class="chamber left" d="M724 428 C645 457, 604 543, 626 625 C649 711, 747 760, 844 741 C941 724, 1016 635, 1007 536 C1000 453, 932 394, 847 393 C803 393, 763 403, 724 428 Z" filter="url(#softShadow)"/>
+
+          <path class="vessel" d="M428 484 C512 470, 604 474, 684 506" fill="none" stroke="#d9c9b8" stroke-width="32" stroke-linecap="round" />
+          <path class="vessel" d="M472 216 C555 122, 676 98, 838 118" fill="none" stroke="#d9c9b8" stroke-width="42" stroke-linecap="round" />
+
+          <circle id="tricuspid-ring" class="valve-ring" cx="351" cy="414" r="28" stroke="#2f7d4b" />
+          <circle id="pulmonic-ring" class="valve-ring" cx="456" cy="236" r="24" stroke="#8f8b85" />
+          <circle id="mitral-ring" class="valve-ring" cx="677" cy="429" r="28" stroke="#2f7d4b" />
+          <circle id="aortic-ring" class="valve-ring" cx="626" cy="182" r="24" stroke="#8f8b85" />
+
+          <text x="298" y="146" class="label">Right atrium</text>
+          <text x="306" y="782" class="label">Right ventricle</text>
+          <text x="760" y="144" class="label">Left atrium</text>
+          <text x="792" y="782" class="label">Left ventricle</text>
+          <text x="260" y="454" class="label">Tricuspid valve</text>
+          <text x="445" y="191" class="label">Pulmonic valve</text>
+          <text x="622" y="470" class="label">Mitral valve</text>
+          <text x="585" y="136" class="label">Aortic valve</text>
+          <text x="86" y="98" class="label">From body veins</text>
+          <text x="942" y="86" class="label">To body tissues</text>
+
+          <path id="flow-ra-rv" class="flow-path" d="M286 284 C318 322, 338 358, 350 392" stroke="#3b82a6" marker-end="url(#arrowBlue)"/>
+          <path id="flow-rv-lungs" class="flow-path" d="M412 514 C466 430, 474 326, 456 260" stroke="#3b82a6" marker-end="url(#arrowBlue)"/>
+          <path id="flow-la-lv" class="flow-path" d="M798 278 C742 334, 706 384, 688 408" stroke="#ba4d3b" marker-end="url(#arrowRed)"/>
+          <path id="flow-lv-body" class="flow-path" d="M782 522 C680 470, 628 336, 628 208" stroke="#ba4d3b" marker-end="url(#arrowRed)"/>
+
+          <circle id="dot-ra-rv" class="flow-dot" r="10" fill="#3b82a6">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M286 284 C318 322, 338 358, 350 392" />
+          </circle>
+          <circle id="dot-ra-rv-2" class="flow-dot" r="8" fill="#3b82a6">
+            <animateMotion begin="-0.9s" dur="2.8s" repeatCount="indefinite" path="M286 284 C318 322, 338 358, 350 392" />
+          </circle>
+          <circle id="dot-ra-rv-3" class="flow-dot" r="7" fill="#3b82a6">
+            <animateMotion begin="-1.8s" dur="2.8s" repeatCount="indefinite" path="M286 284 C318 322, 338 358, 350 392" />
+          </circle>
+          <circle id="dot-rv-lungs" class="flow-dot" r="10" fill="#3b82a6">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M412 514 C466 430, 474 326, 456 260" />
+          </circle>
+          <circle id="dot-rv-lungs-2" class="flow-dot" r="8" fill="#3b82a6">
+            <animateMotion begin="-0.9s" dur="2.8s" repeatCount="indefinite" path="M412 514 C466 430, 474 326, 456 260" />
+          </circle>
+          <circle id="dot-rv-lungs-3" class="flow-dot" r="7" fill="#3b82a6">
+            <animateMotion begin="-1.8s" dur="2.8s" repeatCount="indefinite" path="M412 514 C466 430, 474 326, 456 260" />
+          </circle>
+          <circle id="dot-la-lv" class="flow-dot" r="10" fill="#ba4d3b">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M798 278 C742 334, 706 384, 688 408" />
+          </circle>
+          <circle id="dot-la-lv-2" class="flow-dot" r="8" fill="#ba4d3b">
+            <animateMotion begin="-0.9s" dur="2.8s" repeatCount="indefinite" path="M798 278 C742 334, 706 384, 688 408" />
+          </circle>
+          <circle id="dot-la-lv-3" class="flow-dot" r="7" fill="#ba4d3b">
+            <animateMotion begin="-1.8s" dur="2.8s" repeatCount="indefinite" path="M798 278 C742 334, 706 384, 688 408" />
+          </circle>
+          <circle id="dot-lv-body" class="flow-dot" r="10" fill="#ba4d3b">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M782 522 C680 470, 628 336, 628 208" />
+          </circle>
+          <circle id="dot-lv-body-2" class="flow-dot" r="8" fill="#ba4d3b">
+            <animateMotion begin="-0.9s" dur="2.8s" repeatCount="indefinite" path="M782 522 C680 470, 628 336, 628 208" />
+          </circle>
+          <circle id="dot-lv-body-3" class="flow-dot" r="7" fill="#ba4d3b">
+            <animateMotion begin="-1.8s" dur="2.8s" repeatCount="indefinite" path="M782 522 C680 470, 628 336, 628 208" />
+          </circle>
+
+          <rect x="760" y="536" width="354" height="226" rx="28" class="caption-box"></rect>
+          <text id="caption-phase" x="790" y="588" class="caption-title">Ventricular filling</text>
+          <text id="caption-copy-1" x="790" y="634" class="caption-copy">Atrial pressure is higher than ventricular pressure.</text>
+          <text id="caption-copy-2" x="790" y="666" class="caption-copy">Tricuspid and mitral valves are open.</text>
+          <text id="caption-copy-3" x="790" y="698" class="caption-copy">Pulmonic and aortic valves remain closed.</text>
+          <text id="caption-tag" x="790" y="734" class="state-tag" fill="#2f7d4b">AV valves open</text>
+        </svg>
+      </div>
+
+      <div class="panel-stack">
+        <section class="status-card">
+          <h2>Current Phase</h2>
+          <p id="phase-name" class="phase-name">Ventricular filling</p>
+          <p id="phase-copy" class="phase-copy">
+            Blood moves from each atrium into its ventricle because the relaxed ventricles are still at lower pressure.
+          </p>
+          <ul class="status-list">
+            <li><span class="swatch" style="background:#2f7d4b"></span><span id="av-status">AV valves: open</span></li>
+            <li><span class="swatch" style="background:#8f8b85"></span><span id="sl-status">Semilunar valves: closed</span></li>
+            <li><span class="swatch" style="background:#c08f2f"></span><span id="pressure-status">Pressure rule: atria > ventricles</span></li>
+          </ul>
+        </section>
+
+        <section class="legend">
+          <h2>Legend</h2>
+          <div class="legend-grid">
+            <div class="legend-item">
+              <p><strong>Blue side</strong><br />Right heart: venous blood heading to the lungs.</p>
+            </div>
+            <div class="legend-item">
+              <p><strong>Red side</strong><br />Left heart: oxygenated blood heading to the body.</p>
+            </div>
+            <div class="legend-item">
+              <p><strong>Valve rings</strong><br />Green means functionally open, gray means closed.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="timeline" style="margin-top:20px;">
+      <h2>Beat Sequence</h2>
+      <p>The same drawing updates across the four main teaching phases so you can map event order onto one anatomy view instead of re-learning a new picture each time.</p>
+      <div class="timeline-track">
+        <article class="timeline-step active" data-step="0">
+          <span class="step-index">Phase 1</span>
+          <h3 class="step-title">Ventricular filling</h3>
+          <p>AV valves open. Blood falls into the relaxed ventricles.</p>
+        </article>
+        <article class="timeline-step" data-step="1">
+          <span class="step-index">Phase 2</span>
+          <h3 class="step-title">AV valve closure</h3>
+          <p>Ventricular contraction begins and pressure overtakes the atria.</p>
+        </article>
+        <article class="timeline-step" data-step="2">
+          <span class="step-index">Phase 3</span>
+          <h3 class="step-title">Ejection</h3>
+          <p>Semilunar valves open and blood exits to lungs and body.</p>
+        </article>
+        <article class="timeline-step" data-step="3">
+          <span class="step-index">Phase 4</span>
+          <h3 class="step-title">Semilunar closure</h3>
+          <p>Arterial pressure becomes higher than ventricular pressure and the exit valves shut.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const phases = [
+      {
+        name: "Ventricular filling",
+        copy: "Blood moves from each atrium into its ventricle because the relaxed ventricles are still at lower pressure.",
+        av: "AV valves: open",
+        sl: "Semilunar valves: closed",
+        pressure: "Pressure rule: atria > ventricles",
+        caption: [
+          "Atrial pressure is higher than ventricular pressure.",
+          "Tricuspid and mitral valves are open.",
+          "Pulmonic and aortic valves remain closed."
+        ],
+        tag: { text: "AV valves open", color: "#2f7d4b" },
+        valves: { tricuspid: true, mitral: true, pulmonic: false, aortic: false },
+        flows: ["flow-ra-rv", "flow-la-lv"],
+        dots: ["dot-ra-rv", "dot-la-lv"]
+      },
+      {
+        name: "AV valve closure",
+        copy: "Ventricular contraction starts. Pressure rises inside both ventricles, so the AV valves snap shut and produce S1.",
+        av: "AV valves: closed",
+        sl: "Semilunar valves: still closed",
+        pressure: "Pressure rule: ventricles > atria, but not yet > arteries",
+        caption: [
+          "Ventricular pressure starts rising.",
+          "Tricuspid and mitral valves close.",
+          "This is the S1 heart sound."
+        ],
+        tag: { text: "S1: AV valves close", color: "#ba4d3b" },
+        valves: { tricuspid: false, mitral: false, pulmonic: false, aortic: false },
+        flows: [],
+        dots: []
+      },
+      {
+        name: "Ejection",
+        copy: "As ventricular pressure rises above pulmonary artery and aortic pressure, the semilunar valves open and blood is ejected forward.",
+        av: "AV valves: closed",
+        sl: "Semilunar valves: open",
+        pressure: "Pressure rule: ventricles > arteries",
+        caption: [
+          "Ventricular pressure exceeds the great vessels.",
+          "Pulmonic and aortic valves open.",
+          "Blood is ejected to lungs and body."
+        ],
+        tag: { text: "Semilunar valves open", color: "#2f7d4b" },
+        valves: { tricuspid: false, mitral: false, pulmonic: true, aortic: true },
+        flows: ["flow-rv-lungs", "flow-lv-body"],
+        dots: ["dot-rv-lungs", "dot-lv-body"]
+      },
+      {
+        name: "Semilunar closure",
+        copy: "The ventricles relax. Arterial pressure becomes higher than ventricular pressure, so the pulmonic and aortic valves close and produce S2.",
+        av: "AV valves: closed for a moment, about to reopen as filling restarts",
+        sl: "Semilunar valves: closed",
+        pressure: "Pressure rule: arteries > ventricles",
+        caption: [
+          "Ventricles are relaxing.",
+          "Blood briefly falls back toward each semilunar valve.",
+          "Pulmonic and aortic valves close: S2."
+        ],
+        tag: { text: "S2: semilunar valves close", color: "#ba4d3b" },
+        valves: { tricuspid: false, mitral: false, pulmonic: false, aortic: false },
+        flows: [],
+        dots: []
+      }
+    ];
+
+    const valveMap = {
+      tricuspid: document.getElementById("tricuspid-ring"),
+      pulmonic: document.getElementById("pulmonic-ring"),
+      mitral: document.getElementById("mitral-ring"),
+      aortic: document.getElementById("aortic-ring")
+    };
+
+    const playButton = document.getElementById("play-toggle");
+    const phaseButtons = [...document.querySelectorAll(".phase-button")];
+    const timelineSteps = [...document.querySelectorAll(".timeline-step")];
+    const phaseName = document.getElementById("phase-name");
+    const phaseCopy = document.getElementById("phase-copy");
+    const avStatus = document.getElementById("av-status");
+    const slStatus = document.getElementById("sl-status");
+    const pressureStatus = document.getElementById("pressure-status");
+    const captionPhase = document.getElementById("caption-phase");
+    const captionCopy1 = document.getElementById("caption-copy-1");
+    const captionCopy2 = document.getElementById("caption-copy-2");
+    const captionCopy3 = document.getElementById("caption-copy-3");
+    const captionTag = document.getElementById("caption-tag");
+
+    let currentPhase = 0;
+    let autoplay = true;
+    let timer = null;
+
+        function setValveState(valveElement, isOpen) {
+      valveElement.style.stroke = isOpen ? "#2f7d4b" : "#8f8b85";
+      valveElement.style.fill = isOpen ? "rgba(47, 125, 75, 0.12)" : "white";
+      valveElement.style.strokeWidth = isOpen ? "8" : "6";
+      valveElement.style.filter = isOpen ? "drop-shadow(0 0 8px rgba(47, 125, 75, 0.28))" : "none";
+    }
+
+    function updateFlow(activeIds, activeDots) {
+      document.querySelectorAll(".flow-path").forEach((path) => {
+        path.classList.toggle("active", activeIds.includes(path.id));
+      });
+      document.querySelectorAll(".flow-dot").forEach((dot) => {
+        dot.classList.toggle("active", activeDots.includes(dot.id));
+      });
+    }
+
+    function renderPhase(index) {
+      currentPhase = index;
+      const phase = phases[index];
+
+      Object.entries(valveMap).forEach(([name, element]) => {
+        setValveState(element, phase.valves[name]);
+      });
+
+      updateFlow(phase.flows, phase.dots);
+
+      phaseName.textContent = phase.name;
+      phaseCopy.textContent = phase.copy;
+      avStatus.textContent = phase.av;
+      slStatus.textContent = phase.sl;
+      pressureStatus.textContent = phase.pressure;
+
+      captionPhase.textContent = phase.name;
+      captionCopy1.textContent = phase.caption[0];
+      captionCopy2.textContent = phase.caption[1];
+      captionCopy3.textContent = phase.caption[2];
+      captionTag.textContent = phase.tag.text;
+      captionTag.setAttribute("fill", phase.tag.color);
+
+      phaseButtons.forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.phase) === index);
+      });
+
+      timelineSteps.forEach((step) => {
+        step.classList.toggle("active", Number(step.dataset.step) === index);
+      });
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      timer = window.setInterval(() => {
+        renderPhase((currentPhase + 1) % phases.length);
+      }, 2600);
+    }
+
+    function stopAutoplay() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    playButton.addEventListener("click", () => {
+      autoplay = !autoplay;
+      playButton.textContent = autoplay ? "Pause Autoplay" : "Start Autoplay";
+      playButton.classList.toggle("active", autoplay);
+      if (autoplay) {
+        startAutoplay();
+      } else {
+        stopAutoplay();
+      }
+    });
+
+    phaseButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        renderPhase(Number(button.dataset.phase));
+        if (autoplay) {
+          startAutoplay();
+        }
+      });
+    });
+
+    renderPhase(0);
+    startAutoplay();
+  </script>
+</body>
+</html>
