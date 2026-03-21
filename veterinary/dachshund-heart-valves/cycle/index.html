@@ -326,6 +326,18 @@
       opacity: 1;
     }
 
+    .flow-head {
+      opacity: 0;
+      transition: opacity 240ms ease, filter 240ms ease, transform 240ms ease;
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7));
+      transform-origin: center;
+    }
+
+    .flow-head.active {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
     @keyframes flowPulse {
       from {
         opacity: 0.72;
@@ -543,12 +555,6 @@
             <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="rgba(49,29,16,0.18)"/>
             </filter>
-            <marker id="arrowBlue" markerWidth="11" markerHeight="11" refX="7.2" refY="4" orient="auto">
-              <path d="M0,0 L8,4 L0,8 z" fill="#3b82a6" opacity="0.92"></path>
-            </marker>
-            <marker id="arrowRed" markerWidth="11" markerHeight="11" refX="7.2" refY="4" orient="auto">
-              <path d="M0,0 L8,4 L0,8 z" fill="#ba4d3b" opacity="0.92"></path>
-            </marker>
           </defs>
 
           <rect x="18" y="18" width="1144" height="824" rx="40" fill="url(#bgFade)" />
@@ -581,10 +587,15 @@
           <text x="86" y="98" class="label">From body veins</text>
           <text x="942" y="86" class="label">To body tissues</text>
 
-          <path id="flow-ra-rv" class="flow-path" d="M286 284 C318 322, 334 352, 338 382" stroke="#3b82a6" marker-end="url(#arrowBlue)"/>
-          <path id="flow-rv-lungs" class="flow-path" d="M412 514 C466 430, 472 334, 456 270" stroke="#3b82a6" marker-end="url(#arrowBlue)"/>
-          <path id="flow-la-lv" class="flow-path" d="M798 278 C742 334, 710 370, 694 398" stroke="#ba4d3b" marker-end="url(#arrowRed)"/>
-          <path id="flow-lv-body" class="flow-path" d="M782 522 C680 470, 630 342, 626 216" stroke="#ba4d3b" marker-end="url(#arrowRed)"/>
+          <path id="flow-ra-rv" class="flow-path" d="M286 284 C318 322, 334 352, 338 382" stroke="#3b82a6"/>
+          <path id="flow-rv-lungs" class="flow-path" d="M412 514 C466 430, 472 334, 456 270" stroke="#3b82a6"/>
+          <path id="flow-la-lv" class="flow-path" d="M798 278 C742 334, 710 370, 694 398" stroke="#ba4d3b"/>
+          <path id="flow-lv-body" class="flow-path" d="M782 522 C680 470, 630 342, 626 216" stroke="#ba4d3b"/>
+
+          <polygon id="head-ra-rv" class="flow-head" points="325,376 344,384 331,396" fill="#3b82a6"></polygon>
+          <polygon id="head-rv-lungs" class="flow-head" points="447,280 456,256 467,278" fill="#3b82a6"></polygon>
+          <polygon id="head-la-lv" class="flow-head" points="706,390 688,401 705,414" fill="#ba4d3b"></polygon>
+          <polygon id="head-lv-body" class="flow-head" points="616,224 626,199 638,222" fill="#ba4d3b"></polygon>
 
           <circle id="dot-ra-rv" class="flow-dot" r="10" fill="#3b82a6">
             <animateMotion dur="2.8s" repeatCount="indefinite" path="M286 284 C318 322, 334 352, 338 382" />
@@ -761,6 +772,10 @@
       });
       document.querySelectorAll(".flow-dot").forEach((dot) => {
         dot.classList.toggle("active", activeDots.includes(dot.id));
+      });
+      document.querySelectorAll(".flow-head").forEach((head) => {
+        const flowId = head.id.replace("head-", "flow-");
+        head.classList.toggle("active", activeIds.includes(flowId));
       });
     }
 
