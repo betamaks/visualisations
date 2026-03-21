@@ -365,6 +365,35 @@
       stroke-width: 10;
     }
 
+    .closing-snap {
+      transform-box: fill-box;
+    }
+
+    .leaflet-av-left {
+      transform-origin: 100% 100%;
+    }
+
+    .leaflet-av-right {
+      transform-origin: 0% 100%;
+    }
+
+    .leaflet-semi-left {
+      transform-origin: 100% 0%;
+    }
+
+    .leaflet-semi-right {
+      transform-origin: 0% 0%;
+    }
+
+    .closure-ring {
+      fill: none;
+      stroke: rgba(175, 130, 36, 0.52);
+      stroke-width: 2.5;
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
     .flow.blue {
       stroke: var(--blue-deep);
     }
@@ -390,6 +419,47 @@
     @keyframes flowTravel {
       from { stroke-dashoffset: 0; }
       to { stroke-dashoffset: -32; }
+    }
+
+    @keyframes snapCloseLeft {
+      0%, 18% { transform: rotate(-42deg); }
+      40% { transform: rotate(5deg); }
+      60%, 100% { transform: rotate(0deg); }
+    }
+
+    @keyframes snapCloseRight {
+      0%, 18% { transform: rotate(42deg); }
+      40% { transform: rotate(-5deg); }
+      60%, 100% { transform: rotate(0deg); }
+    }
+
+    @keyframes closureRing {
+      0% {
+        opacity: 0;
+        transform: scale(0.72);
+      }
+      22% {
+        opacity: 0.82;
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.32);
+      }
+    }
+
+    .panel-card.active .closing-av-left,
+    .panel-card.active .closing-semi-left {
+      animation: snapCloseLeft 1.35s cubic-bezier(0.2, 0.9, 0.2, 1) infinite;
+    }
+
+    .panel-card.active .closing-av-right,
+    .panel-card.active .closing-semi-right {
+      animation: snapCloseRight 1.35s cubic-bezier(0.2, 0.9, 0.2, 1) infinite;
+    }
+
+    .panel-card.active .closure-ring {
+      animation: closureRing 1.35s ease-out infinite;
+      animation-delay: var(--delay, 0s);
     }
 
     .page {
@@ -619,10 +689,16 @@
           <ellipse class="la" cx="215" cy="106" rx="49" ry="39" />
           <ellipse class="lv" cx="214" cy="188" rx="65" ry="67" />
           <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
-          <line class="valve closed" x1="132" y1="137" x2="153" y2="154" />
-          <line class="valve closed" x1="208" y1="137" x2="190" y2="154" />
+          <g class="closing-snap leaflet-av-left closing-av-left">
+            <line class="valve closed" x1="145" y1="145" x2="153" y2="154" />
+          </g>
+          <g class="closing-snap leaflet-av-right closing-av-right">
+            <line class="valve closed" x1="198" y1="145" x2="190" y2="154" />
+          </g>
           <line class="valve closed" x1="138" y1="67" x2="148" y2="53" />
           <line class="valve closed" x1="173" y1="51" x2="185" y2="38" />
+          <ellipse class="closure-ring" cx="145" cy="146" rx="18" ry="12" />
+          <ellipse class="closure-ring" cx="198" cy="146" rx="18" ry="12" style="--delay:0.18s" />
         </svg>
         <p class="panel-copy">Ventricular pressure starts rising. The tricuspid and mitral valves shut first, creating the S1 heart sound.</p>
       </article>
@@ -689,8 +765,14 @@
           <path class="septum" d="M171 59 C167 88 166 121 169 155 C171 178 177 201 187 232" />
           <line class="valve closed" x1="132" y1="137" x2="153" y2="154" />
           <line class="valve closed" x1="208" y1="137" x2="190" y2="154" />
-          <line class="valve closed pulse-valve" x1="138" y1="67" x2="148" y2="53" />
-          <line class="valve closed pulse-valve" x1="173" y1="51" x2="185" y2="38" />
+          <g class="closing-snap leaflet-semi-left closing-semi-left">
+            <line class="valve closed" x1="144" y1="61" x2="148" y2="53" />
+          </g>
+          <g class="closing-snap leaflet-semi-right closing-semi-right">
+            <line class="valve closed" x1="179" y1="46" x2="185" y2="38" />
+          </g>
+          <ellipse class="closure-ring" cx="145" cy="60" rx="14" ry="11" />
+          <ellipse class="closure-ring" cx="181" cy="45" rx="14" ry="11" style="--delay:0.18s" />
         </svg>
         <p class="panel-copy">As the ventricles relax, pressure in the great vessels becomes higher than ventricular pressure. The exit valves snap shut, producing S2.</p>
       </article>
