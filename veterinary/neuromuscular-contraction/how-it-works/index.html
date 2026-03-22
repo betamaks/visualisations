@@ -4,8 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How a Nerve Impulse Triggers Muscle Contraction</title>
+  <link rel="stylesheet" href="../../../shared/themes/veterinary.css" />
   <style>
     :root {
+      --page-max-width: 1520px;
+      --page-padding: 16px;
+      --kicker-bg: rgba(184, 121, 43, 0.12);
+      --kicker-color: var(--nerve);
+      --tag-bg: rgba(33, 27, 24, 0.07);
+      --tag-color: var(--muted);
+      --button-active-bg: var(--ink);
+      --button-active-border: var(--ink);
+      --h1-size: clamp(2rem, 4.1vw, 3.95rem);
+      --h1-line-height: 0.93;
+      --h1-letter-spacing: -0.05em;
       --bg: #efe5d8;
       --panel: rgba(255, 250, 244, 0.94);
       --panel-soft: rgba(255, 255, 255, 0.72);
@@ -25,26 +37,6 @@
       --failure: #cf4d37;
       --failure-soft: rgba(207, 77, 55, 0.16);
       --shadow: 0 20px 50px rgba(72, 41, 22, 0.14);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at top left, rgba(184, 121, 43, 0.14), transparent 26%),
-        radial-gradient(circle at bottom right, rgba(66, 123, 161, 0.16), transparent 26%),
-        linear-gradient(180deg, #f7efe7 0%, var(--bg) 100%);
-    }
-
-    .page {
-      max-width: 1520px;
-      margin: 0 auto;
-      padding: 16px;
     }
 
     .stage {
@@ -89,47 +81,6 @@
       padding: 20px 22px;
     }
 
-    .kicker,
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 0.79rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .kicker {
-      background: rgba(184, 121, 43, 0.12);
-      color: var(--nerve);
-      margin-bottom: 12px;
-    }
-
-    .tag {
-      background: rgba(33, 27, 24, 0.07);
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2rem, 4.1vw, 3.95rem);
-      line-height: 0.93;
-      letter-spacing: -0.05em;
-    }
-
-    h2 {
-      margin: 0 0 10px;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-    }
-
     h3 {
       margin: 0 0 8px;
       font-size: 1.62rem;
@@ -166,25 +117,6 @@
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: var(--muted);
-    }
-
-    .controls,
-    .condition-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    button {
-      appearance: none;
-      border: 1px solid rgba(33, 27, 24, 0.14);
-      background: #fff;
-      color: var(--ink);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font: inherit;
-      cursor: pointer;
-      transition: transform 140ms ease, background 140ms ease, color 140ms ease, border-color 140ms ease;
     }
 
     button:hover {
@@ -253,12 +185,6 @@
         linear-gradient(180deg, #fbf6f0 0%, #f1e5d7 100%);
     }
 
-    svg {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
     .panel-stack {
       display: grid;
       gap: 16px;
@@ -283,10 +209,6 @@
     }
 
     .swatch {
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      flex: 0 0 auto;
       margin-top: 4px;
     }
 
@@ -1059,6 +981,7 @@
     </section>
   </div>
 
+  <script src="../../../shared/scripts/veterinary-visual.js"></script>
   <script>
     const steps = [
       {
@@ -1262,11 +1185,13 @@
       }
     };
 
+    const { bindDatasetClicks, bindPlayToggle, createAutoplayController, qsa, syncActive } = window.VetVisual;
+
     const playButton = document.getElementById("play-toggle");
-    const stepButtons = [...document.querySelectorAll(".step-button")];
-    const conditionButtons = [...document.querySelectorAll(".condition-button")];
-    const animatables = [...document.querySelectorAll("[data-anim]")];
-    const conditionLayers = [...document.querySelectorAll("[data-condition-layer]")];
+    const stepButtons = qsa(".step-button");
+    const conditionButtons = qsa(".condition-button");
+    const animatables = qsa("[data-anim]");
+    const conditionLayers = qsa("[data-condition-layer]");
 
     const stageTag = document.getElementById("stage-tag");
     const stageTitle = document.getElementById("stage-title");
@@ -1285,45 +1210,16 @@
     const conditionTreatment = document.getElementById("condition-treatment");
     const conditionSpecies = document.getElementById("condition-species");
 
-    let currentStep = 0;
     let currentCondition = "normal";
     let autoplay = true;
-    let timer = null;
-
-    function startAutoplay() {
-      stopAutoplay();
-      timer = window.setInterval(() => {
-        renderStep((currentStep + 1) % steps.length);
-      }, 2600);
-    }
-
-    function stopAutoplay() {
-      if (timer) {
-        window.clearInterval(timer);
-        timer = null;
-      }
-    }
-
-    function setAutoplay(value) {
-      autoplay = value;
-      playButton.textContent = autoplay ? "Pause Autoplay" : "Start Autoplay";
-      playButton.classList.toggle("active", autoplay);
-
-      if (autoplay) {
-        startAutoplay();
-      } else {
-        stopAutoplay();
-      }
-    }
 
     function updateRiskText() {
       const condition = conditions[currentCondition];
-      const step = steps[currentStep];
+      const step = steps[controller.current()];
       stageRisk.textContent = condition.impacts[step.key] || condition.defaultImpact;
     }
 
     function renderStep(index) {
-      currentStep = index;
       const step = steps[index];
 
       animatables.forEach((element) => {
@@ -1337,9 +1233,7 @@
       stageIon.textContent = step.ion;
       stageResult.textContent = step.result;
 
-      stepButtons.forEach((button) => {
-        button.classList.toggle("active", Number(button.dataset.step) === index);
-      });
+      syncActive(stepButtons, "step", index);
 
       updateRiskText();
     }
@@ -1362,12 +1256,10 @@
       conditionTreatment.textContent = condition.treatment;
       conditionSpecies.textContent = condition.species;
 
-      conditionButtons.forEach((button) => {
-        button.classList.toggle("active", button.dataset.condition === key);
-      });
+      syncActive(conditionButtons, "condition", key);
 
-      if (key !== "normal" && autoplay) {
-        setAutoplay(false);
+      if (key !== "normal" && controller.isAutoplay()) {
+        controller.setAutoplay(false);
       }
 
       if (jump) {
@@ -1377,28 +1269,26 @@
       }
     }
 
-    playButton.addEventListener("click", () => {
-      setAutoplay(!autoplay);
+    const controller = createAutoplayController({
+      length: steps.length,
+      interval: 2600,
+      render: renderStep,
+      autoplay
     });
 
-    stepButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        renderStep(Number(button.dataset.step));
-        if (autoplay) {
-          startAutoplay();
-        }
-      });
+    bindPlayToggle(playButton, controller);
+
+    bindDatasetClicks(stepButtons, "step", (step) => {
+      controller.render(Number(step));
+      controller.restartIfAutoplay();
     });
 
-    conditionButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        renderCondition(button.dataset.condition);
-      });
+    bindDatasetClicks(conditionButtons, "condition", (condition) => {
+      renderCondition(condition);
     });
 
-    renderStep(0);
+    controller.init();
     renderCondition("normal", { jump: false });
-    startAutoplay();
   </script>
 </body>
 </html>

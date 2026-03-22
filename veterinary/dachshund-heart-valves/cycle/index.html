@@ -4,8 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dachshund Heart Valve Cycle</title>
+  <link rel="stylesheet" href="../../../shared/themes/veterinary.css" />
   <style>
     :root {
+      --page-max-width: 1400px;
+      --page-padding: 32px 28px 48px;
+      --controls-gap: 10px;
+      --controls-margin-top: 16px;
+      --button-padding: 10px 14px;
+      --button-active-bg: var(--ink);
+      --button-active-border: var(--ink);
+      --kicker-bg: rgba(192, 143, 47, 0.12);
+      --kicker-color: var(--accent);
+      --h1-size: clamp(2rem, 4vw, 3.75rem);
       --bg: #f5efe6;
       --panel: #fffaf2;
       --ink: #1d1d1b;
@@ -22,26 +33,6 @@
       --closed: #8f8b85;
       --open: #2f7d4b;
       --shadow: 0 18px 42px rgba(49, 29, 16, 0.12);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at top left, rgba(217, 122, 81, 0.18), transparent 25%),
-        radial-gradient(circle at bottom right, rgba(59, 130, 166, 0.18), transparent 22%),
-        var(--bg);
-    }
-
-    .page {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 32px 28px 48px;
     }
 
     .hero {
@@ -86,46 +77,6 @@
       padding: 24px;
     }
 
-    .kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      background: rgba(192, 143, 47, 0.12);
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 16px 0 0;
-    }
-
-    button {
-      border: 1px solid rgba(29, 29, 27, 0.14);
-      background: white;
-      color: var(--ink);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font: inherit;
-      cursor: pointer;
-      transition: transform 140ms ease, background 140ms ease, color 140ms ease;
-    }
-
-    button:hover,
-    button.active {
-      background: var(--ink);
-      color: white;
-      transform: translateY(-1px);
-    }
-
     .layout {
       display: grid;
       grid-template-columns: 1.35fr 0.65fr;
@@ -140,12 +91,6 @@
       box-shadow: var(--shadow);
       padding: 24px;
       overflow: hidden;
-    }
-
-    svg {
-      width: 100%;
-      height: auto;
-      display: block;
     }
 
     .panel-stack {
@@ -782,6 +727,7 @@
     </section>
   </div>
 
+  <script src="../../../shared/scripts/veterinary-visual.js"></script>
   <script>
     const phases = [
       {
@@ -854,6 +800,8 @@
       }
     ];
 
+    const { bindDatasetClicks, bindPlayToggle, createAutoplayController, qsa, syncActive } = window.VetVisual;
+
     const valveMap = {
       tricuspid: document.getElementById("tricuspid-ring"),
       pulmonic: document.getElementById("pulmonic-ring"),
@@ -874,8 +822,8 @@
     };
 
     const playButton = document.getElementById("play-toggle");
-    const phaseButtons = [...document.querySelectorAll(".phase-button")];
-    const timelineSteps = [...document.querySelectorAll(".timeline-step")];
+    const phaseButtons = qsa(".phase-button");
+    const timelineSteps = qsa(".timeline-step");
     const phaseName = document.getElementById("phase-name");
     const phaseCopy = document.getElementById("phase-copy");
     const avStatus = document.getElementById("av-status");
@@ -887,11 +835,9 @@
     const captionCopy3 = document.getElementById("caption-copy-3");
     const captionTag = document.getElementById("caption-tag");
 
-    let currentPhase = 0;
     let autoplay = true;
-    let timer = null;
 
-        function setValveState(valveElement, isOpen) {
+    function setValveState(valveElement, isOpen) {
       valveElement.style.stroke = isOpen ? "#2f7d4b" : "#8f8b85";
       valveElement.style.fill = isOpen ? "rgba(47, 125, 75, 0.12)" : "white";
       valveElement.style.strokeWidth = isOpen ? "8" : "6";
@@ -899,10 +845,10 @@
     }
 
     function updateFlow(activeIds, activeDots) {
-      document.querySelectorAll(".flow-path").forEach((path) => {
+      qsa(".flow-path").forEach((path) => {
         path.classList.toggle("active", activeIds.includes(path.id));
       });
-      document.querySelectorAll(".flow-dot").forEach((dot) => {
+      qsa(".flow-dot").forEach((dot) => {
         dot.classList.toggle("active", activeDots.includes(dot.id));
       });
     }
@@ -917,7 +863,6 @@
     }
 
     function renderPhase(index) {
-      currentPhase = index;
       const phase = phases[index];
 
       Object.entries(valveMap).forEach(([name, element]) => {
@@ -946,51 +891,30 @@
       captionTag.textContent = phase.tag.text;
       captionTag.setAttribute("fill", phase.tag.color);
 
-      phaseButtons.forEach((button) => {
-        button.classList.toggle("active", Number(button.dataset.phase) === index);
-      });
-
-      timelineSteps.forEach((step) => {
-        step.classList.toggle("active", Number(step.dataset.step) === index);
-      });
+      syncActive(phaseButtons, "phase", index);
+      syncActive(timelineSteps, "step", index);
     }
 
-    function startAutoplay() {
-      stopAutoplay();
-      timer = window.setInterval(() => {
-        renderPhase((currentPhase + 1) % phases.length);
-      }, 2600);
-    }
-
-    function stopAutoplay() {
-      if (timer) {
-        window.clearInterval(timer);
-        timer = null;
-      }
-    }
-
-    playButton.addEventListener("click", () => {
-      autoplay = !autoplay;
-      playButton.textContent = autoplay ? "Pause Autoplay" : "Start Autoplay";
-      playButton.classList.toggle("active", autoplay);
-      if (autoplay) {
-        startAutoplay();
-      } else {
-        stopAutoplay();
-      }
+    const controller = createAutoplayController({
+      length: phases.length,
+      interval: 2600,
+      render: renderPhase,
+      autoplay
     });
 
-    phaseButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        renderPhase(Number(button.dataset.phase));
-        if (autoplay) {
-          startAutoplay();
-        }
-      });
+    bindPlayToggle(playButton, controller);
+
+    bindDatasetClicks(phaseButtons, "phase", (phase) => {
+      controller.render(Number(phase));
+      controller.restartIfAutoplay();
     });
 
-    renderPhase(0);
-    startAutoplay();
+    bindDatasetClicks(timelineSteps, "step", (step) => {
+      controller.render(Number(step));
+      controller.restartIfAutoplay();
+    });
+
+    controller.init();
   </script>
 </body>
 </html>

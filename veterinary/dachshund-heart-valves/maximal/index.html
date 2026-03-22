@@ -4,8 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dachshund Heart Valve Cycle Maximal</title>
+  <link rel="stylesheet" href="../../../shared/themes/veterinary.css" />
   <style>
     :root {
+      --page-max-width: 1500px;
+      --page-padding: 30px 26px 46px;
+      --controls-gap: 10px;
+      --controls-margin-top: 18px;
+      --button-padding: 10px 14px;
+      --button-active-bg: var(--ink);
+      --button-active-border: var(--ink);
+      --kicker-bg: rgba(175, 130, 36, 0.12);
+      --kicker-color: #875229;
+      --h1-size: clamp(2.2rem, 4vw, 3.9rem);
+      --h1-letter-spacing: -0.05em;
+      --h2-size: 1.1rem;
+      --h2-letter-spacing: 0.03em;
       --bg: #f4ede4;
       --paper: rgba(255, 251, 245, 0.92);
       --ink: #201d1a;
@@ -21,26 +35,6 @@
       --closed: #8d877f;
       --gold: #af8224;
       --shadow: 0 18px 44px rgba(64, 39, 25, 0.12);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at top left, rgba(213, 109, 90, 0.16), transparent 25%),
-        radial-gradient(circle at bottom right, rgba(94, 162, 203, 0.18), transparent 24%),
-        linear-gradient(180deg, #f8f1e8 0%, #efe3d2 100%);
-    }
-
-    .page {
-      max-width: 1500px;
-      margin: 0 auto;
-      padding: 30px 26px 46px;
     }
 
     .hero,
@@ -83,34 +77,6 @@
       padding: 22px 24px;
     }
 
-    .kicker {
-      display: inline-flex;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      background: rgba(175, 130, 36, 0.12);
-      color: #875229;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2.2rem, 4vw, 3.9rem);
-      line-height: 0.95;
-      letter-spacing: -0.05em;
-    }
-
-    h2 {
-      margin: 0 0 10px;
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: var(--muted);
-    }
-
     .subtitle,
     .copy,
     .rule-card p,
@@ -119,32 +85,6 @@
       line-height: 1.48;
       color: var(--muted);
       font-size: 1rem;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    button {
-      appearance: none;
-      border: 1px solid rgba(32, 29, 26, 0.14);
-      background: #fff;
-      color: var(--ink);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font: inherit;
-      cursor: pointer;
-      transition: transform 140ms ease, background 140ms ease, color 140ms ease;
-    }
-
-    button:hover,
-    button.active {
-      background: var(--ink);
-      color: #fff;
-      transform: translateY(-1px);
     }
 
     .caption-grid {
@@ -249,12 +189,6 @@
 
     .rules {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    svg {
-      width: 100%;
-      height: auto;
-      display: block;
     }
 
     .callout {
@@ -935,6 +869,7 @@
     </section>
   </div>
 
+  <script src="../../../shared/scripts/veterinary-visual.js"></script>
   <script>
     const phaseData = [
       {
@@ -967,9 +902,11 @@
       }
     ];
 
+    const { bindDatasetClicks, bindPlayToggle, createAutoplayController, qsa, syncActive } = window.VetVisual;
+
     const playToggle = document.getElementById("play-toggle");
-    const phaseButtons = [...document.querySelectorAll(".phase-button")];
-    const panelCards = [...document.querySelectorAll(".panel-card")];
+    const phaseButtons = qsa(".phase-button");
+    const panelCards = qsa(".panel-card");
     const phaseTitle = document.getElementById("phase-title");
     const phaseCopy = document.getElementById("phase-copy");
     const avState = document.getElementById("av-state");
@@ -977,12 +914,9 @@
     const pressureRule = document.getElementById("pressure-rule");
     const phaseNumber = document.getElementById("phase-number");
 
-    let current = 0;
     let autoplay = true;
-    let timer = null;
 
     function render(index) {
-      current = index;
       const phase = phaseData[index];
 
       phaseTitle.textContent = phase.title;
@@ -992,60 +926,30 @@
       pressureRule.textContent = phase.pressure;
       phaseNumber.textContent = String(index + 1);
 
-      phaseButtons.forEach((button) => {
-        button.classList.toggle("active", Number(button.dataset.phase) === index);
-      });
-
-      panelCards.forEach((card) => {
-        card.classList.toggle("active", Number(card.dataset.step) === index);
-      });
+      syncActive(phaseButtons, "phase", index);
+      syncActive(panelCards, "step", index);
     }
 
-    function startAutoplay() {
-      stopAutoplay();
-      timer = window.setInterval(() => {
-        render((current + 1) % phaseData.length);
-      }, 2600);
-    }
-
-    function stopAutoplay() {
-      if (timer) {
-        window.clearInterval(timer);
-        timer = null;
-      }
-    }
-
-    playToggle.addEventListener("click", () => {
-      autoplay = !autoplay;
-      playToggle.classList.toggle("active", autoplay);
-      playToggle.textContent = autoplay ? "Pause Autoplay" : "Start Autoplay";
-      if (autoplay) {
-        startAutoplay();
-      } else {
-        stopAutoplay();
-      }
+    const controller = createAutoplayController({
+      length: phaseData.length,
+      interval: 2600,
+      render,
+      autoplay
     });
 
-    phaseButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        render(Number(button.dataset.phase));
-        if (autoplay) {
-          startAutoplay();
-        }
-      });
+    bindPlayToggle(playToggle, controller);
+
+    bindDatasetClicks(phaseButtons, "phase", (phase) => {
+      controller.render(Number(phase));
+      controller.restartIfAutoplay();
     });
 
-    panelCards.forEach((card) => {
-      card.addEventListener("click", () => {
-        render(Number(card.dataset.step));
-        if (autoplay) {
-          startAutoplay();
-        }
-      });
+    bindDatasetClicks(panelCards, "step", (step) => {
+      controller.render(Number(step));
+      controller.restartIfAutoplay();
     });
 
-    render(0);
-    startAutoplay();
+    controller.init();
   </script>
 </body>
 </html>
