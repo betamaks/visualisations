@@ -352,7 +352,7 @@
       <div class="flow-step">
         <div class="flow-step-num">1</div>
         <h5>Operator Prompt</h5>
-        <p>User types in Cursor chat: "Why is checkout-api slow in prod?"</p>
+        <p>User types in Cursor chat: "Why is checkout component slow in prod?"</p>
         <span class="flow-arrow">&#8594;</span>
       </div>
       <div class="flow-step">
@@ -460,7 +460,7 @@
         <!-- Messages -->
         <!-- 1: Operator → Cursor -->
         <line x1="70" y1="76" x2="225" y2="76" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-r)"/>
-        <text x="147" y="70" text-anchor="middle" fill="#00d4aa" font-size="8.5" font-family="JetBrains Mono, monospace">"Why is checkout-api slow?"</text>
+        <text x="147" y="70" text-anchor="middle" fill="#00d4aa" font-size="8.5" font-family="JetBrains Mono, monospace">"Why is checkout component slow?"</text>
 
         <!-- 2: Cursor → Claude -->
         <line x1="225" y1="116" x2="440" y2="116" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-r)"/>
@@ -472,12 +472,12 @@
 
         <!-- 4: Rulesets → Claude -->
         <line x1="630" y1="196" x2="440" y2="196" stroke="#ff7b54" stroke-width="1.5" marker-end="url(#sa-l)"/>
-        <text x="535" y="190" text-anchor="middle" fill="#ff7b54" font-size="8" font-family="JetBrains Mono, monospace">account=1457101, start 3h, check sampled</text>
+        <text x="535" y="190" text-anchor="middle" fill="#ff7b54" font-size="8" font-family="JetBrains Mono, monospace">accountId=2222222, start 3h, check sampled</text>
 
         <!-- 5: Claude → NR MCP -->
         <rect x="440" y="222" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/>
         <line x1="440" y1="234" x2="810" y2="234" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/>
-        <text x="625" y="229" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query("SELECT avg(duration) FROM Transaction WHERE appName='checkout-api'...")</text>
+        <text x="625" y="229" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query("SELECT avg(duration) FROM Transaction WHERE entityName='checkout-component'...")</text>
 
         <!-- 6: NR MCP → Claude -->
         <line x1="810" y1="270" x2="440" y2="270" stroke="#1ce783" stroke-width="1.5" marker-end="url(#sa-l)"/>
@@ -486,26 +486,26 @@
         <!-- 7: Claude → NR MCP (spans) -->
         <rect x="440" y="292" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/>
         <line x1="440" y1="304" x2="810" y2="304" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/>
-        <text x="625" y="299" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query("SELECT * FROM Span WHERE traceId='abc123' AND sampled=true...")</text>
+        <text x="625" y="299" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query("SELECT * FROM Span WHERE traceId='trace-1234' AND sampled=true...")</text>
 
         <!-- 8: NR MCP → Claude (spans result) -->
         <line x1="810" y1="340" x2="440" y2="340" stroke="#1ce783" stroke-width="1.5" marker-end="url(#sa-l)"/>
-        <text x="625" y="334" text-anchor="middle" fill="#1ce783" font-size="8" font-family="JetBrains Mono, monospace">JSON: DB span = 6.2s bottleneck on /checkout endpoint</text>
+        <text x="625" y="334" text-anchor="middle" fill="#1ce783" font-size="8" font-family="JetBrains Mono, monospace">JSON: DB span = 6.2s bottleneck in checkout component</text>
 
         <!-- 9: Claude → Jira MCP -->
         <rect x="440" y="362" width="545" height="24" rx="4" fill="rgba(38,132,255,0.04)"/>
         <line x1="440" y1="374" x2="985" y2="374" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/>
-        <text x="712" y="369" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">jira_search("project=BNPL AND labels=perf-issue AND status!=Done")</text>
+        <text x="712" y="369" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">jira_search("project=PROJ AND labels=perf-issue AND status!=Done")</text>
 
         <!-- 10: Jira MCP → Claude -->
         <line x1="985" y1="410" x2="440" y2="410" stroke="#2684ff" stroke-width="1.5" marker-end="url(#sa-l)"/>
-        <text x="712" y="404" text-anchor="middle" fill="#2684ff" font-size="8" font-family="JetBrains Mono, monospace">JSON: BNPL-4521 — known slow query on /checkout, fix planned for Sprint 47</text>
+        <text x="712" y="404" text-anchor="middle" fill="#2684ff" font-size="8" font-family="JetBrains Mono, monospace">JSON: PROJ-1234 — known latency issue in checkout component, fix planned</text>
 
         <!-- 11: Claude → Cursor -->
         <rect x="225" y="440" width="215" height="36" rx="4" fill="rgba(124,106,239,0.04)"/>
         <line x1="440" y1="460" x2="225" y2="460" stroke="#7c6aef" stroke-width="1.5" marker-end="url(#sa-l)"/>
-        <text x="332" y="452" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Root cause: DB query in /checkout (6.2s)</text>
-        <text x="332" y="464" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Tracked: BNPL-4521 — fix in Sprint 47</text>
+        <text x="332" y="452" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Root cause: slow database span in checkout component (6.2s)</text>
+        <text x="332" y="464" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Tracked: PROJ-1234 — follow-up already planned</text>
 
         <!-- 12: Cursor → Operator -->
         <line x1="225" y1="500" x2="70" y2="500" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-l)"/>
@@ -549,7 +549,7 @@
       </div>
       <div class="rule-card" onclick="this.classList.toggle('open')">
         <h4>NR Investigation Protocol</h4>
-        <p>Maps accounts (<code>1652846</code> dev, <code>1457101</code> live). Time windows start narrow, expand. Cross-table correlation keys.</p>
+        <p>Maps accounts (<code>1111111</code> dev, <code>2222222</code> live). Time windows start narrow, expand. Cross-table correlation keys.</p>
         <div class="rule-detail">
           <div><span class="rl-cmt"># Time window strategy:</span></div>
           <div><span class="rl-kw">1.</span> <span class="rl-val">SINCE 3 hours ago</span></div>
