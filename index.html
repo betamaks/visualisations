@@ -4,79 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Visualisations</title>
-  <link rel="stylesheet" href="./shared/themes/catalog.css" />
+  <link rel="stylesheet" href="./shared/themes/root-directory.css" />
 </head>
 <body>
   <main>
     <section class="shell">
-      <div class="eyebrow">Visualisations</div>
-      <h1>Hosted Visual Platform</h1>
-      <p class="lede">This repository now acts as both a static hosting platform and a steering surface for future visual work. Categories can evolve independently while still sharing repository-level rules, manifests, and reusable theme references.</p>
+      <div class="eyebrow">Visualisations Directory</div>
+      <h1>Choose A Category</h1>
+      <p class="lede">The root page stays neutral and works as a directory. Each category can then carry its own visual language and navigation without mixing veterinary and observability styling on the same surface.</p>
 
       <section class="section">
         <h2 class="section-title">Categories</h2>
-        <div class="grid">
-          <article class="card">
-            <div class="eyebrow">Veterinary</div>
-            <h2>Embed-First Study Visuals</h2>
-            <p>Veterinary topics stay optimized for bounded Notion embeds and normally pair a hosted visual with a companion article.</p>
-            <ul class="meta-list">
-              <li>Notion article expected by default</li>
-              <li>Bounded desktop canvas</li>
-              <li>Compact controls and side explanation</li>
-            </ul>
-            <div class="actions">
-              <a class="button" href="./veterinary/">Open Category</a>
+        <div class="directory">
+          <a class="entry" href="./veterinary/">
+            <div class="entry-top">
+              <h2>Veterinary</h2>
+              <code>/veterinary/</code>
             </div>
-          </article>
+            <p>Embed-first study visuals that normally pair a hosted page with a companion Notion article.</p>
+            <span>Current topics include canine cardiology and neuromuscular contraction.</span>
+          </a>
 
-          <article class="card">
-            <div class="eyebrow observability">Observability</div>
-            <h2>Hosted Systems Visuals</h2>
-            <p>Observability topics default to hosted visuals without a Notion requirement and can use more flexible sizing and darker interface treatments.</p>
-            <ul class="meta-list">
-              <li>No article required by default</li>
-              <li>Flexible sizing allowed</li>
-              <li>Dark system-diagram visual language</li>
-            </ul>
-            <div class="actions">
-              <a class="button" href="./observability/">Open Category</a>
+          <a class="entry" href="./observability/">
+            <div class="entry-top">
+              <h2>Observability</h2>
+              <code>/observability/</code>
             </div>
-          </article>
+            <p>Hosted systems and architecture visuals with flexible sizing and a separate darker visual language.</p>
+            <span>Includes the AI Agent Architecture reference visual.</span>
+          </a>
         </div>
       </section>
 
-      <section class="section">
-        <h2 class="section-title">Featured Visuals</h2>
-        <div class="grid">
-          <article class="card">
-            <div class="eyebrow">Veterinary Neurology</div>
-            <h2>Nerve Impulse to Muscle Contraction</h2>
-            <p>Animated motor-unit plate covering the neuromuscular junction, excitation-contraction coupling, and common clinical failure points.</p>
-            <div class="actions">
-              <a class="button" href="./veterinary/neuromuscular-contraction/how-it-works/">Open Visual</a>
-            </div>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">Canine Cardiology</div>
-            <h2>How a Canine Heart Works</h2>
-            <p>Animated overview of double circulation, valve timing, and the electrical trigger that coordinates a normal canine heartbeat.</p>
-            <div class="actions">
-              <a class="button" href="./veterinary/canine-heart/how-it-works/">Open Visual</a>
-            </div>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow observability">Observability</div>
-            <h2>AI Agent Architecture</h2>
-            <p>Reference visual for the darker observability style family, showing architecture, sequence, and agent-rules framing in one hosted page.</p>
-            <div class="actions">
-              <a class="button" href="./observability/ai-agent-architecture/overview/">Open Visual</a>
-            </div>
-          </article>
-        </div>
-      </section>
+      <p class="footer-note">From here, category landing pages can stay distinct in tone, layout, and color space.</p>
     </section>
   </main>
 </body>
