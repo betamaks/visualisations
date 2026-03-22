@@ -1,0 +1,23 @@
+{
+  "slug": "canine-heart",
+  "category": "veterinary",
+  "title": "How a Canine Heart Works",
+  "theme": "veterinary",
+  "default_variant": "how-it-works",
+  "notion": {
+    "required": true,
+    "location_hint": "Veterinary stuff -> visualisations"
+  },
+  "embed": {
+    "mode": "bounded",
+    "recommended_height_px": 980,
+    "flexible": false
+  },
+  "variants": [
+    {
+      "slug": "how-it-works",
+      "title": "How a Canine Heart Works",
+      "path": "./how-it-works/"
+    }
+  ]
+}

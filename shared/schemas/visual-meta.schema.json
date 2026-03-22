@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Visual Topic Metadata",
+  "type": "object",
+  "required": [
+    "slug",
+    "category",
+    "title",
+    "theme",
+    "default_variant",
+    "variants"
+  ],
+  "properties": {
+    "slug": { "type": "string" },
+    "category": { "type": "string", "enum": ["veterinary", "observability"] },
+    "title": { "type": "string" },
+    "theme": { "type": "string" },
+    "default_variant": { "type": "string" },
+    "notion": {
+      "type": "object",
+      "properties": {
+        "required": { "type": "boolean" },
+        "location_hint": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "embed": {
+      "type": "object",
+      "properties": {
+        "mode": { "type": "string" },
+        "recommended_height_px": { "type": "number" },
+        "flexible": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["slug", "title", "path"],
+        "properties": {
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "path": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

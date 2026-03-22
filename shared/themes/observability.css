@@ -1,0 +1,13 @@
+:root {
+  --obs-bg: #0a0c10;
+  --obs-surface: #12151c;
+  --obs-surface-2: #1a1e28;
+  --obs-border: #2a2f3c;
+  --obs-border-glow: #3a4055;
+  --obs-text: #e4e8f0;
+  --obs-text-dim: #8890a4;
+  --obs-accent-primary: #00d4aa;
+  --obs-accent-secondary: #7c6aef;
+  --obs-accent-tertiary: #f5c542;
+  --obs-accent-alert: #ff7b54;
+}

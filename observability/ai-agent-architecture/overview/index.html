@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #12151c;
+    --surface-2: #1a1e28;
+    --border: #2a2f3c;
+    --border-glow: #3a4055;
+    --text: #e4e8f0;
+    --text-dim: #8890a4;
+    --accent-cursor: #00d4aa;
+    --accent-agent: #7c6aef;
+    --accent-nr: #1ce783;
+    --accent-atlassian: #2684ff;
+    --accent-rules: #ff7b54;
+    --accent-mcp: #f5c542;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+  .noise {
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+  header {
+    text-align: center; padding: 40px 24px 12px; position: relative; z-index: 1;
+  }
+  header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.8rem; font-weight: 400; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent-cursor) 50%, var(--accent-agent) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  header p {
+    color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 24px; }
+
+  .legend {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: var(--text-dim);
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* ── SVG Architecture Diagram ── */
+  .arch-svg-wrap {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; margin-bottom: 40px; overflow-x: auto;
+  }
+  .arch-svg-wrap svg { display: block; margin: 0 auto; }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-family: 'Instrument Serif', serif; font-size: 1.7rem; text-align: center; margin-bottom: 6px;
+  }
+  .section-subtitle {
+    text-align: center; color: var(--text-dim); font-size: 0.82rem; margin-bottom: 28px;
+    max-width: 660px; margin-left: auto; margin-right: auto; line-height: 1.55;
+  }
+
+  /* ── Flow Steps ── */
+  .flow-steps {
+    display: grid; grid-template-columns: repeat(6,1fr); gap: 0; margin-bottom: 40px;
+  }
+  .flow-step { text-align: center; padding: 20px 10px; position: relative; }
+  .flow-step-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.82rem;
+    margin-bottom: 10px; position: relative; z-index: 2;
+  }
+  .flow-step:nth-child(1) .flow-step-num { background: rgba(0,212,170,0.15); color: var(--accent-cursor); }
+  .flow-step:nth-child(2) .flow-step-num { background: rgba(0,212,170,0.15); color: var(--accent-cursor); }
+  .flow-step:nth-child(3) .flow-step-num { background: rgba(255,123,84,0.15); color: var(--accent-rules); }
+  .flow-step:nth-child(4) .flow-step-num { background: rgba(124,106,239,0.15); color: var(--accent-agent); }
+  .flow-step:nth-child(5) .flow-step-num { background: rgba(245,197,66,0.15); color: var(--accent-mcp); }
+  .flow-step:nth-child(6) .flow-step-num { background: rgba(0,212,170,0.15); color: var(--accent-cursor); }
+  .flow-step h5 { font-size: 0.78rem; font-weight: 600; margin-bottom: 5px; }
+  .flow-step p { font-size: 0.7rem; color: var(--text-dim); line-height: 1.45; }
+  .flow-arrow {
+    position: absolute; top: 36px; right: -8px; z-index: 1;
+    color: var(--border-glow); font-size: 0.9rem;
+  }
+  .flow-step:last-child .flow-arrow { display: none; }
+
+  /* ── MCP Grid ── */
+  .mcp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+  .mcp-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  }
+  .mcp-card-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mcp-card-header .ic {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .mcp-nr .ic { background: rgba(28,231,131,0.12); }
+  .mcp-atlassian .ic { background: rgba(38,132,255,0.12); }
+  .mcp-card-header h4 { font-size: 0.88rem; font-weight: 600; }
+  .mcp-nr h4 { color: var(--accent-nr); }
+  .mcp-atlassian h4 { color: var(--accent-atlassian); }
+  .mcp-card-body { padding: 16px 20px; }
+  .tool-list { list-style: none; }
+  .tool-list li {
+    display: flex; align-items: flex-start; gap: 8px; padding: 6px 0;
+    border-bottom: 1px solid rgba(42,47,60,0.5); font-size: 0.78rem;
+  }
+  .tool-list li:last-child { border-bottom: none; }
+  .tool-name {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+    padding: 2px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+  }
+  .mcp-nr .tool-name { background: rgba(28,231,131,0.08); color: var(--accent-nr); }
+  .mcp-atlassian .tool-name { background: rgba(38,132,255,0.08); color: var(--accent-atlassian); }
+  .tool-desc { color: var(--text-dim); line-height: 1.45; }
+
+  /* ── Sequence Diagram ── */
+  .seq-wrap {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 28px; margin-bottom: 40px; overflow-x: auto;
+  }
+  .seq-svg { display: block; margin: 0 auto; }
+
+  /* ── Rules Grid ── */
+  .rules-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 40px; }
+  .rule-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; cursor: pointer; position: relative; overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .rule-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent-rules); opacity: 0.5; border-radius: 12px 12px 0 0;
+  }
+  .rule-card:hover { border-color: rgba(255,123,84,0.3); transform: translateY(-2px); }
+  .rule-card h4 {
+    font-size: 0.85rem; font-weight: 600; color: var(--accent-rules); margin-bottom: 6px;
+  }
+  .rule-card p { color: var(--text-dim); font-size: 0.74rem; line-height: 1.5; }
+  .rule-card code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    background: rgba(255,123,84,0.08); color: var(--accent-rules); padding: 1px 4px; border-radius: 3px;
+  }
+  .rule-detail {
+    margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+    display: none; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; line-height: 1.7;
+  }
+  .rule-card.open .rule-detail { display: block; }
+  .rl-kw { color: var(--accent-agent); }
+  .rl-val { color: var(--accent-cursor); }
+  .rl-cmt { color: #555b6e; }
+
+  footer {
+    text-align: center; padding: 28px; color: var(--text-dim); font-size: 0.68rem;
+    font-family: 'JetBrains Mono', monospace; border-top: 1px solid var(--border);
+  }
+
+  /* ── Animations ── */
+  @keyframes dashFlow { to { stroke-dashoffset: -20; } }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .anim-section { opacity: 0; animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+  .anim-section:nth-child(2) { animation-delay: 0.1s; }
+  .anim-section:nth-child(3) { animation-delay: 0.2s; }
+  .anim-section:nth-child(4) { animation-delay: 0.3s; }
+  .anim-section:nth-child(5) { animation-delay: 0.4s; }
+  .anim-section:nth-child(6) { animation-delay: 0.5s; }
+  .anim-section:nth-child(7) { animation-delay: 0.6s; }
+
+  @media (max-width: 900px) {
+    .flow-steps { grid-template-columns: repeat(3,1fr); }
+    .mcp-grid { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<header>
+  <h1>AI Agent Architecture in Cursor IDE</h1>
+  <p>Reference visual language for hosted observability and systems diagrams</p>
+</header>
+
+<div class="wrap">
+  <div class="legend anim-section">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-cursor)"></div>Cursor IDE</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-agent)"></div>LLM Agent</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-nr)"></div>New Relic MCP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-atlassian)"></div>Atlassian MCP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-rules)"></div>Agent Rules</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-mcp)"></div>MCP Protocol</div>
+  </div>
+
+  <!-- ═══════════ ARCHITECTURE DIAGRAM (SVG) ═══════════ -->
+  <div class="arch-svg-wrap anim-section">
+    <svg viewBox="0 0 1040 420" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">
+      <defs>
+        <marker id="arr-cursor" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#00d4aa"/></marker>
+        <marker id="arr-agent" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c6aef"/></marker>
+        <marker id="arr-mcp" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#f5c542"/></marker>
+        <marker id="arr-rules" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ff7b54"/></marker>
+        <marker id="arr-left-agent" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><polygon points="8 0, 0 3, 8 6" fill="#7c6aef"/></marker>
+        <marker id="arr-left-nr" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><polygon points="8 0, 0 3, 8 6" fill="#1ce783"/></marker>
+        <marker id="arr-left-at" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><polygon points="8 0, 0 3, 8 6" fill="#2684ff"/></marker>
+
+        <filter id="glow-c"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#00d4aa" flood-opacity="0.25"/></filter>
+        <filter id="glow-a"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#7c6aef" flood-opacity="0.25"/></filter>
+        <filter id="glow-nr"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#1ce783" flood-opacity="0.2"/></filter>
+        <filter id="glow-at"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#2684ff" flood-opacity="0.2"/></filter>
+        <filter id="glow-r"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ff7b54" flood-opacity="0.2"/></filter>
+      </defs>
+
+      <!-- ── Cursor IDE Box ── -->
+      <rect x="20" y="130" width="200" height="160" rx="14" fill="#12151c" stroke="#00d4aa" stroke-width="1.5" filter="url(#glow-c)"/>
+      <text x="120" y="170" text-anchor="middle" fill="#00d4aa" font-weight="700" font-size="15">Cursor IDE</text>
+      <text x="120" y="192" text-anchor="middle" fill="#8890a4" font-size="10.5">Desktop IDE</text>
+      <text x="120" y="208" text-anchor="middle" fill="#8890a4" font-size="10.5">User interface for</text>
+      <text x="120" y="224" text-anchor="middle" fill="#8890a4" font-size="10.5">natural language prompts</text>
+      <rect x="52" y="248" width="136" height="22" rx="4" fill="rgba(0,212,170,0.08)"/>
+      <text x="120" y="263" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.5">USER INTERFACE</text>
+
+      <!-- ── Agent Box ── -->
+      <rect x="330" y="100" width="230" height="220" rx="14" fill="#12151c" stroke="#7c6aef" stroke-width="1.5" filter="url(#glow-a)"/>
+      <text x="445" y="140" text-anchor="middle" fill="#7c6aef" font-weight="700" font-size="15">Claude Opus 4.6</text>
+      <text x="445" y="162" text-anchor="middle" fill="#8890a4" font-size="10.5">LLM Reasoning Engine</text>
+      <text x="445" y="184" text-anchor="middle" fill="#8890a4" font-size="10.5">Analyzes prompt + context</text>
+      <text x="445" y="200" text-anchor="middle" fill="#8890a4" font-size="10.5">Applies rulesets</text>
+      <text x="445" y="216" text-anchor="middle" fill="#8890a4" font-size="10.5">Decides tool invocations</text>
+      <text x="445" y="232" text-anchor="middle" fill="#8890a4" font-size="10.5">Synthesizes answers</text>
+      <rect x="370" y="254" width="150" height="22" rx="4" fill="rgba(124,106,239,0.08)"/>
+      <text x="445" y="269" text-anchor="middle" fill="#7c6aef" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.5">REASONING ENGINE</text>
+
+      <!-- ── Rulesets Box (below agent) ── -->
+      <rect x="350" y="355" width="190" height="55" rx="10" fill="#12151c" stroke="#ff7b54" stroke-width="1.5" filter="url(#glow-r)"/>
+      <text x="445" y="380" text-anchor="middle" fill="#ff7b54" font-weight="600" font-size="12">Agent Rulesets</text>
+      <text x="445" y="398" text-anchor="middle" fill="#8890a4" font-size="10">User-defined behavior config</text>
+
+      <!-- ── MCP Server group box ── -->
+      <rect x="696" y="44" width="248" height="376" rx="16" fill="none" stroke="#f5c542" stroke-width="1" stroke-dasharray="4 3" opacity="0.3"/>
+      <text x="820" y="63" text-anchor="middle" fill="#f5c542" font-family="JetBrains Mono, monospace" font-size="8" opacity="0.6">VENDOR-SPECIFIC IMPLEMENTATIONS</text>
+
+      <!-- ── New Relic MCP Box ── -->
+      <rect x="706" y="74" width="228" height="158" rx="12" fill="#12151c" stroke="#1ce783" stroke-width="1.5" filter="url(#glow-nr)"/>
+      <text x="820" y="96" text-anchor="middle" fill="#1ce783" font-weight="700" font-size="13">New Relic MCP</text>
+      <text x="820" y="114" text-anchor="middle" fill="#8890a4" font-size="9.5">Thin wrappers + orchestrators</text>
+      <text x="820" y="130" text-anchor="middle" fill="#8890a4" font-size="9.5">+ AI-backed analysis tools</text>
+      <line x1="720" y1="140" x2="920" y2="140" stroke="#2a2f3c" stroke-width="0.5"/>
+      <text x="820" y="156" text-anchor="middle" fill="#555b6e" font-size="8.5" font-style="italic">Vendor choice: multi-query pipelines,</text>
+      <text x="820" y="170" text-anchor="middle" fill="#555b6e" font-size="8.5" font-style="italic">NR platform AI for some tools</text>
+      <rect x="755" y="184" width="130" height="18" rx="4" fill="rgba(28,231,131,0.08)"/>
+      <text x="820" y="197" text-anchor="middle" fill="#1ce783" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing="0.5">27 TOOLS · 3 TIERS</text>
+
+      <!-- ── Atlassian MCP Box ── -->
+      <rect x="706" y="248" width="228" height="130" rx="12" fill="#12151c" stroke="#2684ff" stroke-width="1.5" filter="url(#glow-at)"/>
+      <text x="820" y="272" text-anchor="middle" fill="#2684ff" font-weight="700" font-size="13">Atlassian MCP</text>
+      <text x="820" y="290" text-anchor="middle" fill="#8890a4" font-size="9.5">All thin CRUD wrappers</text>
+      <text x="820" y="306" text-anchor="middle" fill="#8890a4" font-size="9.5">Auth + REST call + return</text>
+      <line x1="720" y1="316" x2="920" y2="316" stroke="#2a2f3c" stroke-width="0.5"/>
+      <text x="820" y="332" text-anchor="middle" fill="#555b6e" font-size="8.5" font-style="italic">Vendor choice: simple passthrough</text>
+      <rect x="755" y="346" width="130" height="18" rx="4" fill="rgba(38,132,255,0.08)"/>
+      <text x="820" y="359" text-anchor="middle" fill="#2684ff" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing="0.5">31 TOOLS · 1 TIER</text>
+
+      <!-- ── Common layer annotation ── -->
+      <text x="820" y="400" text-anchor="middle" fill="#555b6e" font-size="7.5" font-style="italic">Common: auth + API call + structured JSON return</text>
+      <text x="820" y="412" text-anchor="middle" fill="#555b6e" font-size="7.5" font-style="italic">Everything else = vendor design choice</text>
+
+      <!-- ═══ CONNECTING LINES ═══ -->
+
+      <!-- Cursor → Agent (prompt) -->
+      <line x1="220" y1="195" x2="330" y2="195" stroke="#00d4aa" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr-cursor)">
+        <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.5s" repeatCount="indefinite"/>
+      </line>
+      <rect x="245" y="180" width="50" height="16" rx="3" fill="#0a0c10"/>
+      <text x="270" y="192" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="8">PROMPT</text>
+
+      <!-- Agent → Cursor (response) -->
+      <line x1="330" y1="220" x2="220" y2="220" stroke="#7c6aef" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr-left-agent)">
+        <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.5s" repeatCount="indefinite"/>
+      </line>
+      <rect x="237" y="208" width="66" height="16" rx="3" fill="#0a0c10"/>
+      <text x="270" y="220" text-anchor="middle" fill="#7c6aef" font-family="JetBrains Mono, monospace" font-size="8">RESPONSE</text>
+
+      <!-- Agent → NR MCP -->
+      <line x1="560" y1="165" x2="706" y2="140" stroke="#f5c542" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr-mcp)">
+        <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.2s" repeatCount="indefinite"/>
+      </line>
+      <rect x="595" y="132" width="72" height="16" rx="3" fill="#0a0c10"/>
+      <text x="631" y="144" text-anchor="middle" fill="#f5c542" font-family="JetBrains Mono, monospace" font-size="7.5">TOOL CALL</text>
+
+      <!-- NR MCP → Agent (return) -->
+      <line x1="706" y1="165" x2="560" y2="190" stroke="#1ce783" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6" marker-end="url(#arr-left-nr)">
+        <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.2s" repeatCount="indefinite"/>
+      </line>
+
+      <!-- Agent → Atlassian MCP -->
+      <line x1="560" y1="240" x2="706" y2="300" stroke="#f5c542" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr-mcp)">
+        <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.2s" repeatCount="indefinite"/>
+      </line>
+      <rect x="595" y="260" width="72" height="16" rx="3" fill="#0a0c10"/>
+      <text x="631" y="272" text-anchor="middle" fill="#f5c542" font-family="JetBrains Mono, monospace" font-size="7.5">TOOL CALL</text>
+
+      <!-- Atlassian MCP → Agent (return) -->
+      <line x1="706" y1="320" x2="560" y2="265" stroke="#2684ff" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6" marker-end="url(#arr-left-at)">
+        <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.2s" repeatCount="indefinite"/>
+      </line>
+
+      <!-- Rulesets → Agent -->
+      <line x1="445" y1="355" x2="445" y2="320" stroke="#ff7b54" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arr-rules)">
+        <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <rect x="453" y="328" width="62" height="16" rx="3" fill="#0a0c10"/>
+      <text x="484" y="340" text-anchor="middle" fill="#ff7b54" font-family="JetBrains Mono, monospace" font-size="7.5">INJECTED</text>
+
+      <!-- ═══ PROTOCOL LABEL ═══ -->
+      <rect x="580" y="16" width="180" height="24" rx="6" fill="rgba(245,197,66,0.08)" stroke="#f5c542" stroke-width="0.5"/>
+      <text x="670" y="32" text-anchor="middle" fill="#f5c542" font-family="JetBrains Mono, monospace" font-size="8.5">MCP = PROTOCOL ONLY</text>
+      <text x="670" y="48" text-anchor="middle" fill="#555b6e" font-size="7.5" font-style="italic">Standardizes interface, not internals</text>
+
+      <!-- Context bubble on IDE -->
+      <rect x="20" y="28" width="184" height="80" rx="10" fill="#12151c" stroke="#2a2f3c" stroke-width="1"/>
+      <text x="112" y="50" text-anchor="middle" fill="#8890a4" font-size="9.5">Workspace context attached:</text>
+      <text x="112" y="66" text-anchor="middle" fill="#8890a4" font-family="JetBrains Mono, monospace" font-size="8.5">open files, git status,</text>
+      <text x="112" y="80" text-anchor="middle" fill="#8890a4" font-family="JetBrains Mono, monospace" font-size="8.5">terminals, linter errors</text>
+      <line x1="112" y1="108" x2="112" y2="130" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="3 2"/>
+    </svg>
+  </div>
+
+  <!-- ═══════════ REQUEST LIFECYCLE ═══════════ -->
+  <div class="anim-section">
+    <div class="section-title" style="color:var(--accent-cursor)">Request Lifecycle</div>
+    <div class="section-subtitle">What happens when an ITOPS operator asks the agent a question</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-step-num">1</div>
+        <h5>Operator Prompt</h5>
+        <p>User types in Cursor chat: "Why is checkout-api slow in prod?"</p>
+        <span class="flow-arrow">&#8594;</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">2</div>
+        <h5>Context Assembly</h5>
+        <p>IDE attaches open files, git status, terminal output, linter state</p>
+        <span class="flow-arrow">&#8594;</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">3</div>
+        <h5>Rules Applied</h5>
+        <p>Agent loads rulesets: response style, NR accounts, investigation protocol</p>
+        <span class="flow-arrow">&#8594;</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">4</div>
+        <h5>Tool Selection</h5>
+        <p>LLM picks a tool + builds arguments — e.g. nrql_query with a NRQL string and account ID</p>
+        <span class="flow-arrow">&#8594;</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">5</div>
+        <h5>MCP Execution</h5>
+        <p>MCP server process handles auth, calls NR/Atlassian APIs, transforms response into structured JSON</p>
+        <span class="flow-arrow">&#8594;</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">6</div>
+        <h5>Synthesized Answer</h5>
+        <p>Agent analyzes results per rules, returns concise root-cause analysis</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MCP SERVER DETAILS ═══════════ -->
+  <div class="anim-section">
+    <div class="section-title" style="color:var(--accent-mcp)">MCP Server Capabilities</div>
+    <div class="section-subtitle">MCP standardizes how the agent discovers and calls tools (JSON schemas + JSON-RPC). What each server does internally is entirely up to the vendor — from thin API wrappers (Atlassian) to multi-query orchestrators and AI-backed analysis (New Relic). The only universal layer: auth + API call + return structured JSON.</div>
+    <div class="mcp-grid">
+      <div class="mcp-card mcp-nr">
+        <div class="mcp-card-header"><div class="ic">📊</div><h4>New Relic MCP Server — 27 tools</h4></div>
+        <div class="mcp-card-body">
+          <ul class="tool-list">
+            <li><span class="tool-name" style="background:rgba(28,231,131,0.04);color:#6ba87d">execute_nrql_query</span><span class="tool-desc">Thin wrapper — runs NRQL via NerdGraph, returns raw JSON. Auth + call + return.</span></li>
+            <li><span class="tool-name" style="background:rgba(28,231,131,0.04);color:#6ba87d">list_alert_policies</span><span class="tool-desc">Thin wrapper — fetches alert conditions and thresholds. Pure API passthrough.</span></li>
+            <li><span class="tool-name">analyze_transactions</span><span class="tool-desc">Orchestrator — runs multiple NRQL queries, identifies slow/error-prone transactions, compiles report.</span></li>
+            <li><span class="tool-name">analyze_golden_metrics</span><span class="tool-desc">Orchestrator — fetches throughput/latency/error rate, applies health assessment heuristics.</span></li>
+            <li><span class="tool-name" style="background:rgba(245,197,66,0.1);color:#f5c542">natural_language_to_nrql</span><span class="tool-desc">AI-backed — converts plain English to NRQL. Uses NR AI or embedded LLM call.</span></li>
+            <li><span class="tool-name" style="background:rgba(245,197,66,0.1);color:#f5c542">generate_alert_insights</span><span class="tool-desc">AI-backed — root cause analysis, impact assessment, recommended actions for an issue.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mcp-card mcp-atlassian">
+        <div class="mcp-card-header"><div class="ic">🔷</div><h4>Atlassian MCP Server</h4></div>
+        <div class="mcp-card-body">
+          <ul class="tool-list">
+            <li><span class="tool-name">jira_search</span><span class="tool-desc">Run JQL queries to find issues, incidents, and change requests across projects.</span></li>
+            <li><span class="tool-name">jira_get_issue</span><span class="tool-desc">Fetch full issue details — description, comments, status transitions, linked items.</span></li>
+            <li><span class="tool-name">jira_create_issue</span><span class="tool-desc">Create new tickets (bug, task, incident) with structured fields and labels.</span></li>
+            <li><span class="tool-name">confluence_search</span><span class="tool-desc">Search Confluence pages for runbooks, postmortems, architecture docs.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SEQUENCE DIAGRAM (SVG) ═══════════ -->
+  <div class="anim-section">
+    <div class="section-title" style="color:var(--accent-agent)">Interaction Sequence</div>
+    <div class="section-subtitle">Step-by-step message flow for a typical investigation — from operator prompt to synthesized answer</div>
+    <div class="seq-wrap">
+      <svg class="seq-svg" viewBox="0 0 1060 580" width="1060" height="580" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">
+        <defs>
+          <marker id="sa-r" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#8890a4"/></marker>
+          <marker id="sa-l" markerWidth="7" markerHeight="5" refX="0" refY="2.5" orient="auto"><polygon points="7 0,0 2.5,7 5" fill="#8890a4"/></marker>
+        </defs>
+
+        <!-- Participant boxes -->
+        <rect x="20" y="8" width="100" height="28" rx="6" fill="rgba(0,212,170,0.1)"/>
+        <text x="70" y="27" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Operator</text>
+
+        <rect x="175" y="8" width="100" height="28" rx="6" fill="rgba(0,212,170,0.1)"/>
+        <text x="225" y="27" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Cursor IDE</text>
+
+        <rect x="380" y="8" width="120" height="28" rx="6" fill="rgba(124,106,239,0.1)"/>
+        <text x="440" y="27" text-anchor="middle" fill="#7c6aef" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Claude 4.6</text>
+
+        <rect x="580" y="8" width="100" height="28" rx="6" fill="rgba(255,123,84,0.1)"/>
+        <text x="630" y="27" text-anchor="middle" fill="#ff7b54" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Rulesets</text>
+
+        <rect x="760" y="8" width="100" height="28" rx="6" fill="rgba(28,231,131,0.1)"/>
+        <text x="810" y="27" text-anchor="middle" fill="#1ce783" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">NR MCP</text>
+
+        <rect x="930" y="8" width="110" height="28" rx="6" fill="rgba(38,132,255,0.1)"/>
+        <text x="985" y="27" text-anchor="middle" fill="#2684ff" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Jira MCP</text>
+
+        <!-- Lifelines -->
+        <line x1="70" y1="44" x2="70" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="225" y1="44" x2="225" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="440" y1="44" x2="440" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="630" y1="44" x2="630" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="810" y1="44" x2="810" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="985" y1="44" x2="985" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/>
+
+        <!-- Messages -->
+        <!-- 1: Operator → Cursor -->
+        <line x1="70" y1="76" x2="225" y2="76" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-r)"/>
+        <text x="147" y="70" text-anchor="middle" fill="#00d4aa" font-size="8.5" font-family="JetBrains Mono, monospace">"Why is checkout-api slow?"</text>
+
+        <!-- 2: Cursor → Claude -->
+        <line x1="225" y1="116" x2="440" y2="116" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-r)"/>
+        <text x="332" y="110" text-anchor="middle" fill="#8890a4" font-size="8" font-family="JetBrains Mono, monospace">prompt + workspace context + git status</text>
+
+        <!-- 3: Claude → Rulesets -->
+        <line x1="440" y1="156" x2="630" y2="156" stroke="#7c6aef" stroke-width="1.5" marker-end="url(#sa-r)"/>
+        <text x="535" y="150" text-anchor="middle" fill="#8890a4" font-size="8" font-family="JetBrains Mono, monospace">load rulesets (style, NR config, protocols)</text>
+
+        <!-- 4: Rulesets → Claude -->
+        <line x1="630" y1="196" x2="440" y2="196" stroke="#ff7b54" stroke-width="1.5" marker-end="url(#sa-l)"/>
+        <text x="535" y="190" text-anchor="middle" fill="#ff7b54" font-size="8" font-family="JetBrains Mono, monospace">account=1457101, start 3h, check sampled</text>
+
+        <!-- 5: Claude → NR MCP -->
+        <rect x="440" y="222" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/>
+        <line x1="440" y1="234" x2="810" y2="234" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/>
+        <text x="625" y="229" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query("SELECT avg(duration) FROM Transaction WHERE appName='checkout-api'...")</text>
+
+        <!-- 6: NR MCP → Claude -->
+        <line x1="810" y1="270" x2="440" y2="270" stroke="#1ce783" stroke-width="1.5" marker-end="url(#sa-l)"/>
+        <text x="625" y="264" text-anchor="middle" fill="#1ce783" font-size="8" font-family="JetBrains Mono, monospace">JSON: avg=2.3s, P99=8.1s, top slow transaction identified</text>
+
+        <!-- 7: Claude → NR MCP (spans) -->
+        <rect x="440" y="292" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/>
+        <line x1="440" y1="304" x2="810" y2="304" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/>
+        <text x="625" y="299" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query("SELECT * FROM Span WHERE traceId='abc123' AND sampled=true...")</text>
+
+        <!-- 8: NR MCP → Claude (spans result) -->
+        <line x1="810" y1="340" x2="440" y2="340" stroke="#1ce783" stroke-width="1.5" marker-end="url(#sa-l)"/>
+        <text x="625" y="334" text-anchor="middle" fill="#1ce783" font-size="8" font-family="JetBrains Mono, monospace">JSON: DB span = 6.2s bottleneck on /checkout endpoint</text>
+
+        <!-- 9: Claude → Jira MCP -->
+        <rect x="440" y="362" width="545" height="24" rx="4" fill="rgba(38,132,255,0.04)"/>
+        <line x1="440" y1="374" x2="985" y2="374" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/>
+        <text x="712" y="369" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">jira_search("project=BNPL AND labels=perf-issue AND status!=Done")</text>
+
+        <!-- 10: Jira MCP → Claude -->
+        <line x1="985" y1="410" x2="440" y2="410" stroke="#2684ff" stroke-width="1.5" marker-end="url(#sa-l)"/>
+        <text x="712" y="404" text-anchor="middle" fill="#2684ff" font-size="8" font-family="JetBrains Mono, monospace">JSON: BNPL-4521 — known slow query on /checkout, fix planned for Sprint 47</text>
+
+        <!-- 11: Claude → Cursor -->
+        <rect x="225" y="440" width="215" height="36" rx="4" fill="rgba(124,106,239,0.04)"/>
+        <line x1="440" y1="460" x2="225" y2="460" stroke="#7c6aef" stroke-width="1.5" marker-end="url(#sa-l)"/>
+        <text x="332" y="452" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Root cause: DB query in /checkout (6.2s)</text>
+        <text x="332" y="464" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Tracked: BNPL-4521 — fix in Sprint 47</text>
+
+        <!-- 12: Cursor → Operator -->
+        <line x1="225" y1="500" x2="70" y2="500" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-l)"/>
+        <text x="147" y="494" text-anchor="middle" fill="#00d4aa" font-size="8" font-family="JetBrains Mono, monospace">Formatted answer in IDE chat panel</text>
+
+        <!-- Step labels on left -->
+        <text x="16" y="79" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">1</text>
+        <text x="16" y="119" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">2</text>
+        <text x="16" y="159" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">3</text>
+        <text x="16" y="199" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">4</text>
+        <text x="16" y="237" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">5</text>
+        <text x="16" y="273" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">6</text>
+        <text x="16" y="307" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">7</text>
+        <text x="16" y="343" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">8</text>
+        <text x="16" y="377" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">9</text>
+        <text x="16" y="413" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">10</text>
+        <text x="12" y="463" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">11</text>
+        <text x="12" y="503" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">12</text>
+
+        <!-- Annotation: MCP calls -->
+        <rect x="435" y="530" width="380" height="28" rx="6" fill="rgba(245,197,66,0.06)" stroke="#f5c542" stroke-width="0.5"/>
+        <text x="625" y="549" text-anchor="middle" fill="#f5c542" font-size="9" font-family="JetBrains Mono, monospace">Steps 5-10: Agent chains tool calls; MCP servers handle auth + API plumbing per call</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ═══════════ AGENT RULESETS ═══════════ -->
+  <div class="anim-section">
+    <div class="section-title" style="color:var(--accent-rules)">Agent Rulesets</div>
+    <div class="section-subtitle">User-defined configuration injected into every LLM prompt. These shape agent behavior — response format, investigation protocols, and safety constraints. Click to expand.</div>
+    <div class="rules-grid">
+      <div class="rule-card" onclick="this.classList.toggle('open')">
+        <h4>Response Style</h4>
+        <p>Enforces ~5 line outputs, forbidden phrases, one-word answers when possible. No AI boilerplate.</p>
+        <div class="rule-detail">
+          <div><span class="rl-cmt"># Example:</span></div>
+          <div><span class="rl-kw">User:</span> Is 11 prime?</div>
+          <div><span class="rl-kw">Agent:</span> <span class="rl-val">Yes</span></div>
+          <div><span class="rl-cmt"># Forbidden: "Based on the information..."</span></div>
+        </div>
+      </div>
+      <div class="rule-card" onclick="this.classList.toggle('open')">
+        <h4>NR Investigation Protocol</h4>
+        <p>Maps accounts (<code>1652846</code> dev, <code>1457101</code> live). Time windows start narrow, expand. Cross-table correlation keys.</p>
+        <div class="rule-detail">
+          <div><span class="rl-cmt"># Time window strategy:</span></div>
+          <div><span class="rl-kw">1.</span> <span class="rl-val">SINCE 3 hours ago</span></div>
+          <div><span class="rl-kw">2.</span> <span class="rl-val">SINCE 1 day ago</span> <span class="rl-cmt">(if empty)</span></div>
+          <div><span class="rl-kw">3.</span> <span class="rl-val">SINCE 7 days ago</span> <span class="rl-cmt">(simple only)</span></div>
+        </div>
+      </div>
+      <div class="rule-card" onclick="this.classList.toggle('open')">
+        <h4>Truth &amp; Verification</h4>
+        <p>Labels claims as <code>[Inference]</code>, <code>[Speculation]</code>, <code>[Unverified]</code>. Fetch before reasoning about recent tech.</p>
+        <div class="rule-detail">
+          <div><span class="rl-kw">IF</span> date 2025+ <span class="rl-kw">AND</span> recent tech → <span class="rl-val">FETCH first</span></div>
+          <div><span class="rl-kw">IF</span> unverified → <span class="rl-val">label it</span></div>
+          <div><span class="rl-cmt"># Never present guesses as fact</span></div>
+        </div>
+      </div>
+      <div class="rule-card" onclick="this.classList.toggle('open')">
+        <h4>Timestamp &amp; Epoch</h4>
+        <p>Default UTC+2. Converts with ms precision, round-trip validates. Critical for time-bounded NR queries.</p>
+        <div class="rule-detail">
+          <div><span class="rl-kw">1.</span> Capture TZ <span class="rl-val">Europe/Tallinn</span></div>
+          <div><span class="rl-kw">2.</span> Convert to epoch ms</div>
+          <div><span class="rl-kw">3.</span> Round-trip verify</div>
+          <div><span class="rl-kw">4.</span> Use in NRQL <span class="rl-val">SINCE/UNTIL</span></div>
+        </div>
+      </div>
+      <div class="rule-card" onclick="this.classList.toggle('open')">
+        <h4>Security &amp; Privacy</h4>
+        <p>Never expose secrets. Env vars for config. Never commit credentials. Input validation mandatory.</p>
+        <div class="rule-detail">
+          <div><span class="rl-kw">✅</span> <span class="rl-val">Environment variables for secrets</span></div>
+          <div><span class="rl-kw">✅</span> <span class="rl-val">HTTPS/TLS only</span></div>
+          <div><span class="rl-kw">❌</span> Never hardcode API keys</div>
+          <div><span class="rl-kw">❌</span> Never log sensitive user data</div>
+        </div>
+      </div>
+      <div class="rule-card" onclick="this.classList.toggle('open')">
+        <h4>MCP Interaction Rules</h4>
+        <p>Read tool schema before calling. Correct NR account per env. Handle <code>NRDB:1109</code> via chunking. Max <code>LIMIT 5000</code>.</p>
+        <div class="rule-detail">
+          <div><span class="rl-kw">1.</span> Read tool JSON descriptor</div>
+          <div><span class="rl-kw">2.</span> Validate required params</div>
+          <div><span class="rl-kw">3.</span> <span class="rl-val">CallMcpTool(server, tool, args)</span></div>
+          <div><span class="rl-kw">4.</span> Handle errors per ruleset</div>
+          <div><span class="rl-cmt"># NRDB:1109 → chunk into 7d windows</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>AI Agent Architecture Visualization · Observability reference visual</footer>
+</body>
+</html>

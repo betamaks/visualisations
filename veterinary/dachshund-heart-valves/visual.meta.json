@@ -1,0 +1,28 @@
+{
+  "slug": "dachshund-heart-valves",
+  "category": "veterinary",
+  "title": "Dachshund Heart Valve Cycle",
+  "theme": "veterinary",
+  "default_variant": "cycle",
+  "notion": {
+    "required": true,
+    "location_hint": "Veterinary stuff -> visualisations"
+  },
+  "embed": {
+    "mode": "bounded",
+    "recommended_height_px": 980,
+    "flexible": false
+  },
+  "variants": [
+    {
+      "slug": "cycle",
+      "title": "Dachshund Heart Valve Cycle",
+      "path": "./cycle/"
+    },
+    {
+      "slug": "maximal",
+      "title": "Dachshund Heart Valve Cycle Maximal",
+      "path": "./maximal/"
+    }
+  ]
+}

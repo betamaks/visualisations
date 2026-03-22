@@ -1,0 +1,37 @@
+{
+  "site_title": "Visualisations",
+  "categories": [
+    {
+      "slug": "veterinary",
+      "title": "Veterinary",
+      "description": "Embed-first study visuals that typically pair a hosted page with a Notion article.",
+      "landing_path": "./veterinary/",
+      "topics": [
+        {
+          "slug": "canine-heart",
+          "manifest": "./veterinary/canine-heart/visual.meta.json"
+        },
+        {
+          "slug": "dachshund-heart-valves",
+          "manifest": "./veterinary/dachshund-heart-valves/visual.meta.json"
+        },
+        {
+          "slug": "neuromuscular-contraction",
+          "manifest": "./veterinary/neuromuscular-contraction/visual.meta.json"
+        }
+      ]
+    },
+    {
+      "slug": "observability",
+      "title": "Observability",
+      "description": "Hosted systems and architecture visuals with flexible sizing and no default Notion requirement.",
+      "landing_path": "./observability/",
+      "topics": [
+        {
+          "slug": "ai-agent-architecture",
+          "manifest": "./observability/ai-agent-architecture/visual.meta.json"
+        }
+      ]
+    }
+  ]
+}

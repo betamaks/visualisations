@@ -1,0 +1,23 @@
+{
+  "slug": "ai-agent-architecture",
+  "category": "observability",
+  "title": "AI Agent Architecture",
+  "theme": "observability",
+  "default_variant": "overview",
+  "notion": {
+    "required": false,
+    "location_hint": ""
+  },
+  "embed": {
+    "mode": "flexible",
+    "recommended_height_px": 900,
+    "flexible": true
+  },
+  "variants": [
+    {
+      "slug": "overview",
+      "title": "AI Agent Architecture Overview",
+      "path": "./overview/"
+    }
+  ]
+}
