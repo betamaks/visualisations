@@ -218,9 +218,8 @@
         <marker id="arr-agent" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c6aef"/></marker>
         <marker id="arr-mcp" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#f5c542"/></marker>
         <marker id="arr-rules" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ff7b54"/></marker>
-        <marker id="arr-left-agent" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><polygon points="8 0, 0 3, 8 6" fill="#7c6aef"/></marker>
-        <marker id="arr-left-nr" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><polygon points="8 0, 0 3, 8 6" fill="#1ce783"/></marker>
-        <marker id="arr-left-at" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><polygon points="8 0, 0 3, 8 6" fill="#2684ff"/></marker>
+        <marker id="arr-nr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1ce783"/></marker>
+        <marker id="arr-at" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2684ff"/></marker>
 
         <filter id="glow-c"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#00d4aa" flood-opacity="0.25"/></filter>
         <filter id="glow-a"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#7c6aef" flood-opacity="0.25"/></filter>
@@ -293,7 +292,7 @@
       <text x="270" y="192" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="8">PROMPT</text>
 
       <!-- Agent → Cursor (response) -->
-      <line x1="330" y1="220" x2="220" y2="220" stroke="#7c6aef" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr-left-agent)">
+      <line x1="330" y1="220" x2="220" y2="220" stroke="#7c6aef" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr-agent)">
         <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.5s" repeatCount="indefinite"/>
       </line>
       <rect x="237" y="208" width="66" height="16" rx="3" fill="#0a0c10"/>
@@ -307,7 +306,7 @@
       <text x="631" y="144" text-anchor="middle" fill="#f5c542" font-family="JetBrains Mono, monospace" font-size="7.5">TOOL CALL</text>
 
       <!-- NR MCP → Agent (return) -->
-      <line x1="706" y1="165" x2="560" y2="190" stroke="#1ce783" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6" marker-end="url(#arr-left-nr)">
+      <line x1="706" y1="165" x2="560" y2="190" stroke="#1ce783" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6" marker-end="url(#arr-nr)">
         <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.2s" repeatCount="indefinite"/>
       </line>
 
@@ -319,7 +318,7 @@
       <text x="631" y="272" text-anchor="middle" fill="#f5c542" font-family="JetBrains Mono, monospace" font-size="7.5">TOOL CALL</text>
 
       <!-- Atlassian MCP → Agent (return) -->
-      <line x1="706" y1="320" x2="560" y2="265" stroke="#2684ff" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6" marker-end="url(#arr-left-at)">
+      <line x1="706" y1="320" x2="560" y2="265" stroke="#2684ff" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6" marker-end="url(#arr-at)">
         <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1.2s" repeatCount="indefinite"/>
       </line>
 
