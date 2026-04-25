@@ -12,7 +12,7 @@
   ],
   "properties": {
     "slug": { "type": "string" },
-    "category": { "type": "string", "enum": ["veterinary", "observability"] },
+    "category": { "type": "string", "enum": ["veterinary", "observability", "otsa-talu"] },
     "title": { "type": "string" },
     "theme": { "type": "string" },
     "default_variant": { "type": "string" },

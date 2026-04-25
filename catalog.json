@@ -32,6 +32,18 @@
           "manifest": "./observability/ai-agent-architecture/visual.meta.json"
         }
       ]
+    },
+    {
+      "slug": "otsa-talu",
+      "title": "Otsa Talu",
+      "description": "Construction and planning visuals for the Otsa Talu building work.",
+      "landing_path": "./otsa-talu/",
+      "topics": [
+        {
+          "slug": "upper-floor",
+          "manifest": "./otsa-talu/upper-floor/visual.meta.json"
+        }
+      ]
     }
   ]
 }

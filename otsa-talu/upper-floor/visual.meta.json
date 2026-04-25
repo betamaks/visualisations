@@ -1,0 +1,23 @@
+{
+  "slug": "upper-floor",
+  "category": "otsa-talu",
+  "title": "Otsa Talu Upper Floor",
+  "theme": "otsa-talu",
+  "default_variant": "base",
+  "notion": {
+    "required": false,
+    "location_hint": ""
+  },
+  "embed": {
+    "mode": "flexible",
+    "recommended_height_px": 1100,
+    "flexible": true
+  },
+  "variants": [
+    {
+      "slug": "base",
+      "title": "Upper Floor Base Measurements",
+      "path": "./base/"
+    }
+  ]
+}

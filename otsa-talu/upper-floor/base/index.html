@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Otsa Talu Upper Floor Base</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f8f3e8;
+      --ink: #241f19;
+      --muted: #6f655b;
+      --line: #3a3128;
+      --wood: #8a5a31;
+      --wood-dark: #5c391f;
+      --planned: #2077b4;
+      --planned-soft: rgba(32, 119, 180, 0.14);
+      --wool: #efe3c6;
+      --wool-line: #cdb985;
+      --panel: #fffaf0;
+      --grid: rgba(68, 55, 39, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        var(--paper);
+      background-size: 28px 28px;
+      color: var(--ink);
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+    }
+
+    main {
+      width: min(1660px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    header {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      padding: 5px 10px;
+      border: 1px solid rgba(36, 31, 25, 0.16);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255, 250, 240, 0.78);
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1;
+    }
+
+    .lede {
+      max-width: 82ch;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 8px;
+      border: 1px solid rgba(36, 31, 25, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 250, 240, 0.8);
+    }
+
+    .swatch {
+      width: 18px;
+      height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .existing {
+      background: var(--wood);
+    }
+
+    .planned {
+      background: var(--planned);
+    }
+
+    .fill {
+      background: var(--wool);
+      border: 1px solid var(--wool-line);
+    }
+
+    .drawings {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .material-list {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border: 1px solid rgba(36, 31, 25, 0.18);
+      border-radius: 10px;
+      background: rgba(255, 250, 240, 0.92);
+      box-shadow: 0 12px 28px rgba(75, 55, 31, 0.06);
+    }
+
+    .material-list h2 {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .material-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .material-table th,
+    .material-table td {
+      padding: 10px 12px;
+      border-top: 1px solid rgba(36, 31, 25, 0.12);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .material-table th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .material-table a {
+      color: #365f86;
+      font-weight: 700;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .material-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .sheet {
+      background: rgba(255, 250, 240, 0.9);
+      border: 1px solid rgba(36, 31, 25, 0.18);
+      border-radius: 10px;
+      box-shadow: 0 16px 36px rgba(75, 55, 31, 0.08);
+      padding: 26px;
+      overflow: auto;
+    }
+
+    .sheet h2 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-width: 760px;
+    }
+
+    .dim {
+      fill: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .label {
+      fill: var(--ink);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .tiny {
+      fill: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .beam {
+      fill: var(--wood);
+      stroke: var(--wood-dark);
+      stroke-width: 2;
+    }
+
+    .beam-thin {
+      fill: var(--wood);
+      stroke: var(--wood-dark);
+      stroke-width: 1.25;
+    }
+
+    .schematic-beam {
+      fill: rgba(181, 137, 91, 0.46);
+      stroke: #8f6a45;
+      stroke-width: 1.4;
+    }
+
+    .future {
+      fill: var(--planned-soft);
+      stroke: var(--planned);
+      stroke-width: 3;
+      stroke-dasharray: 8 5;
+    }
+
+    .cavity {
+      fill: var(--wool);
+      stroke: var(--wool-line);
+      stroke-width: 1.5;
+    }
+
+    .outline {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 3;
+    }
+
+    .inner-edge {
+      fill: none;
+      stroke: rgba(58, 49, 40, 0.42);
+      stroke-width: 1.25;
+    }
+
+    .model-note {
+      fill: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .dimline {
+      stroke: var(--muted);
+      stroke-width: 1.5;
+      marker-start: url(#arrow);
+      marker-end: url(#arrow);
+    }
+
+    .extension {
+      stroke: var(--muted);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+      opacity: 0.72;
+    }
+
+    .cutline {
+      stroke: rgba(36, 31, 25, 0.18);
+      stroke-width: 1;
+    }
+
+    @media (max-width: 980px) {
+      .drawings {
+        grid-template-columns: 1fr;
+      }
+
+      .material-table {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Otsa Talu / Upper Floor</div>
+      <h1>Base Measurements And Planned Beams</h1>
+      <p class="lede">Current measured floor, roof-wall cavities, and end triangle walls. Planned middle beams are shown in blue dashed marking so they stay visually separate from the timber that already exists.</p>
+      <div class="legend" aria-label="Drawing legend">
+        <span><i class="swatch existing"></i>Existing timber</span>
+        <span><i class="swatch planned"></i>Planned added beams</span>
+        <span><i class="swatch fill"></i>Insulation cavity</span>
+      </div>
+    </header>
+
+    <section class="material-list" aria-label="Material list">
+      <h2>Wool Purchase List</h2>
+      <table class="material-table">
+        <thead>
+          <tr>
+            <th>Use</th>
+            <th>Quantity</th>
+            <th>Product</th>
+            <th>Install note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Saunapealse põrand / large floor</td>
+            <td>3 packs</td>
+            <td><a href="https://www.k-rauta.ee/p/kivivill-rockwool-100-cm-x-56-5-cm-x-15-cm/pzfw">Rockwool 150 x 1000 x 565 mm, 5 boards per pack</a></td>
+            <td>15 boards total; three 96 cm bays, five boards per bay.</td>
+          </tr>
+          <tr>
+            <td>Töötoa lagi / smaller floor portion</td>
+            <td>1 pack</td>
+            <td><a href="https://www.k-rauta.ee/p/kivivill-rockwool-superrock-premium-100-cm-x-56-5-cm-x-10-cm-8-tk/pzfv">Rockwool Superrock Premium 100 x 1000 x 565 mm, 8 boards per pack</a></td>
+            <td>Needs 9 pieces; use 8 full boards plus one made from leftover pieces.</td>
+          </tr>
+          <tr>
+            <td>Kolmnurk-seinad / triangle walls</td>
+            <td>1 pack</td>
+            <td><a href="https://www.k-rauta.ee/p/kivivill-paroc-ultra-122-cm-x-56-5-cm-x-5-cm-14-tk/dyfk">Paroc Ultra 1220 x 565 x 50 mm, 14 boards per pack</a></td>
+            <td>Two 5 cm layers: pocket layer between shallow members, then cover layer.</td>
+          </tr>
+          <tr>
+            <td>Sarikate täitmine / roof-wall cavities</td>
+            <td>4 packs</td>
+            <td><a href="https://www.k-rauta.ee/p/kivivill-rockwool-superrock-premium-100-cm-x-56-5-cm-x-10-cm-8-tk/pzfv">Rockwool Superrock Premium 100 x 56.5 x 10 cm, 8 boards per pack</a></td>
+            <td>For the 88 cm and 94 cm bays; trim board width to about 90 cm or 96 cm.</td>
+          </tr>
+          <tr>
+            <td>Sarikate täitmine / 86 cm bays</td>
+            <td>1 pack</td>
+            <td><a href="https://www.k-rauta.ee/p/klaasvill-isover-87-cm-x-56-cm-x-10-cm/e9gu">Isover klaasvill 87 x 56 x 10 cm</a></td>
+            <td>For the two 86 cm bays, one on each roof side.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="material-note">The Rockwool 100 x 56.5 x 10 cm product appears twice because one pack is for the smaller floor portion and four packs are for the rafters: total purchase is 5 packs of that product.</p>
+    </section>
+
+    <section class="drawings">
+      <article class="sheet">
+        <h2>Floor Plan</h2>
+        <svg viewBox="0 0 1200 640" role="img" aria-label="Landscape floor plan with measured floor sections">
+          <defs>
+            <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#6f655b"></path>
+            </marker>
+          </defs>
+          <!-- Scale: 1 cm = 1.45 px. The 172 cm töötoa lagi section is on the left. -->
+          <g transform="translate(190 100)">
+            <rect x="0" y="0" width="249.4" height="411.8" class="cavity"></rect>
+            <rect x="249.4" y="0" width="7.25" height="411.8" class="beam"></rect>
+            <rect x="256.65" y="0" width="432.1" height="411.8" class="cavity"></rect>
+
+            <rect x="-14.5" y="-14.5" width="717.75" height="14.5" class="beam"></rect>
+            <rect x="-14.5" y="411.8" width="717.75" height="14.5" class="beam"></rect>
+            <rect x="-14.5" y="-14.5" width="14.5" height="440.8" class="beam"></rect>
+            <rect x="688.75" y="-14.5" width="14.5" height="440.8" class="beam"></rect>
+
+            <rect x="117.45" y="0" width="14.5" height="411.8" class="future"></rect>
+            <rect x="395.85" y="0" width="7.25" height="411.8" class="future"></rect>
+            <rect x="542.3" y="0" width="7.25" height="411.8" class="future"></rect>
+
+            <text x="190" y="172" text-anchor="middle" class="label">Töötoa</text>
+            <text x="190" y="194" text-anchor="middle" class="label">lagi</text>
+            <text x="190" y="220" text-anchor="middle" class="dim">10 cm wool</text>
+            <text x="190" y="240" text-anchor="middle" class="dim">9 pieces</text>
+            <text x="472.7" y="168" text-anchor="middle" class="label">Saunapealse</text>
+            <text x="472.7" y="190" text-anchor="middle" class="label">põrand</text>
+            <text x="472.7" y="216" text-anchor="middle" class="dim">15 cm wool</text>
+            <text x="472.7" y="236" text-anchor="middle" class="dim">3 packs</text>
+            <text x="253" y="438" text-anchor="middle" class="tiny">existing 5 x 10 cm divider</text>
+            <text x="472.7" y="438" text-anchor="middle" class="tiny">planned 5 cm beams</text>
+
+            <line x1="0" y1="-54" x2="688.75" y2="-54" class="dimline"></line>
+            <line x1="0" y1="-40" x2="0" y2="-14.5" class="extension"></line>
+            <line x1="688.75" y1="-40" x2="688.75" y2="-14.5" class="extension"></line>
+            <text x="344.4" y="-68" text-anchor="middle" class="dim">475 cm incl. divider</text>
+
+            <line x1="0" y1="488" x2="249.4" y2="488" class="dimline"></line>
+            <line x1="256.65" y1="488" x2="395.85" y2="488" class="dimline"></line>
+            <line x1="403.1" y1="488" x2="542.3" y2="488" class="dimline"></line>
+            <line x1="549.55" y1="488" x2="688.75" y2="488" class="dimline"></line>
+            <text x="124.7" y="516" text-anchor="middle" class="dim">172 cm</text>
+            <text x="326.2" y="516" text-anchor="middle" class="dim">96 cm</text>
+            <text x="472.7" y="516" text-anchor="middle" class="dim">96 cm</text>
+            <text x="619.2" y="516" text-anchor="middle" class="dim">96 cm</text>
+            <line x1="0" y1="426" x2="0" y2="488" class="extension"></line>
+            <line x1="249.4" y1="426" x2="249.4" y2="488" class="extension"></line>
+            <line x1="256.65" y1="426" x2="256.65" y2="488" class="extension"></line>
+            <line x1="395.85" y1="426" x2="395.85" y2="488" class="extension"></line>
+            <line x1="403.1" y1="426" x2="403.1" y2="488" class="extension"></line>
+            <line x1="542.3" y1="426" x2="542.3" y2="488" class="extension"></line>
+            <line x1="549.55" y1="426" x2="549.55" y2="488" class="extension"></line>
+            <line x1="688.75" y1="426" x2="688.75" y2="488" class="extension"></line>
+
+            <line x1="748" y1="0" x2="748" y2="411.8" class="dimline"></line>
+            <line x1="703.25" y1="0" x2="748" y2="0" class="extension"></line>
+            <line x1="703.25" y1="411.8" x2="748" y2="411.8" class="extension"></line>
+            <text x="770" y="211" class="dim">284 cm clear width</text>
+
+            <line x1="-14.5" y1="411.8" x2="-14.5" y2="426.3" class="dimline"></line>
+            <text x="-28" y="424" text-anchor="end" class="tiny">10</text>
+            <line x1="688.75" y1="-14.5" x2="703.25" y2="-14.5" class="dimline"></line>
+            <text x="696" y="-28" text-anchor="middle" class="tiny">10</text>
+          </g>
+        </svg>
+      </article>
+
+      <article class="sheet">
+        <h2>Roof / Wall Cavities</h2>
+        <svg viewBox="0 0 1200 580" role="img" aria-label="Roof wall cavities, one mirrored side to scale">
+          <defs>
+            <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#6f655b"></path>
+            </marker>
+          </defs>
+          <!-- Scale: 1 cm = 1.45 px. Width and height are proportional. -->
+          <g transform="translate(210 85)">
+            <text x="-82" y="166" class="label">One side</text>
+            <rect x="0" y="0" width="124.7" height="326.25" class="cavity"></rect>
+            <rect x="124.7" y="0" width="7.25" height="326.25" class="beam-thin"></rect>
+            <rect x="131.95" y="0" width="127.6" height="326.25" class="cavity"></rect>
+            <rect x="259.55" y="0" width="7.25" height="326.25" class="beam-thin"></rect>
+            <rect x="266.8" y="0" width="136.3" height="326.25" class="cavity"></rect>
+            <rect x="403.1" y="0" width="7.25" height="326.25" class="beam-thin"></rect>
+            <rect x="410.35" y="0" width="136.3" height="326.25" class="cavity"></rect>
+            <rect x="546.65" y="0" width="7.25" height="326.25" class="beam-thin"></rect>
+            <rect x="553.9" y="0" width="136.3" height="326.25" class="cavity"></rect>
+            <rect x="0" y="0" width="690.2" height="326.25" class="outline"></rect>
+            <text x="62" y="168" text-anchor="middle" class="label">86</text>
+            <text x="196" y="168" text-anchor="middle" class="label">88</text>
+            <text x="334" y="168" text-anchor="middle" class="label">94</text>
+            <text x="478" y="168" text-anchor="middle" class="label">94</text>
+            <text x="622" y="168" text-anchor="middle" class="label">94</text>
+
+            <line x1="0" y1="-44" x2="661.2" y2="-44" class="dimline"></line>
+            <line x1="0" y1="-30" x2="0" y2="0" class="extension"></line>
+            <line x1="661.2" y1="-30" x2="661.2" y2="0" class="extension"></line>
+            <text x="330.6" y="-58" text-anchor="middle" class="dim">456 cm clear wool bays per side</text>
+
+            <line x1="0" y1="390" x2="690.2" y2="390" class="dimline"></line>
+            <line x1="0" y1="336" x2="0" y2="390" class="extension"></line>
+            <line x1="690.2" y1="336" x2="690.2" y2="390" class="extension"></line>
+            <text x="345.1" y="418" text-anchor="middle" class="dim">476 cm including four 5 cm members</text>
+
+            <line x1="748" y1="0" x2="748" y2="326.25" class="dimline"></line>
+            <line x1="702" y1="0" x2="748" y2="0" class="extension"></line>
+            <line x1="702" y1="326.25" x2="748" y2="326.25" class="extension"></line>
+            <text x="770" y="168" class="dim">225 cm</text>
+            <text x="0" y="468" class="tiny">Shown once; the opposite roof side mirrors this layout.</text>
+            <text x="0" y="490" class="tiny">Each bay gets four boards along the 225 cm slope.</text>
+          </g>
+        </svg>
+      </article>
+
+      <article class="sheet triangle-sheet">
+        <h2>Triangle Walls</h2>
+        <svg id="triangle-wall-svg" viewBox="0 0 1200 600" role="img" aria-label="Triangle wall framing drawn to scale">
+          <defs>
+            <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#6f655b"></path>
+            </marker>
+          </defs>
+          <g id="triangle-wall-drawing"></g>
+        </svg>
+      </article>
+
+      <article class="sheet">
+        <h2>Wool Use Plan</h2>
+        <svg viewBox="0 0 1500 900" role="img" aria-label="Wool laying plan for floor, roof, and triangle walls">
+          <defs>
+            <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#6f655b"></path>
+            </marker>
+          </defs>
+
+          <g transform="translate(60 70)">
+            <text x="0" y="0" class="label">Large floor: 15 cm boards</text>
+            <text x="0" y="24" class="dim">3 packs = 15 boards. Three 96 cm bays, five boards per bay.</text>
+            <g transform="translate(0 56)">
+              <rect x="0" y="0" width="369.2" height="124.8" class="cavity"></rect>
+              <rect x="0" y="139" width="369.2" height="124.8" class="cavity"></rect>
+              <rect x="0" y="278" width="369.2" height="124.8" class="cavity"></rect>
+              <rect x="0" y="124.8" width="369.2" height="6.5" class="future"></rect>
+              <rect x="0" y="263.8" width="369.2" height="6.5" class="future"></rect>
+              <g>
+                <line x1="73.45" y1="0" x2="73.45" y2="124.8" class="cutline"></line>
+                <line x1="146.9" y1="0" x2="146.9" y2="124.8" class="cutline"></line>
+                <line x1="220.35" y1="0" x2="220.35" y2="124.8" class="cutline"></line>
+                <line x1="293.8" y1="0" x2="293.8" y2="124.8" class="cutline"></line>
+                <line x1="73.45" y1="139" x2="73.45" y2="263.8" class="cutline"></line>
+                <line x1="146.9" y1="139" x2="146.9" y2="263.8" class="cutline"></line>
+                <line x1="220.35" y1="139" x2="220.35" y2="263.8" class="cutline"></line>
+                <line x1="293.8" y1="139" x2="293.8" y2="263.8" class="cutline"></line>
+                <line x1="73.45" y1="278" x2="73.45" y2="402.8" class="cutline"></line>
+                <line x1="146.9" y1="278" x2="146.9" y2="402.8" class="cutline"></line>
+                <line x1="220.35" y1="278" x2="220.35" y2="402.8" class="cutline"></line>
+                <line x1="293.8" y1="278" x2="293.8" y2="402.8" class="cutline"></line>
+              </g>
+              <text x="184.6" y="431" text-anchor="middle" class="dim">100 cm side cut to 96 cm; 56.5 cm side runs across the 284 cm width</text>
+            </g>
+          </g>
+
+          <g transform="translate(535 70)">
+            <text x="0" y="0" class="label">Smaller floor: 10 cm boards</text>
+            <text x="0" y="24" class="dim">1 pack = 8 boards. Needs 9 pieces; last piece from offcuts.</text>
+            <g transform="translate(0 56)">
+              <rect x="0" y="0" width="72" height="112" class="cavity"></rect>
+              <rect x="88" y="0" width="72" height="112" class="cavity"></rect>
+              <rect x="176" y="0" width="72" height="112" class="cavity"></rect>
+              <rect x="0" y="128" width="72" height="112" class="cavity"></rect>
+              <rect x="88" y="128" width="72" height="112" class="cavity"></rect>
+              <rect x="176" y="128" width="72" height="112" class="cavity"></rect>
+              <rect x="0" y="256" width="72" height="112" class="cavity"></rect>
+              <rect x="88" y="256" width="72" height="112" class="cavity"></rect>
+              <rect x="176" y="256" width="72" height="112" fill="rgba(32, 119, 180, 0.1)" stroke="#2077b4" stroke-width="1.5"></rect>
+              <text x="36" y="60" text-anchor="middle" class="tiny">1</text>
+              <text x="124" y="60" text-anchor="middle" class="tiny">2</text>
+              <text x="212" y="60" text-anchor="middle" class="tiny">3</text>
+              <text x="36" y="188" text-anchor="middle" class="tiny">4</text>
+              <text x="124" y="188" text-anchor="middle" class="tiny">5</text>
+              <text x="212" y="188" text-anchor="middle" class="tiny">6</text>
+              <text x="36" y="316" text-anchor="middle" class="tiny">7</text>
+              <text x="124" y="316" text-anchor="middle" class="tiny">8</text>
+              <text x="212" y="309" text-anchor="middle" class="tiny">leftover</text>
+              <text x="212" y="326" text-anchor="middle" class="tiny">piece</text>
+              <text x="124" y="398" text-anchor="middle" class="dim">9 total: 8 from pack, 1 from leftovers</text>
+            </g>
+          </g>
+
+          <g transform="translate(60 585)">
+            <text x="0" y="0" class="label">Roof / wall cavities: 10 cm boards</text>
+            <text x="0" y="24" class="dim">Four boards along the 225 cm slope in every bay. Both sides are the same.</text>
+            <g transform="translate(0 58)">
+              <rect x="0" y="0" width="86" height="226" class="cavity"></rect>
+              <rect x="106" y="0" width="88" height="226" class="cavity"></rect>
+              <rect x="214" y="0" width="94" height="226" class="cavity"></rect>
+              <rect x="328" y="0" width="94" height="226" class="cavity"></rect>
+              <rect x="442" y="0" width="94" height="226" class="cavity"></rect>
+              <g>
+                <line x1="0" y1="56.5" x2="86" y2="56.5" class="cutline"></line>
+                <line x1="0" y1="113" x2="86" y2="113" class="cutline"></line>
+                <line x1="0" y1="169.5" x2="86" y2="169.5" class="cutline"></line>
+                <line x1="106" y1="56.5" x2="194" y2="56.5" class="cutline"></line>
+                <line x1="106" y1="113" x2="194" y2="113" class="cutline"></line>
+                <line x1="106" y1="169.5" x2="194" y2="169.5" class="cutline"></line>
+                <line x1="214" y1="56.5" x2="308" y2="56.5" class="cutline"></line>
+                <line x1="214" y1="113" x2="308" y2="113" class="cutline"></line>
+                <line x1="214" y1="169.5" x2="308" y2="169.5" class="cutline"></line>
+                <line x1="328" y1="56.5" x2="422" y2="56.5" class="cutline"></line>
+                <line x1="328" y1="113" x2="422" y2="113" class="cutline"></line>
+                <line x1="328" y1="169.5" x2="422" y2="169.5" class="cutline"></line>
+                <line x1="442" y1="56.5" x2="536" y2="56.5" class="cutline"></line>
+                <line x1="442" y1="113" x2="536" y2="113" class="cutline"></line>
+                <line x1="442" y1="169.5" x2="536" y2="169.5" class="cutline"></line>
+              </g>
+              <text x="43" y="252" text-anchor="middle" class="dim">87x56</text>
+              <text x="150" y="252" text-anchor="middle" class="dim">100->90</text>
+              <text x="261" y="252" text-anchor="middle" class="dim">100->96</text>
+              <text x="375" y="252" text-anchor="middle" class="dim">100->96</text>
+              <text x="489" y="252" text-anchor="middle" class="dim">100->96</text>
+              <text x="0" y="302" class="tiny">Shown once; repeat the same layout for the second roof side.</text>
+            </g>
+          </g>
+
+          <g transform="translate(930 70)">
+            <text x="0" y="0" class="label">Triangle walls: 5 cm pocket layer</text>
+            <text x="0" y="24" class="dim">Fill between the shallow 10 x 5 cm members first.</text>
+            <g id="triangle-pocket-layer" transform="translate(0 58)"></g>
+          </g>
+
+          <g transform="translate(930 455)">
+            <text x="0" y="0" class="label">Triangle walls: 5 cm cover layer</text>
+            <text x="0" y="24" class="dim">Three horizontal rows per triangle; cut row ends to the roof angle.</text>
+            <g id="triangle-cover-layer" transform="translate(0 58)"></g>
+          </g>
+        </svg>
+      </article>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const NS = "http://www.w3.org/2000/svg";
+      const triangle = buildTriangleModel();
+
+      renderMainTriangle(document.getElementById("triangle-wall-drawing"), triangle);
+      renderPocketTriangle(document.getElementById("triangle-pocket-layer"), triangle);
+      renderCoverTriangle(document.getElementById("triangle-cover-layer"), triangle);
+
+      function buildTriangleModel() {
+        const gaps = [56, 49, 44, 49, 56];
+        const innerMember = 10;
+        const outerBeam = 10;
+        const topBeam = 10;
+        const slope = 225;
+        const topClearHeight = 100;
+        const base = gaps.reduce((sum, gap) => sum + gap, 0) + innerMember * (gaps.length - 1);
+        const halfBase = base / 2;
+        const height = Math.sqrt(slope * slope - halfBase * halfBase);
+        const left = { x: 0, y: height };
+        const apex = { x: halfBase, y: 0 };
+        const right = { x: base, y: height };
+        const leftOut = unit({ x: -height, y: -halfBase });
+        const rightOut = unit({ x: height, y: -halfBase });
+        const leftOuterA = add(apex, mul(leftOut, outerBeam));
+        const leftOuterB = add(left, mul(leftOut, outerBeam));
+        const rightOuterA = add(apex, mul(rightOut, outerBeam));
+        const rightOuterB = add(right, mul(rightOut, outerBeam));
+        const ridgeOuter = lineIntersection(leftOuterA, leftOuterB, rightOuterA, rightOuterB);
+
+        let cursor = gaps[0];
+        const posts = [];
+        for (let i = 0; i < gaps.length - 1; i += 1) {
+          posts.push({ x1: cursor, x2: cursor + innerMember });
+          cursor += innerMember + gaps[i + 1];
+        }
+
+        const topBottomY = height - topClearHeight;
+        const topTopY = topBottomY - topBeam;
+        const topBeamShape = {
+          leftBottom: { x: leftXAtY(topBottomY), y: topBottomY },
+          leftTop: { x: leftXAtY(topTopY), y: topTopY },
+          rightTop: { x: rightXAtY(topTopY), y: topTopY },
+          rightBottom: { x: rightXAtY(topBottomY), y: topBottomY },
+          topY: topTopY,
+          bottomY: topBottomY
+        };
+
+        return {
+          gaps,
+          innerMember,
+          outerBeam,
+          topBeam,
+          slope,
+          topClearHeight,
+          base,
+          halfBase,
+          height,
+          left,
+          apex,
+          right,
+          leftOuterB,
+          rightOuterB,
+          ridgeOuter,
+          leftOut,
+          rightOut,
+          posts,
+          topBeamShape,
+          topContinuationCalc: posts[1].x1 - topBeamShape.leftBottom.x,
+          leftXAtY,
+          rightXAtY,
+          leftYAtX,
+          rightYAtX
+        };
+
+        function leftXAtY(y) {
+          return halfBase * (height - y) / height;
+        }
+
+        function rightXAtY(y) {
+          return base - leftXAtY(y);
+        }
+
+        function leftYAtX(x) {
+          return height - (x / halfBase) * height;
+        }
+
+        function rightYAtX(x) {
+          return height - ((base - x) / halfBase) * height;
+        }
+      }
+
+      function renderMainTriangle(root, model) {
+        root.textContent = "";
+        const draw = createDrawer(root, { x: 230, y: 54, scale: 2.02 });
+        drawFrame(draw, model);
+        drawMainDimensions(draw, model);
+      }
+
+      function renderPocketTriangle(root, model) {
+        root.textContent = "";
+        const draw = createDrawer(root, { x: 18, y: 10, scale: 1.18 });
+        drawFrame(draw, model, { mini: true });
+
+        const y = model.height + model.outerBeam + 22;
+        draw.text({ x: model.base / 2, y }, "Pocket cuts: 56 / 49 / 44 / 49 / 56 clear gaps", {
+          class: "model-note",
+          anchor: "middle"
+        });
+      }
+
+      function renderCoverTriangle(root, model) {
+        root.textContent = "";
+        const draw = createDrawer(root, { x: 8, y: 0, scale: 1.36 });
+        const rowYs = [model.height / 3, (model.height * 2) / 3];
+        const rowWidths = [
+          widthAtY(model, rowYs[0]),
+          widthAtY(model, rowYs[1]),
+          model.base
+        ];
+
+        draw.polygon([model.left, model.apex, model.right], "cavity");
+        draw.polyline([model.left, model.apex, model.right], "outline");
+        rowYs.forEach((y) => {
+          draw.line({ x: model.leftXAtY(y), y }, { x: model.rightXAtY(y), y }, "cutline");
+        });
+        [model.leftXAtY(rowYs[1]) + rowWidths[1] / 3, model.leftXAtY(rowYs[1]) + (rowWidths[1] * 2) / 3].forEach((x) => {
+          draw.line({ x, y: rowYs[1] }, { x, y: model.height }, "cutline");
+        });
+        [model.leftXAtY(rowYs[0]) + rowWidths[0] / 2].forEach((x) => {
+          draw.line({ x, y: rowYs[0] }, { x, y: rowYs[1] }, "cutline");
+        });
+
+        draw.text({ x: model.base / 2, y: rowYs[0] - 10 }, `top row approx. ${Math.round(rowWidths[0])} cm`, {
+          class: "tiny",
+          anchor: "middle"
+        });
+        draw.text({ x: model.base / 2, y: rowYs[1] - 10 }, `middle row approx. ${Math.round(rowWidths[1])} cm`, {
+          class: "tiny",
+          anchor: "middle"
+        });
+        draw.text({ x: model.base / 2, y: model.height - 18 }, `bottom row ${Math.round(model.base)} cm`, {
+          class: "tiny",
+          anchor: "middle"
+        });
+      }
+
+      function drawFrame(draw, model, options = {}) {
+        const beam = model.outerBeam;
+
+        draw.polygon([model.left, model.apex, model.right], "cavity");
+        draw.polygon([model.left, model.apex, model.ridgeOuter, model.leftOuterB], "schematic-beam");
+        draw.polygon([model.apex, model.right, model.rightOuterB, model.ridgeOuter], "schematic-beam");
+        draw.rect({ x: model.left.x, y: model.height, width: model.base, height: beam }, "schematic-beam");
+
+        model.posts.forEach((post, index) => {
+          if (index === 0) {
+            draw.polygon([
+              { x: post.x1, y: model.leftYAtX(post.x1) },
+              { x: post.x2, y: model.leftYAtX(post.x2) },
+              { x: post.x2, y: model.height },
+              { x: post.x1, y: model.height }
+            ], "schematic-beam");
+          } else if (index === model.posts.length - 1) {
+            draw.polygon([
+              { x: post.x1, y: model.rightYAtX(post.x1) },
+              { x: post.x2, y: model.rightYAtX(post.x2) },
+              { x: post.x2, y: model.height },
+              { x: post.x1, y: model.height }
+            ], "schematic-beam");
+          } else {
+            draw.rect({
+              x: post.x1,
+              y: model.topBeamShape.bottomY,
+              width: model.innerMember,
+              height: model.topClearHeight
+            }, "schematic-beam");
+          }
+        });
+
+        draw.polygon([
+          model.topBeamShape.leftBottom,
+          model.topBeamShape.leftTop,
+          model.topBeamShape.rightTop,
+          model.topBeamShape.rightBottom
+        ], "schematic-beam");
+
+        if (!options.mini) {
+          draw.line(model.left, model.apex, "inner-edge");
+          draw.line(model.apex, model.right, "inner-edge");
+          draw.line(model.left, model.right, "inner-edge");
+        }
+
+        if (options.mini) {
+          draw.text({ x: 28, y: model.height - 8 }, "56", { class: "tiny", anchor: "middle" });
+          draw.text({ x: 90.5, y: model.height - 36 }, "49", { class: "tiny", anchor: "middle" });
+          draw.text({ x: model.base / 2, y: model.topBeamShape.bottomY + 45 }, "44 x 100", {
+            class: "tiny",
+            anchor: "middle"
+          });
+          draw.text({ x: model.base - 90.5, y: model.height - 36 }, "49", { class: "tiny", anchor: "middle" });
+          draw.text({ x: model.base - 28, y: model.height - 8 }, "56", { class: "tiny", anchor: "middle" });
+        }
+      }
+
+      function drawMainDimensions(draw, model) {
+        const post2Left = model.posts[1].x1;
+        const gapY = model.height + 40;
+        const overallY = model.height + 75;
+        const heightX = model.base + 56;
+        const slopeOffset = 19;
+        const slopeA = add(model.apex, mul(model.rightOut, slopeOffset));
+        const slopeB = add(model.right, mul(model.rightOut, slopeOffset));
+        const topDistanceY = model.topBeamShape.bottomY - 14;
+        const diagStart = { x: model.posts[0].x1, y: model.leftYAtX(model.posts[0].x1) };
+        const diagEnd = model.topBeamShape.leftBottom;
+        const diagonalNoteCalc = distance(diagStart, diagEnd);
+
+        draw.dimLine({ x: 0, y: gapY }, { x: model.gaps[0], y: gapY }, "56");
+        draw.dimLine({ x: model.posts[0].x2, y: gapY }, { x: model.posts[1].x1, y: gapY }, "49");
+        draw.dimLine({ x: model.posts[1].x2, y: gapY }, { x: model.posts[2].x1, y: gapY }, "44");
+        draw.dimLine({ x: model.posts[2].x2, y: gapY }, { x: model.posts[3].x1, y: gapY }, "49");
+        draw.dimLine({ x: model.posts[3].x2, y: gapY }, { x: model.base, y: gapY }, "56");
+        [0, ...model.posts.flatMap((post) => [post.x1, post.x2]), model.base].forEach((x) => {
+          draw.line({ x, y: model.height + model.outerBeam }, { x, y: gapY }, "extension");
+        });
+
+        draw.dimLine({ x: 0, y: overallY }, { x: model.base, y: overallY }, `${round1(model.base)} cm calc.`);
+        draw.line({ x: 0, y: model.height + model.outerBeam }, { x: 0, y: overallY }, "extension");
+        draw.line({ x: model.base, y: model.height + model.outerBeam }, { x: model.base, y: overallY }, "extension");
+
+        draw.dimLine({ x: heightX, y: model.apex.y }, { x: heightX, y: model.height }, `${round1(model.height)} cm calc.`);
+        draw.line(model.apex, { x: heightX, y: model.apex.y }, "extension");
+        draw.line(model.right, { x: heightX, y: model.height }, "extension");
+
+        draw.dimLine(slopeA, slopeB, "225 cm", { rotate: true, labelOffset: 16 });
+        draw.line(model.apex, slopeA, "extension");
+        draw.line(model.right, slopeB, "extension");
+
+        draw.dimLine({ x: model.base / 2 + 8, y: model.height }, { x: model.base / 2 + 8, y: model.topBeamShape.bottomY }, "100 cm", {
+          labelOffset: 16
+        });
+        draw.dimLine(diagStart, diagEnd, `${round1(diagonalNoteCalc)} cm calc.`, {
+          rotate: true,
+          labelOffset: -18
+        });
+        draw.dimLine(
+          { x: model.topBeamShape.leftBottom.x, y: topDistanceY },
+          { x: post2Left, y: topDistanceY },
+          `${round1(model.topContinuationCalc)} cm calc.`,
+          { labelOffset: -16 }
+        );
+        draw.line(model.topBeamShape.leftBottom, { x: model.topBeamShape.leftBottom.x, y: topDistanceY }, "extension");
+        draw.line({ x: post2Left, y: model.topBeamShape.bottomY }, { x: post2Left, y: topDistanceY }, "extension");
+
+        draw.text({
+          x: (model.posts[0].x1 + model.posts[0].x2) / 2,
+          y: model.height - 18
+        }, "10 x 5", { class: "tiny", anchor: "middle" });
+        draw.text({ x: model.base / 2, y: model.height + 22 }, "10 x 10 outer frame", {
+          class: "tiny",
+          anchor: "middle"
+        });
+        draw.text(
+          { x: model.base / 2, y: model.height + 98 },
+          "15 and 49 notes conflict with this 225 / 100 / 294 cm model; calculated values shown above.",
+          { class: "model-note", anchor: "middle" }
+        );
+        draw.text({ x: model.base / 2, y: model.height + 116 }, "Triangle walls x 2", {
+          class: "label",
+          anchor: "middle"
+        });
+      }
+
+      function createDrawer(root, view) {
+        const p = (point) => ({ x: view.x + point.x * view.scale, y: view.y + point.y * view.scale });
+        const len = (value) => value * view.scale;
+        return {
+          polygon(points, className) {
+            element("polygon", { points: points.map((point) => pair(p(point))).join(" "), class: className }, root);
+          },
+          polyline(points, className) {
+            element("polyline", { points: points.map((point) => pair(p(point))).join(" "), class: className }, root);
+          },
+          rect(rect, className) {
+            const origin = p(rect);
+            element("rect", {
+              x: origin.x,
+              y: origin.y,
+              width: len(rect.width),
+              height: len(rect.height),
+              class: className
+            }, root);
+          },
+          line(a, b, className) {
+            const from = p(a);
+            const to = p(b);
+            element("line", { x1: from.x, y1: from.y, x2: to.x, y2: to.y, class: className }, root);
+          },
+          dimLine(a, b, label, options = {}) {
+            const from = p(a);
+            const to = p(b);
+            element("line", { x1: from.x, y1: from.y, x2: to.x, y2: to.y, class: "dimline" }, root);
+            const mid = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
+            const angle = Math.atan2(to.y - from.y, to.x - from.x);
+            const offset = options.labelOffset ?? 18;
+            const textPoint = {
+              x: mid.x + Math.cos(angle - Math.PI / 2) * offset,
+              y: mid.y + Math.sin(angle - Math.PI / 2) * offset
+            };
+            const attrs = { x: textPoint.x, y: textPoint.y, class: "dim", "text-anchor": "middle" };
+            if (options.rotate) {
+              attrs.transform = `rotate(${angle * 180 / Math.PI} ${textPoint.x} ${textPoint.y})`;
+            }
+            element("text", attrs, root).textContent = label;
+          },
+          text(point, value, options = {}) {
+            const projected = p(point);
+            element("text", {
+              x: projected.x,
+              y: projected.y,
+              class: options.class || "dim",
+              "text-anchor": options.anchor || "start"
+            }, root).textContent = value;
+          }
+        };
+      }
+
+      function widthAtY(model, y) {
+        return model.rightXAtY(y) - model.leftXAtY(y);
+      }
+
+      function element(tag, attrs, parent) {
+        const node = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([name, value]) => {
+          if (value !== undefined && value !== null) {
+            node.setAttribute(name, value);
+          }
+        });
+        parent.appendChild(node);
+        return node;
+      }
+
+      function pair(point) {
+        return `${round2(point.x)},${round2(point.y)}`;
+      }
+
+      function round1(value) {
+        return Math.round(value * 10) / 10;
+      }
+
+      function round2(value) {
+        return Math.round(value * 100) / 100;
+      }
+
+      function add(a, b) {
+        return { x: a.x + b.x, y: a.y + b.y };
+      }
+
+      function mul(point, factor) {
+        return { x: point.x * factor, y: point.y * factor };
+      }
+
+      function distance(a, b) {
+        return Math.hypot(b.x - a.x, b.y - a.y);
+      }
+
+      function lineIntersection(a, b, c, d) {
+        const denominator = ((a.x - b.x) * (c.y - d.y)) - ((a.y - b.y) * (c.x - d.x));
+        return {
+          x: (((a.x * b.y) - (a.y * b.x)) * (c.x - d.x) - (a.x - b.x) * ((c.x * d.y) - (c.y * d.x))) / denominator,
+          y: (((a.x * b.y) - (a.y * b.x)) * (c.y - d.y) - (a.y - b.y) * ((c.x * d.y) - (c.y * d.x))) / denominator
+        };
+      }
+
+      function unit(point) {
+        const magnitude = Math.hypot(point.x, point.y);
+        return { x: point.x / magnitude, y: point.y / magnitude };
+      }
+    })();
+  </script>
+</body>
+</html>
