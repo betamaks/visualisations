@@ -632,6 +632,12 @@
         const rightOuterA = add(apex, mul(rightOut, outerBeam));
         const rightOuterB = add(right, mul(rightOut, outerBeam));
         const ridgeOuter = lineIntersection(leftOuterA, leftOuterB, rightOuterA, rightOuterB);
+        const bottomBeamShape = {
+          topLeft: left,
+          topRight: right,
+          bottomRight: { x: rightXAtY(height + outerBeam), y: height + outerBeam },
+          bottomLeft: { x: leftXAtY(height + outerBeam), y: height + outerBeam }
+        };
 
         let cursor = gaps[0];
         const posts = [];
@@ -667,6 +673,7 @@
           leftOuterB,
           rightOuterB,
           ridgeOuter,
+          bottomBeamShape,
           leftOut,
           rightOut,
           posts,
@@ -751,12 +758,15 @@
       }
 
       function drawFrame(draw, model, options = {}) {
-        const beam = model.outerBeam;
-
         draw.polygon([model.left, model.apex, model.right], "cavity");
         draw.polygon([model.left, model.apex, model.ridgeOuter, model.leftOuterB], "schematic-beam");
         draw.polygon([model.apex, model.right, model.rightOuterB, model.ridgeOuter], "schematic-beam");
-        draw.rect({ x: model.left.x, y: model.height, width: model.base, height: beam }, "schematic-beam");
+        draw.polygon([
+          model.bottomBeamShape.topLeft,
+          model.bottomBeamShape.topRight,
+          model.bottomBeamShape.bottomRight,
+          model.bottomBeamShape.bottomLeft
+        ], "schematic-beam");
 
         model.posts.forEach((post, index) => {
           if (index === 0) {
