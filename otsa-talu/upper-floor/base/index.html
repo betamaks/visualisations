@@ -367,6 +367,44 @@
       stroke-dasharray: 6 4;
     }
 
+    .floor-board {
+      fill: rgba(207, 169, 113, 0.35);
+      stroke: #a77845;
+      stroke-width: 1;
+    }
+
+    .floor-board-alt {
+      fill: rgba(222, 190, 139, 0.32);
+      stroke: #a77845;
+      stroke-width: 1;
+    }
+
+    .floor-target {
+      fill: none;
+      stroke: #2077b4;
+      stroke-width: 2;
+      stroke-dasharray: 8 5;
+    }
+
+    .floor-profile {
+      fill: rgba(207, 169, 113, 0.42);
+      stroke: #79522f;
+      stroke-width: 1.4;
+    }
+
+    .floor-tongue {
+      fill: rgba(32, 119, 180, 0.12);
+      stroke: #2077b4;
+      stroke-width: 1.2;
+    }
+
+    .trim-off {
+      fill: rgba(207, 83, 61, 0.16);
+      stroke: rgba(207, 83, 61, 0.65);
+      stroke-width: 1.2;
+      stroke-dasharray: 5 4;
+    }
+
     .model-note {
       fill: var(--muted);
       font-size: 10px;
@@ -486,6 +524,29 @@
       <p class="material-note">Purchased area: 31.25 m². Drawn OSB use: about 19.29 m². Theoretical offcut/waste: about 11.96 m². A two-bay lower-sheet layout also needs 10 boards, but adds horizontal seams around 125 cm; this plan keeps each sloped bay side as one continuous 194 cm panel.</p>
     </section>
 
+    <section class="material-list" aria-label="Floor board purchase list">
+      <h2>Floor Board Purchase / Fit Summary</h2>
+      <table class="material-table">
+        <thead>
+          <tr>
+            <th>Use</th>
+            <th>Quantity</th>
+            <th>Product / profile</th>
+            <th>Fit logic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Saunapealse põrand cover boards</td>
+            <td>26 boards</td>
+            <td>H-type floor board, 28 mm thick, 5.1 m long. Cover face is 11.2 cm; tongue/taper is 8 mm.</td>
+            <td>Run boards along the 476 cm floor length. Across the floor, cover 290 cm because the boards sit partly on the top and bottom beams. 26 x 11.2 cm = 291.2 cm, so the last board has about 1.2 cm theoretical trim.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="material-note">Clear width between the side beams is 284 cm; the boarded width is drawn as 290 cm. The 8 mm tongue/taper is joint geometry and is not counted as extra cover width.</p>
+    </section>
+
     <section class="drawings">
       <article class="sheet">
         <h2>Floor Plan</h2>
@@ -590,6 +651,18 @@
             <line x1="688.75" y1="-14.5" x2="703.25" y2="-14.5" class="dimline"></line>
             <text x="696" y="-28" text-anchor="middle" class="tiny">10</text>
           </g>
+        </svg>
+      </article>
+
+      <article class="sheet floorboard-sheet">
+        <h2>Floor Board Fit</h2>
+        <svg id="floorboard-fit-svg" viewBox="0 0 1200 680" role="img" aria-label="Floor board fit plan and tongue profile drawn to scale">
+          <defs>
+            <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#6f655b"></path>
+            </marker>
+          </defs>
+          <g id="floorboard-fit-drawing"></g>
         </svg>
       </article>
 
@@ -801,11 +874,117 @@
       const NS = "http://www.w3.org/2000/svg";
       const triangle = buildTriangleModel();
 
+      renderFloorBoardFit(document.getElementById("floorboard-fit-drawing"));
       renderMainTriangle(document.getElementById("triangle-wall-drawing"), triangle);
       renderOsbProfile(document.getElementById("osb-cover-profile-drawing"), triangle);
       renderOsbCuttingPlan(document.getElementById("osb-cutting-plan-drawing"), triangle);
       renderPocketTriangle(document.getElementById("triangle-pocket-layer"), triangle);
       renderCoverTriangle(document.getElementById("triangle-cover-layer"), triangle);
+
+      function renderFloorBoardFit(root) {
+        root.textContent = "";
+
+        const boardCount = 26;
+        const boardCover = 11.2;
+        const tongue = 0.8;
+        const thickness = 2.8;
+        const runLength = 476;
+        const clearWidth = 284;
+        const coverTarget = 290;
+        const totalBoardCover = boardCount * boardCover;
+        const trim = totalBoardCover - coverTarget;
+        const sideOverlap = (coverTarget - clearWidth) / 2;
+        const scale = 1.42;
+        const x = 84;
+        const y = 155;
+        const lengthPx = runLength * scale;
+        const targetPx = coverTarget * scale;
+        const boardPx = boardCover * scale;
+        const clearY = y + sideOverlap * scale;
+        const clearPx = clearWidth * scale;
+        const trimPx = Math.max(trim * scale, 4);
+
+        svgText(root, x, 28, "26 boards across 290 cm cover width", "label");
+        svgText(root, x, 56, "Boards run along the 476 cm floor length. Clear width between beams is still 284 cm.", "dim");
+
+        for (let index = 0; index < boardCount; index += 1) {
+          svgRect(root, x, y + index * boardPx, lengthPx, boardPx, index % 2 ? "floor-board-alt" : "floor-board");
+          if (index > 0) {
+            svgLine(root, x, y + index * boardPx, x + lengthPx, y + index * boardPx, "cutline");
+          }
+        }
+
+        svgRect(root, x, y, lengthPx, targetPx, "floor-target");
+        svgLine(root, x - 12, clearY, x + lengthPx + 12, clearY, "extension");
+        svgLine(root, x - 12, clearY + clearPx, x + lengthPx + 12, clearY + clearPx, "extension");
+        svgRect(root, x + lengthPx + 20, y + targetPx - trimPx, 42, trimPx, "trim-off");
+        svgText(root, x + lengthPx + 70, y + targetPx - trimPx / 2 + 4, `trim about ${round1(trim)} cm from final board`, "tiny");
+
+        svgLine(root, x, y - 38, x + lengthPx, y - 38, "dimline");
+        svgLine(root, x, y - 26, x, y, "extension");
+        svgLine(root, x + lengthPx, y - 26, x + lengthPx, y, "extension");
+        svgText(root, x + lengthPx / 2, y - 54, "476 cm board run", "dim", "middle");
+
+        svgLine(root, x + lengthPx + 92, y, x + lengthPx + 92, y + targetPx, "dimline");
+        svgLine(root, x + lengthPx + 72, y, x + lengthPx + 92, y, "extension");
+        svgLine(root, x + lengthPx + 72, y + targetPx, x + lengthPx + 92, y + targetPx, "extension");
+        svgText(root, x + lengthPx + 118, y + targetPx / 2, "290 cm covered", "dim");
+
+        svgLine(root, x - 44, clearY, x - 44, clearY + clearPx, "dimline");
+        svgLine(root, x - 30, clearY, x, clearY, "extension");
+        svgLine(root, x - 30, clearY + clearPx, x, clearY + clearPx, "extension");
+        svgText(root, x - 26, clearY + clearPx / 2, "284 cm clear", "dim", "middle");
+
+        svgLine(root, x - 18, y, x - 18, clearY, "dimline");
+        svgLine(root, x - 18, clearY + clearPx, x - 18, y + targetPx, "dimline");
+        svgText(root, x - 36, y + (clearY - y) / 2 + 4, "3", "tiny", "middle");
+        svgText(root, x - 36, clearY + clearPx + (y + targetPx - clearY - clearPx) / 2 + 4, "3", "tiny", "middle");
+
+        svgText(root, x + lengthPx / 2, y + targetPx + 30, `${boardCount} x ${boardCover} cm = ${round1(totalBoardCover)} cm`, "dim", "middle");
+        svgText(root, x + lengthPx / 2, y + targetPx + 52, "Use the 11.2 cm face as the counting width; the 8 mm tongue seats into the next board.", "tiny", "middle");
+
+        drawFloorBoardProfile(root, 895, 204, {
+          face: boardCover,
+          tongue,
+          thickness,
+          scale: 13
+        });
+      }
+
+      function drawFloorBoardProfile(root, x, y, profile) {
+        const face = profile.face * profile.scale;
+        const tongue = profile.tongue * profile.scale;
+        const thickness = profile.thickness * profile.scale;
+        const groove = tongue * 0.86;
+        const secondX = x + face;
+
+        svgText(root, x, y - 54, "Board joint / taper profile", "label");
+        svgText(root, x, y - 30, "Tongue seats into groove; cover remains 11.2 cm.", "dim");
+
+        svgRect(root, x, y, face, thickness, "floor-profile");
+        svgRect(root, x + face, y + thickness * 0.36, tongue, thickness * 0.28, "floor-tongue");
+        svgRect(root, secondX, y, face, thickness, "floor-profile");
+        svgRect(root, secondX, y + thickness * 0.34, groove, thickness * 0.32, "osb-waste");
+        svgLine(root, secondX, y - 10, secondX, y + thickness + 12, "extension");
+
+        svgLine(root, x, y - 24, x + face, y - 24, "dimline");
+        svgLine(root, x, y - 12, x, y, "extension");
+        svgLine(root, x + face, y - 12, x + face, y, "extension");
+        svgText(root, x + face / 2, y - 40, "11.2 cm cover face", "dim", "middle");
+
+        svgLine(root, x + face, y + thickness + 30, x + face + tongue, y + thickness + 30, "dimline");
+        svgLine(root, x + face, y + thickness + 16, x + face, y + thickness + 30, "extension");
+        svgLine(root, x + face + tongue, y + thickness * 0.64, x + face + tongue, y + thickness + 30, "extension");
+        svgText(root, x + face + tongue / 2, y + thickness + 52, "0.8 cm tongue", "dim", "middle");
+
+        svgLine(root, x - 28, y, x - 28, y + thickness, "dimline");
+        svgLine(root, x - 14, y, x, y, "extension");
+        svgLine(root, x - 14, y + thickness, x, y + thickness, "extension");
+        svgText(root, x - 54, y + thickness / 2 + 4, "2.8 cm", "dim", "middle");
+
+        svgText(root, secondX + face / 2, y + thickness + 30, "next board", "tiny", "middle");
+        svgText(root, x + face / 2, y + thickness + 30, "current board", "tiny", "middle");
+      }
 
       function buildTriangleModel() {
         const gaps = [56, 49, 44, 49, 56];
