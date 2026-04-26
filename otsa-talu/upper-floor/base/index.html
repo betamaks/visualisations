@@ -398,6 +398,12 @@
       stroke-width: 1.2;
     }
 
+    .floor-groove-void {
+      fill: var(--panel);
+      stroke: #2077b4;
+      stroke-width: 1.2;
+    }
+
     .trim-off {
       fill: rgba(207, 83, 61, 0.16);
       stroke: rgba(207, 83, 61, 0.65);
@@ -943,11 +949,11 @@
         svgText(root, x + lengthPx / 2, y + targetPx + 30, `${boardCount} x ${boardCover} cm = ${round1(totalBoardCover)} cm`, "dim", "middle");
         svgText(root, x + lengthPx / 2, y + targetPx + 52, "Use the 11.2 cm face as the counting width; the 8 mm tongue seats into the next board.", "tiny", "middle");
 
-        drawFloorBoardProfile(root, 862, 204, {
+        drawFloorBoardProfile(root, 930, 235, {
           face: boardCover,
           tongue,
           thickness,
-          scale: 12
+          scale: 11
         });
       }
 
@@ -955,43 +961,46 @@
         const face = profile.face * profile.scale;
         const tongue = profile.tongue * profile.scale;
         const thickness = profile.thickness * profile.scale;
-        const secondX = x + face;
+        const groove = 0.9 * profile.scale;
+        const bodyX = x + tongue;
+        const bodyW = face;
         const tongueY = y + thickness * 0.38;
         const tongueH = thickness * 0.24;
         const lipH = (thickness - tongueH) / 2;
 
-        svgText(root, x, y - 54, "Board joint / taper profile", "label");
-        svgText(root, x, y - 30, "0.8 cm tongue hidden in H/groove.", "dim");
-        svgText(root, x, y - 12, "Coverage pitch stays 11.2 cm.", "dim");
+        svgText(root, x, y - 72, "Floorboard cross-section", "label");
+        svgText(root, x, y - 50, "Tongue left, groove / hole right.", "dim");
 
-        svgRect(root, x, y, face, thickness, "floor-profile");
-        svgRect(root, secondX, y, face, thickness, "floor-profile");
-        svgRect(root, secondX, y + lipH, tongue, tongueH, "osb-waste");
-        svgRect(root, x + face, tongueY, tongue, tongueH, "floor-tongue");
-        svgLine(root, secondX, y + lipH, secondX + tongue, y + lipH, "inner-edge");
-        svgLine(root, secondX, y + lipH + tongueH, secondX + tongue, y + lipH + tongueH, "inner-edge");
-        svgLine(root, secondX, y - 10, secondX, y + thickness + 12, "extension");
+        svgRect(root, bodyX, y, bodyW, thickness, "floor-profile");
+        svgRect(root, x, tongueY, tongue, tongueH, "floor-tongue");
+        svgRect(root, bodyX + bodyW - groove, y + lipH, groove, tongueH, "floor-groove-void");
+        svgLine(root, bodyX + bodyW - groove, y + lipH, bodyX + bodyW, y + lipH, "inner-edge");
+        svgLine(root, bodyX + bodyW - groove, y + lipH + tongueH, bodyX + bodyW, y + lipH + tongueH, "inner-edge");
 
-        svgLine(root, x, y - 24, x + face, y - 24, "dimline");
-        svgLine(root, x, y - 12, x, y, "extension");
-        svgLine(root, x + face, y - 12, x + face, y, "extension");
-        svgText(root, x + face / 2, y - 40, "11.2 cm installed cover", "dim", "middle");
+        svgLine(root, bodyX, y - 24, bodyX + bodyW, y - 24, "dimline");
+        svgLine(root, bodyX, y - 12, bodyX, y, "extension");
+        svgLine(root, bodyX + bodyW, y - 12, bodyX + bodyW, y, "extension");
+        svgText(root, bodyX + bodyW / 2, y - 38, "11.2 cm board face", "dim", "middle");
 
-        svgLine(root, x + face, y + thickness + 30, x + face + tongue, y + thickness + 30, "dimline");
-        svgLine(root, x + face, y + thickness + 16, x + face, y + thickness + 30, "extension");
-        svgLine(root, x + face + tongue, y + thickness * 0.62, x + face + tongue, y + thickness + 30, "extension");
-        svgText(root, x + face + tongue / 2, y + thickness + 52, "0.8 cm hidden tongue", "dim", "middle");
+        svgLine(root, x, y + thickness + 30, bodyX, y + thickness + 30, "dimline");
+        svgLine(root, x, tongueY, x, y + thickness + 30, "extension");
+        svgLine(root, bodyX, y + thickness + 16, bodyX, y + thickness + 30, "extension");
+        svgText(root, x + tongue / 2, y + thickness + 52, "0.8 cm tongue", "dim", "middle");
+
+        svgLine(root, bodyX + bodyW - groove, y + thickness + 30, bodyX + bodyW, y + thickness + 30, "dimline");
+        svgLine(root, bodyX + bodyW - groove, y + lipH + tongueH, bodyX + bodyW - groove, y + thickness + 30, "extension");
+        svgLine(root, bodyX + bodyW, y + lipH + tongueH, bodyX + bodyW, y + thickness + 30, "extension");
+        svgText(root, bodyX + bodyW - groove / 2, y + thickness + 52, "0.8-0.9 cm groove", "dim", "middle");
 
         svgLine(root, x - 28, y, x - 28, y + thickness, "dimline");
-        svgLine(root, x - 14, y, x, y, "extension");
-        svgLine(root, x - 14, y + thickness, x, y + thickness, "extension");
+        svgLine(root, x - 14, y, bodyX, y, "extension");
+        svgLine(root, x - 14, y + thickness, bodyX, y + thickness, "extension");
         svgText(root, x - 54, y + thickness / 2 + 4, "2.8 cm", "dim", "middle");
 
-        svgText(root, secondX + tongue + 18, y + lipH / 2 + 4, "upper lip", "tiny");
-        svgText(root, secondX + tongue + 18, y + thickness - lipH / 2 + 4, "lower lip", "tiny");
-        svgText(root, secondX + tongue + 18, y + thickness / 2 + 4, "groove", "tiny");
-        svgText(root, secondX + face / 2, y + thickness + 30, "H/groove side", "tiny", "middle");
-        svgText(root, x + face / 2, y + thickness + 30, "tongue side", "tiny", "middle");
+        svgText(root, x + tongue / 2, tongueY - 8, "tongue", "tiny", "middle");
+        svgText(root, bodyX + bodyW - groove / 2, y + lipH - 8, "hole", "tiny", "middle");
+        svgText(root, bodyX + bodyW + 16, y + lipH / 2 + 4, "upper lip", "tiny");
+        svgText(root, bodyX + bodyW + 16, y + thickness - lipH / 2 + 4, "lower lip", "tiny");
       }
 
       function buildTriangleModel() {
