@@ -291,6 +291,13 @@
       stroke-width: 1.25;
     }
 
+    .miter-edge {
+      fill: none;
+      stroke: rgba(58, 49, 40, 0.72);
+      stroke-width: 1.1;
+      stroke-dasharray: 4 3;
+    }
+
     .ghost-frame {
       fill: none;
       stroke: rgba(58, 49, 40, 0.22);
@@ -346,6 +353,12 @@
       stroke: rgba(207, 83, 61, 0.55);
       stroke-width: 1.1;
       stroke-dasharray: 4 3;
+    }
+
+    .notch-label {
+      fill: #9b3b31;
+      font-size: 8.5px;
+      font-weight: 800;
     }
 
     .osb-seam {
@@ -425,7 +438,7 @@
             <td>Töötoa lagi / smaller floor portion</td>
             <td>1 pack</td>
             <td><a href="https://www.k-rauta.ee/p/kivivill-rockwool-superrock-premium-100-cm-x-56-5-cm-x-10-cm-8-tk/pzfv">Rockwool Superrock Premium 100 x 1000 x 565 mm, 8 boards per pack</a></td>
-            <td>Needs 9 pieces; use 8 full boards plus one made from leftover pieces.</td>
+            <td>New framing makes three rows: 99.9 cm, 64.3 cm, 99.8 cm. Each row uses two left pieces and one right piece; 9 fitted pieces total, so one piece still comes from leftover stock.</td>
           </tr>
           <tr>
             <td>Kolmnurk-seinad / triangle walls</td>
@@ -493,19 +506,24 @@
             <rect x="-14.5" y="-14.5" width="14.5" height="440.8" class="beam"></rect>
             <rect x="688.75" y="-14.5" width="14.5" height="440.8" class="beam"></rect>
 
-            <rect x="117.45" y="0" width="14.5" height="411.8" class="future"></rect>
+            <rect x="0" y="144.855" width="249.4" height="14.5" class="future"></rect>
+            <rect x="0" y="252.59" width="249.4" height="14.5" class="future"></rect>
+            <rect x="165.3" y="0" width="7.25" height="144.855" class="future"></rect>
+            <rect x="165.3" y="159.355" width="7.25" height="93.235" class="future"></rect>
+            <rect x="165.3" y="267.09" width="7.25" height="144.71" class="future"></rect>
             <rect x="395.85" y="0" width="7.25" height="411.8" class="future"></rect>
             <rect x="542.3" y="0" width="7.25" height="411.8" class="future"></rect>
 
-            <text x="190" y="172" text-anchor="middle" class="label">Töötoa</text>
-            <text x="190" y="194" text-anchor="middle" class="label">lagi</text>
-            <text x="190" y="220" text-anchor="middle" class="dim">10 cm wool</text>
-            <text x="190" y="240" text-anchor="middle" class="dim">9 pieces</text>
+            <text x="68" y="196" text-anchor="middle" class="label">Töötoa</text>
+            <text x="68" y="218" text-anchor="middle" class="label">lagi</text>
+            <text x="68" y="244" text-anchor="middle" class="dim">10 cm wool</text>
+            <text x="68" y="264" text-anchor="middle" class="dim">9 fitted pieces</text>
             <text x="472.7" y="168" text-anchor="middle" class="label">Saunapealse</text>
             <text x="472.7" y="190" text-anchor="middle" class="label">põrand</text>
             <text x="472.7" y="216" text-anchor="middle" class="dim">15 cm wool</text>
             <text x="472.7" y="236" text-anchor="middle" class="dim">3 packs</text>
             <text x="253" y="438" text-anchor="middle" class="tiny">existing 5 x 10 cm divider</text>
+            <text x="124.7" y="456" text-anchor="middle" class="tiny">new 10 x 10 rows + 5 cm splits</text>
             <text x="472.7" y="438" text-anchor="middle" class="tiny">planned 5 cm beams</text>
 
             <line x1="0" y1="-54" x2="688.75" y2="-54" class="dimline"></line>
@@ -529,6 +547,23 @@
             <line x1="542.3" y1="426" x2="542.3" y2="488" class="extension"></line>
             <line x1="549.55" y1="426" x2="549.55" y2="488" class="extension"></line>
             <line x1="688.75" y1="426" x2="688.75" y2="488" class="extension"></line>
+
+            <line x1="-72" y1="0" x2="-72" y2="144.855" class="dimline"></line>
+            <line x1="-52" y1="144.855" x2="-52" y2="159.355" class="dimline"></line>
+            <line x1="-72" y1="159.355" x2="-72" y2="252.59" class="dimline"></line>
+            <line x1="-52" y1="252.59" x2="-52" y2="267.09" class="dimline"></line>
+            <line x1="-72" y1="267.09" x2="-72" y2="411.8" class="dimline"></line>
+            <text x="-94" y="76" text-anchor="middle" class="dim">99.9</text>
+            <text x="-35" y="156" text-anchor="middle" class="tiny">10</text>
+            <text x="-94" y="210" text-anchor="middle" class="dim">64.3</text>
+            <text x="-35" y="264" text-anchor="middle" class="tiny">10</text>
+            <text x="-94" y="342" text-anchor="middle" class="dim">99.8</text>
+            <line x1="-72" y1="0" x2="0" y2="0" class="extension"></line>
+            <line x1="-72" y1="144.855" x2="0" y2="144.855" class="extension"></line>
+            <line x1="-52" y1="159.355" x2="0" y2="159.355" class="extension"></line>
+            <line x1="-72" y1="252.59" x2="0" y2="252.59" class="extension"></line>
+            <line x1="-52" y1="267.09" x2="0" y2="267.09" class="extension"></line>
+            <line x1="-72" y1="411.8" x2="0" y2="411.8" class="extension"></line>
 
             <line x1="748" y1="0" x2="748" y2="411.8" class="dimline"></line>
             <line x1="703.25" y1="0" x2="748" y2="0" class="extension"></line>
@@ -665,28 +700,34 @@
 
           <g transform="translate(535 70)">
             <text x="0" y="0" class="label">Smaller floor: 10 cm boards</text>
-            <text x="0" y="24" class="dim">1 pack = 8 boards. Needs 9 pieces; last piece from offcuts.</text>
+            <text x="0" y="24" class="dim">Three framed rows; 9 fitted pieces total.</text>
             <g transform="translate(0 56)">
-              <rect x="0" y="0" width="72" height="112" class="cavity"></rect>
-              <rect x="88" y="0" width="72" height="112" class="cavity"></rect>
-              <rect x="176" y="0" width="72" height="112" class="cavity"></rect>
-              <rect x="0" y="128" width="72" height="112" class="cavity"></rect>
-              <rect x="88" y="128" width="72" height="112" class="cavity"></rect>
-              <rect x="176" y="128" width="72" height="112" class="cavity"></rect>
-              <rect x="0" y="256" width="72" height="112" class="cavity"></rect>
-              <rect x="88" y="256" width="72" height="112" class="cavity"></rect>
-              <rect x="176" y="256" width="72" height="112" fill="rgba(32, 119, 180, 0.1)" stroke="#2077b4" stroke-width="1.5"></rect>
-              <text x="36" y="60" text-anchor="middle" class="tiny">1</text>
-              <text x="124" y="60" text-anchor="middle" class="tiny">2</text>
-              <text x="212" y="60" text-anchor="middle" class="tiny">3</text>
-              <text x="36" y="188" text-anchor="middle" class="tiny">4</text>
-              <text x="124" y="188" text-anchor="middle" class="tiny">5</text>
-              <text x="212" y="188" text-anchor="middle" class="tiny">6</text>
-              <text x="36" y="316" text-anchor="middle" class="tiny">7</text>
-              <text x="124" y="316" text-anchor="middle" class="tiny">8</text>
-              <text x="212" y="309" text-anchor="middle" class="tiny">leftover</text>
-              <text x="212" y="326" text-anchor="middle" class="tiny">piece</text>
-              <text x="124" y="398" text-anchor="middle" class="dim">9 total: 8 from pack, 1 from leftovers</text>
+              <rect x="0" y="0" width="128" height="98" class="cavity"></rect>
+              <rect x="136" y="0" width="60" height="98" class="cavity"></rect>
+              <rect x="0" y="113" width="128" height="63" class="cavity"></rect>
+              <rect x="136" y="113" width="60" height="63" class="cavity"></rect>
+              <rect x="0" y="191" width="128" height="98" class="cavity"></rect>
+              <rect x="136" y="191" width="60" height="98" class="cavity"></rect>
+              <rect x="128" y="0" width="8" height="98" class="future"></rect>
+              <rect x="128" y="113" width="8" height="63" class="future"></rect>
+              <rect x="128" y="191" width="8" height="98" class="future"></rect>
+              <rect x="0" y="98" width="196" height="15" class="future"></rect>
+              <rect x="0" y="176" width="196" height="15" class="future"></rect>
+
+              <line x1="64" y1="0" x2="64" y2="98" class="cutline"></line>
+              <line x1="64" y1="113" x2="64" y2="176" class="cutline"></line>
+              <line x1="64" y1="191" x2="64" y2="289" class="cutline"></line>
+              <text x="32" y="48" text-anchor="middle" class="tiny">56.5 x 99.9</text>
+              <text x="96" y="48" text-anchor="middle" class="tiny">56.5 x 99.9</text>
+              <text x="166" y="48" text-anchor="middle" class="tiny">53 x 99.9</text>
+              <text x="32" y="148" text-anchor="middle" class="tiny">56.5 x 64.3</text>
+              <text x="96" y="148" text-anchor="middle" class="tiny">56.5 x 64.3</text>
+              <text x="166" y="148" text-anchor="middle" class="tiny">53 x 64.3</text>
+              <text x="32" y="239" text-anchor="middle" class="tiny">56.5 x 99.8</text>
+              <text x="96" y="239" text-anchor="middle" class="tiny">56.5 x 99.8</text>
+              <text x="166" y="239" text-anchor="middle" class="tiny">53 x 99.8</text>
+              <text x="98" y="318" text-anchor="middle" class="dim">9 pieces total: 8 from pack + 1 leftover</text>
+              <text x="98" y="340" text-anchor="middle" class="tiny">Left side is about 114 cm, made from two 56.5 cm board widths.</text>
             </g>
           </g>
 
@@ -771,11 +812,13 @@
         const rightOuterA = add(apex, mul(rightOut, outerBeam));
         const rightOuterB = add(right, mul(rightOut, outerBeam));
         const ridgeOuter = lineIntersection(leftOuterA, leftOuterB, rightOuterA, rightOuterB);
+        const leftBottomMiter = pointAtY(leftOuterA, leftOuterB, height + outerBeam);
+        const rightBottomMiter = pointAtY(rightOuterA, rightOuterB, height + outerBeam);
         const bottomBeamShape = {
           topLeft: left,
           topRight: right,
-          bottomRight: { x: rightXAtY(height + outerBeam), y: height + outerBeam },
-          bottomLeft: { x: leftXAtY(height + outerBeam), y: height + outerBeam }
+          bottomRight: rightBottomMiter,
+          bottomLeft: leftBottomMiter
         };
 
         let cursor = gaps[0];
@@ -811,6 +854,8 @@
           right,
           leftOuterB,
           rightOuterB,
+          leftBottomMiter,
+          rightBottomMiter,
           ridgeOuter,
           bottomBeamShape,
           leftOut,
@@ -838,6 +883,14 @@
 
         function rightYAtX(x) {
           return height - ((base - x) / halfBase) * height;
+        }
+
+        function pointAtY(a, b, y) {
+          const t = (y - a.y) / (b.y - a.y);
+          return {
+            x: a.x + (b.x - a.x) * t,
+            y
+          };
         }
       }
 
@@ -976,8 +1029,8 @@
           const x = boardStartX + index * columnGap;
           svgText(root, x + boardW / 2, boardTopY - 44, `Bay ${index + 1}: ${bay.clear} cm clear`, "label", "middle");
           svgText(root, x + boardW / 2, boardTopY - 24, `${bay.cutWidth} cm OSB width`, "dim", "middle");
-          drawOsbBoard(root, x, boardTopY, boardScale, bay, "A", true);
-          drawOsbBoard(root, x, boardBottomY, boardScale, bay, "B", false);
+          drawOsbBoard(root, x, boardTopY, boardScale, bay, "A", true, index === 0);
+          drawOsbBoard(root, x, boardBottomY, boardScale, bay, "B", false, index === 0);
         });
 
         const noteX = 1125;
@@ -1022,8 +1075,9 @@
         ], "tiny", 20);
 
         drawVariantB(root, plan);
+        drawNotchDetails(root, plan);
 
-        function drawOsbBoard(parent, x, y, scale, bay, side, includeMiniRoof) {
+        function drawOsbBoard(parent, x, y, scale, bay, side, includeMiniRoof, labelNotches) {
           const innerW = bay.cutWidth * scale;
           const clearW = bay.clear * scale;
           const notchW = (plan.beamThickness / 2) * scale;
@@ -1049,6 +1103,14 @@
             svgRect(parent, x + innerW, y, miniW, miniH, "osb-mini-roof");
           }
           svgLine(parent, x, y + boardH - 4, x + innerW, y + boardH - 4, "osb-bevel");
+
+          if (labelNotches) {
+            const notchY = y + topWasteH + upperH;
+            const notchLabelY = notchY + beamH + 14;
+            svgLine(parent, x, notchY + beamH / 2, x - 8, notchLabelY - 4, "osb-seam");
+            svgLine(parent, x + innerW, notchY + beamH / 2, x + innerW + 8, notchLabelY - 4, "osb-seam");
+            svgText(parent, x + innerW / 2, notchLabelY, "edge notches", "notch-label", "middle");
+          }
 
           svgText(parent, x + boardW / 2, y - 8, `Board ${side}`, "dim", "middle");
           svgText(parent, x + innerW / 2, y + topWasteH + upperH / 2 + 4, `33 x ${bay.cutWidth}`, "tiny", "middle");
@@ -1106,15 +1168,54 @@
           ], "dim", 22);
 
           function drawContinuationBand(node, bandX, bandY, s, group) {
+            const halfNotch = cutPlan.beamThickness / 2;
             let cx = bandX;
             svgRect(node, bandX, bandY, group.width * s, notchH, "osb-notch");
-            group.clears.forEach((clear) => {
-              const notch = cutPlan.beamThickness / 2;
-              cx += notch * s;
+
+            svgRect(node, cx, bandY, halfNotch * s, notchH, "osb-notch");
+            cx += halfNotch * s;
+
+            group.clears.forEach((clear, index) => {
               svgRect(node, cx, bandY, clear * s, notchH, "osb-beam-zone");
               svgText(node, cx + clear * s / 2, bandY + notchH / 2 + 4, `${clear} x 14`, "tiny", "middle");
-              cx += clear * s + notch * s;
+              cx += clear * s;
+
+              const slotWidth = index === group.clears.length - 1 ? halfNotch : cutPlan.beamThickness;
+              svgRect(node, cx, bandY, slotWidth * s, notchH, "osb-notch");
+              cx += slotWidth * s;
             });
+          }
+        }
+
+        function drawNotchDetails(parent, cutPlan) {
+          const x = 1125;
+          const y = 820;
+          const s = 1.2;
+          const h = cutPlan.beamBand * s;
+          const half = cutPlan.beamThickness / 2;
+          const clearA = 86;
+          const clearB = 88;
+
+          svgText(parent, x, y, "Notch detail, enlarged", "label");
+          svgText(parent, x, y + 24, "Red areas are the OSB removed in the 14 cm beam band.", "dim");
+
+          svgText(parent, x, y + 68, "Variant A single bay", "dim");
+          drawBand(x, y + 84, [half, clearA, half], ["2.5", "clear bay", "2.5"]);
+
+          svgText(parent, x, y + 148, "Variant B two-bay continuation", "dim");
+          drawBand(x, y + 164, [half, clearA, cutPlan.beamThickness, clearB, half], ["2.5", "clear", "5 slot", "clear", "2.5"]);
+
+          function drawBand(bandX, bandY, parts, labels) {
+            let cursor = bandX;
+            parts.forEach((part, index) => {
+              const isCut = index % 2 === 0;
+              const className = isCut ? "osb-notch" : "osb-beam-zone";
+              const width = part * s;
+              svgRect(parent, cursor, bandY, width, h, className);
+              svgText(parent, cursor + width / 2, bandY + h / 2 + 4, labels[index], isCut ? "notch-label" : "tiny", "middle");
+              cursor += width;
+            });
+            svgText(parent, cursor + 14, bandY + h / 2 + 4, "14 cm high", "tiny");
           }
         }
       }
@@ -1219,8 +1320,8 @@
 
       function drawFrame(draw, model, options = {}) {
         draw.polygon([model.left, model.apex, model.right], "cavity");
-        draw.polygon([model.left, model.apex, model.ridgeOuter, model.leftOuterB], "schematic-beam");
-        draw.polygon([model.apex, model.right, model.rightOuterB, model.ridgeOuter], "schematic-beam");
+        draw.polygon([model.left, model.apex, model.ridgeOuter, model.leftBottomMiter], "schematic-beam");
+        draw.polygon([model.apex, model.right, model.rightBottomMiter, model.ridgeOuter], "schematic-beam");
         draw.polygon([
           model.bottomBeamShape.topLeft,
           model.bottomBeamShape.topRight,
@@ -1264,6 +1365,9 @@
           draw.line(model.left, model.apex, "inner-edge");
           draw.line(model.apex, model.right, "inner-edge");
           draw.line(model.left, model.right, "inner-edge");
+          draw.line(model.left, model.leftBottomMiter, "miter-edge");
+          draw.line(model.right, model.rightBottomMiter, "miter-edge");
+          draw.line(model.apex, model.ridgeOuter, "miter-edge");
         }
 
         if (options.mini) {
@@ -1338,7 +1442,7 @@
         });
         draw.text(
           { x: model.base / 2, y: model.height + 98 },
-          "15 and 49 notes conflict with this 225 / 100 / 294 cm model; calculated values shown above.",
+          "Mitered outer timber is drawn from the calculated 225 / 100 / 294 cm frame model.",
           { class: "model-note", anchor: "middle" }
         );
         draw.text({ x: model.base / 2, y: model.height + 116 }, "Triangle walls x 2", {
