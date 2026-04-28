@@ -521,13 +521,13 @@
         <tbody>
           <tr>
             <td>Roof-wall OSB cover + small top roof strip</td>
-            <td>10 boards</td>
+            <td>7 boards used</td>
             <td><a href="https://www.k-rauta.ee/p/osb-plaat-kronospan-250-cm-x-125-cm-x-1-2-cm/sz23">Kronospan OSB 250 x 125 x 1.2 cm</a></td>
-            <td>One one-piece 194 cm side panel per bay side: 147 cm lower cover + 14 cm beam band + 33 cm upper cover. Small top roof strips come from side offcuts.</td>
+            <td>Row cut plan: 125 cm lower row, 22 cm row up to the horizontal beam, 14 cm clear strips through the beam band, and 33 cm top row. Repeat for both roof sides.</td>
           </tr>
         </tbody>
       </table>
-      <p class="material-note">Purchased area: 31.25 m². Drawn OSB use: about 19.29 m². Theoretical offcut/waste: about 11.96 m². A two-bay lower-sheet layout also needs 10 boards, but adds horizontal seams around 125 cm; this plan keeps each sloped bay side as one continuous 194 cm panel.</p>
+      <p class="material-note">Seven-board cut area: 21.88 m². Drawn OSB use: about 18.59 m². Practical offcut from the seven-board plan: about 3.28 m². If 10 boards were bought, 3 full boards remain untouched.</p>
     </section>
 
     <section class="material-list" aria-label="Floor board purchase list">
@@ -744,9 +744,9 @@
       </article>
 
       <article class="sheet osb-cuts-sheet">
-        <h2>OSB Laying Variants</h2>
-        <p class="sheet-note">Both variants use 10 boards. Variant A keeps every sloped side panel continuous at 194 cm. Variant B uses wider 125 cm lower panels, but needs a horizontal seam and separate 69 cm continuation pieces. The 14 cm beam band is covered in both variants, with notches where timber blocks the full width.</p>
-        <svg id="osb-cutting-svg" viewBox="0 0 1500 1360" role="img" aria-label="Exact OSB laying variants and cutting plan for ten OSB boards">
+        <h2>OSB Row Cutting Plan</h2>
+        <p class="sheet-note">Recommended layout uses 7 sheets: five sheets create the 125 cm lower row and useful offcuts; two sheets plus those offcuts finish the 22 cm, 14 cm, and 33 cm rows. Three sheets remain untouched if 10 were bought.</p>
+        <svg id="osb-cutting-svg" viewBox="0 0 1500 1350" role="img" aria-label="Optimized OSB row cutting plan for seven OSB boards">
           <defs>
             <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M0,0 L8,4 L0,8 Z" fill="#6f655b"></path>
@@ -1201,231 +1201,96 @@
       function renderOsbCuttingPlan(root, model) {
         root.textContent = "";
         const plan = buildOsbCutPlan(model);
-        const spanScale = 1.38;
-        const spanX = 70;
-        const spanY = 82;
-        const spanHeight = 62;
-        const boardScale = 0.64;
-        const boardStartX = 70;
-        const boardTopY = 342;
-        const boardBottomY = 662;
-        const columnGap = 205;
-        const boardW = plan.board.width * boardScale;
-        const boardH = plan.board.length * boardScale;
+        const rowScale = 1.42;
+        const boardScale = 0.92;
+        const rowX = 190;
+        const rowY = 78;
+        const summaryX = 1040;
 
-        svgText(root, 60, 30, "Shared bay widths", "label");
-        svgText(root, 60, 56, "Board joins land on rafter centerlines: clear bay plus 2.5 cm on each side.", "dim");
+        svgText(root, 60, 30, "Recommended row layout", "label");
+        svgText(root, 60, 56, "Shown for one roof side; repeat the same four rows for the mirrored side.", "dim");
+        drawRowLayout(rowX, rowY, rowScale);
 
-        let cursor = 0;
-        plan.bays.forEach((bay, index) => {
-          const x = spanX + cursor * spanScale;
-          const w = bay.cutWidth * spanScale;
-          svgRect(root, x, spanY, w, spanHeight, "osb-cover");
-          svgText(root, x + w / 2, spanY + 28, `${bay.cutWidth} cm`, "label", "middle");
-          svgText(root, x + w / 2, spanY + 48, `${bay.clear} clear + 5`, "tiny", "middle");
-          svgLine(root, x, spanY - 18, x, spanY + spanHeight + 20, "extension");
-          if (index === plan.bays.length - 1) {
-            svgLine(root, x + w, spanY - 18, x + w, spanY + spanHeight + 20, "extension");
-          }
-          cursor += bay.cutWidth;
-        });
-        svgLine(root, spanX, spanY + spanHeight + 44, spanX + plan.totalCutWidth * spanScale, spanY + spanHeight + 44, "dimline");
-        svgText(root, spanX + (plan.totalCutWidth * spanScale) / 2, spanY + spanHeight + 72, `${plan.totalCutWidth} cm centerline-to-centerline run`, "dim", "middle");
+        svgText(root, summaryX, 30, "Material summary", "label");
+        textBlock(root, summaryX, 60, [
+          `OSB used: ${round2(plan.usedArea)} m²`,
+          `Cut plan: ${plan.boardsUsed} sheets = ${round2(plan.purchaseArea)} m²`,
+          `Practical offcut: ${round2(plan.wasteArea)} m²`,
+          "If 10 sheets were bought, 3 full sheets remain.",
+          "Bevel the bottom edge of the 125 cm lower row on site.",
+          "A 6-sheet plan is mathematically too tight for kerf and site error."
+        ], "dim", 25);
 
-        svgText(root, 60, 245, "Variant A: one continuous side panel per bay side", "label");
-        svgText(root, 60, 268, "Cut ten shaped panels. Each starts as W x 194, then gets two 2.5 x 14 cm side notches through the beam band.", "dim");
-
-        plan.bays.forEach((bay, index) => {
-          const x = boardStartX + index * columnGap;
-          svgText(root, x + boardW / 2, boardTopY - 44, `Bay ${index + 1}: ${bay.clear} cm clear`, "label", "middle");
-          svgText(root, x + boardW / 2, boardTopY - 24, `${bay.cutWidth} cm OSB width`, "dim", "middle");
-          drawOsbBoard(root, x, boardTopY, boardScale, bay, "A", true, index === 0);
-          drawOsbBoard(root, x, boardBottomY, boardScale, bay, "B", false, index === 0);
+        svgText(root, 60, 440, "Seven-sheet cutting layout", "label");
+        svgText(root, 60, 466, "All rectangles are drawn as 250 x 125 cm sheets. Labels show cut piece width x height in centimeters.", "dim");
+        plan.sheets.forEach((sheet, index) => {
+          const col = index % 3;
+          const row = Math.floor(index / 3);
+          drawBoard(60 + col * 455, 536 + row * 280, sheet, boardScale);
         });
 
-        const noteX = 1125;
-        svgText(root, noteX, 245, "Summary", "label");
-        svgText(root, noteX, 276, "Buy 10 boards x 3.125 m² = 31.25 m²", "dim");
-        svgText(root, noteX, 304, `Covered OSB: about ${round2(plan.usedArea)} m²`, "dim");
-        svgText(root, noteX, 332, `Theoretical offcut: about ${round2(plan.wasteArea)} m²`, "dim");
-        textBlock(root, noteX, 376, [
-          "Variant A is cleaner on site:",
-          "no horizontal seam in the sloped wall,",
-          "but every panel needs the small notches.",
-          "",
-          "Variant B has larger lower sheets:",
-          "fewer lower vertical seams, but adds",
-          "a supported horizontal seam at 125 cm."
-        ], "tiny", 20);
-
-        svgText(root, noteX, 540, "Variant A offcut", "label");
-        const rows = [
-          ["86 clear", "91 cut", "1.24 / 1.36 m²"],
-          ["88 clear", "93 cut", "1.20 / 1.32 m²"],
-          ["94 clear x3", "99 cut", "1.08 / 1.20 m²"]
-        ];
-        const tableY = 568;
-        svgText(root, noteX, tableY, "Bay", "tiny");
-        svgText(root, noteX + 108, tableY, "Width", "tiny");
-        svgText(root, noteX + 205, tableY, "A / B board", "tiny");
-        rows.forEach((row, index) => {
-          const y = tableY + 26 + index * 28;
-          svgLine(root, noteX, y - 18, noteX + 332, y - 18, "cutline");
-          svgText(root, noteX, y, row[0], "dim");
-          svgText(root, noteX + 108, y, row[1], "dim");
-          svgText(root, noteX + 205, y, row[2], "dim");
-        });
-
-        textBlock(root, noteX, 716, [
-          "A board includes one tiny top-roof strip",
-          `from the side offcut: ${round1(plan.miniRoofWidth)} x bay width.`,
-          "B board is the mirrored side without that strip.",
-          "Notches are 2.5 x 14 cm on each side",
-          "of every single-bay side panel."
-        ], "tiny", 20);
-
-        drawVariantB(root, plan);
-        drawNotchDetails(root, plan);
-
-        function drawOsbBoard(parent, x, y, scale, bay, side, includeMiniRoof, labelNotches) {
-          const innerW = bay.cutWidth * scale;
-          const clearW = bay.clear * scale;
-          const notchW = (plan.beamThickness / 2) * scale;
-          const stripW = (plan.board.width - bay.cutWidth) * scale;
-          const topWasteH = (plan.board.length - plan.sidePanel) * scale;
-          const upperH = plan.upperPanel * scale;
-          const beamH = plan.beamBand * scale;
-          const lowerH = plan.lowerPanel * scale;
-          const miniW = plan.miniRoofWidth * scale;
-          const miniH = bay.cutWidth * scale;
-          const usedArea = bay.cutWidth * (plan.sidePanel + (includeMiniRoof ? plan.miniRoofWidth : 0)) / 10000;
-          const wasteArea = plan.board.area - usedArea;
-
-          svgRect(parent, x, y, boardW, boardH, "osb-board");
-          svgRect(parent, x, y, innerW, topWasteH, "osb-waste");
-          svgRect(parent, x, y + topWasteH, innerW, upperH, "osb-upper");
-          svgRect(parent, x + notchW, y + topWasteH + upperH, clearW, beamH, "osb-beam-zone");
-          svgRect(parent, x, y + topWasteH + upperH + beamH, innerW, lowerH, "osb-cover");
-          svgRect(parent, x, y + topWasteH + upperH, notchW, beamH, "osb-notch");
-          svgRect(parent, x + notchW + clearW, y + topWasteH + upperH, notchW, beamH, "osb-notch");
-          svgRect(parent, x + innerW, y, stripW, boardH, "osb-waste");
-          if (includeMiniRoof) {
-            svgRect(parent, x + innerW, y, miniW, miniH, "osb-mini-roof");
-          }
-          svgLine(parent, x, y + boardH - 4, x + innerW, y + boardH - 4, "osb-bevel");
-
-          if (labelNotches) {
-            const notchY = y + topWasteH + upperH;
-            const notchLabelY = notchY + beamH + 14;
-            svgLine(parent, x, notchY + beamH / 2, x - 8, notchLabelY - 4, "osb-seam");
-            svgLine(parent, x + innerW, notchY + beamH / 2, x + innerW + 8, notchLabelY - 4, "osb-seam");
-            svgText(parent, x + innerW / 2, notchLabelY, "edge notches", "notch-label", "middle");
-          }
-
-          svgText(parent, x + boardW / 2, y - 8, `Board ${side}`, "dim", "middle");
-          svgText(parent, x + innerW / 2, y + topWasteH + upperH / 2 + 4, `33 x ${bay.cutWidth}`, "tiny", "middle");
-          svgText(parent, x + innerW / 2, y + topWasteH + upperH + beamH / 2 + 4, `${bay.clear} x 14`, "tiny", "middle");
-          svgText(parent, x + innerW / 2, y + topWasteH + upperH + beamH + lowerH / 2 + 5, `147 x ${bay.cutWidth}`, "tiny", "middle");
-          svgText(parent, x + innerW / 2, y + boardH - 16, "45° bevel", "tiny", "middle");
-          if (includeMiniRoof) {
-            svgText(parent, x + boardW + 8, y + 12, `mini ${round1(plan.miniRoofWidth)} x ${bay.cutWidth}`, "tiny");
-          }
-          svgText(parent, x + boardW / 2, y + boardH + 22, `offcut ${round2(wasteArea)} m²`, "dim", "middle");
-        }
-
-        function drawVariantB(parent, cutPlan) {
-          const y = 1040;
-          const scale = 0.66;
-          const lowerH = 125 * scale;
-          const contH = (22 + cutPlan.beamBand + cutPlan.upperPanel) * scale;
-          const notchH = cutPlan.beamBand * scale;
-          const topH = cutPlan.upperPanel * scale;
-          const lowerRemainderH = 22 * scale;
-          const groups = [
-            { label: "Bays 1+2", width: 184, clears: [86, 88], board: "Board 1 lower + Board 4 continuation" },
-            { label: "Bays 3+4", width: 198, clears: [94, 94], board: "Board 2 lower + Board 5 continuation" },
-            { label: "Bay 5", width: 99, clears: [94], board: "Board 3 has lower and continuation" }
+        function drawRowLayout(x, y, scale) {
+          const rows = [
+            { label: "33 cm top row", height: plan.topHeight, widths: plan.panelWidths, className: "osb-upper" },
+            { label: "14 cm beam band", height: plan.beamBand, widths: plan.clearBays, className: "osb-beam-zone", clearOnly: true },
+            { label: "22 cm row", height: plan.middleHeight, widths: plan.panelWidths, className: "osb-cover" },
+            { label: "125 cm lower row", height: plan.lowerHeight, widths: plan.panelWidths, className: "osb-cover" }
           ];
+          let yy = y;
 
-          svgText(parent, 60, y - 34, "Variant B: wider lower sheets with 125 cm horizontal seam", "label");
-          svgText(parent, 60, y - 10, "Per roof side: lower sheets 184 x 125, 198 x 125, 99 x 125; continuation pieces 184 x 69, 198 x 69, 99 x 69. Repeat for the opposite side.", "dim");
-
-          let x = 70;
-          groups.forEach((group) => {
-            const w = group.width * scale;
-            svgText(parent, x + w / 2, y + 18, group.label, "label", "middle");
-            svgText(parent, x + w / 2, y + 40, group.board, "tiny", "middle");
-            svgRect(parent, x, y + 58, w, lowerH, "osb-cover");
-            svgLine(parent, x, y + 58, x + w, y + 58, "osb-seam");
-            svgText(parent, x + w / 2, y + 58 + lowerH / 2, `${group.width} x 125 lower`, "tiny", "middle");
-
-            svgRect(parent, x, y + 58 + lowerH + 18, w, topH, "osb-upper");
-            drawContinuationBand(parent, x, y + 58 + lowerH + 18 + topH, scale, group);
-            svgRect(parent, x, y + 58 + lowerH + 18 + topH + notchH, w, lowerRemainderH, "osb-cover");
-            svgText(parent, x + w / 2, y + 58 + lowerH + 18 + topH + notchH + lowerRemainderH / 2 + 4, "22 lower continuation", "tiny", "middle");
-            svgText(parent, x + w / 2, y + 58 + lowerH + 18 + contH + 16, `${group.width} x 69 continuation`, "dim", "middle");
-            x += w + 76;
+          rows.forEach((row) => {
+            svgText(root, x - 14, yy + (row.height * scale) / 2 + 4, row.label, "tiny", "end");
+            if (row.clearOnly) {
+              let xx = x;
+              row.widths.forEach((width, index) => {
+                const panelWidth = plan.panelWidths[index] * scale;
+                const halfBeam = (plan.beamThickness / 2) * scale;
+                svgRect(root, xx, yy, halfBeam, row.height * scale, "osb-notch");
+                svgRect(root, xx + halfBeam, yy, width * scale, row.height * scale, row.className);
+                svgRect(root, xx + halfBeam + width * scale, yy, halfBeam, row.height * scale, "osb-notch");
+                svgText(root, xx + panelWidth / 2, yy + (row.height * scale) / 2 + 4, `${width}`, "tiny", "middle");
+                xx += panelWidth;
+              });
+            } else {
+              let xx = x;
+              row.widths.forEach((width) => {
+                svgRect(root, xx, yy, width * scale, row.height * scale, row.className);
+                svgText(root, xx + (width * scale) / 2, yy + (row.height * scale) / 2 + 4, `${width}`, "tiny", "middle");
+                xx += width * scale;
+              });
+            }
+            yy += row.height * scale;
           });
 
-          textBlock(parent, 980, y + 18, [
-            "Reality of Variant B:",
-            "1. Install 125 cm lower panels first.",
-            "2. Add backing/support at the horizontal seam.",
-            "3. Install 69 cm continuation pieces above.",
-            "4. In the 14 cm band, cut 2.5 cm edge notches",
-            "   and 5 cm slots where the piece crosses an internal beam.",
-            "5. Bottom edge still gets the 45 degree bevel."
-          ], "dim", 22);
+          const totalW = plan.totalPanelRun * scale;
+          svgLine(root, x, y + plan.sideHeight * scale + 28, x + totalW, y + plan.sideHeight * scale + 28, "dimline");
+          svgText(root, x + totalW / 2, y + plan.sideHeight * scale + 56, `${plan.totalPanelRun} cm panel run`, "dim", "middle");
+          svgLine(root, x + totalW + 38, y, x + totalW + 38, y + plan.sideHeight * scale, "dimline");
+          svgText(root, x + totalW + 72, y + (plan.sideHeight * scale) / 2, `${plan.sideHeight} cm total cover`, "dim", "middle");
+        }
 
-          function drawContinuationBand(node, bandX, bandY, s, group) {
-            const halfNotch = cutPlan.beamThickness / 2;
-            let cx = bandX;
-            svgRect(node, bandX, bandY, group.width * s, notchH, "osb-notch");
-
-            svgRect(node, cx, bandY, halfNotch * s, notchH, "osb-notch");
-            cx += halfNotch * s;
-
-            group.clears.forEach((clear, index) => {
-              svgRect(node, cx, bandY, clear * s, notchH, "osb-beam-zone");
-              svgText(node, cx + clear * s / 2, bandY + notchH / 2 + 4, `${clear} x 14`, "tiny", "middle");
-              cx += clear * s;
-
-              const slotWidth = index === group.clears.length - 1 ? halfNotch : cutPlan.beamThickness;
-              svgRect(node, cx, bandY, slotWidth * s, notchH, "osb-notch");
-              cx += slotWidth * s;
-            });
+        function drawBoard(x, y, sheet, scale) {
+          const boardW = plan.board.length * scale;
+          const boardH = plan.board.width * scale;
+          svgText(root, x + boardW / 2, y - 18, sheet.title, "label", "middle");
+          svgRect(root, x, y, boardW, boardH, "osb-board");
+          sheet.pieces.forEach((piece) => drawPiece(x, y, piece, scale));
+          if (sheet.note) {
+            svgText(root, x + boardW / 2, y + boardH + 22, sheet.note, "tiny", "middle");
           }
         }
 
-        function drawNotchDetails(parent, cutPlan) {
-          const x = 1125;
-          const y = 820;
-          const s = 1.2;
-          const h = cutPlan.beamBand * s;
-          const half = cutPlan.beamThickness / 2;
-          const clearA = 86;
-          const clearB = 88;
-
-          svgText(parent, x, y, "Notch detail, enlarged", "label");
-          svgText(parent, x, y + 24, "Red areas are the OSB removed in the 14 cm beam band.", "dim");
-
-          svgText(parent, x, y + 68, "Variant A single bay", "dim");
-          drawBand(x, y + 84, [half, clearA, half], ["2.5", "clear bay", "2.5"]);
-
-          svgText(parent, x, y + 148, "Variant B two-bay continuation", "dim");
-          drawBand(x, y + 164, [half, clearA, cutPlan.beamThickness, clearB, half], ["2.5", "clear", "5 slot", "clear", "2.5"]);
-
-          function drawBand(bandX, bandY, parts, labels) {
-            let cursor = bandX;
-            parts.forEach((part, index) => {
-              const isCut = index % 2 === 0;
-              const className = isCut ? "osb-notch" : "osb-beam-zone";
-              const width = part * s;
-              svgRect(parent, cursor, bandY, width, h, className);
-              svgText(parent, cursor + width / 2, bandY + h / 2 + 4, labels[index], isCut ? "notch-label" : "tiny", "middle");
-              cursor += width;
-            });
-            svgText(parent, cursor + 14, bandY + h / 2 + 4, "14 cm high", "tiny");
+        function drawPiece(boardX, boardY, piece, scale) {
+          const x = boardX + piece.x * scale;
+          const y = boardY + piece.y * scale;
+          const w = piece.w * scale;
+          const h = piece.h * scale;
+          svgRect(root, x, y, w, h, piece.className);
+          if (piece.label) {
+            const text = svgText(root, x + w / 2, y + h / 2 + 4, piece.label, piece.small ? "notch-label" : "tiny", "middle");
+            if (w < 36 && h > 40) {
+              text.setAttribute("transform", `rotate(-90 ${x + w / 2} ${y + h / 2})`);
+            }
           }
         }
       }
@@ -1489,7 +1354,6 @@
       }
 
       function buildOsbCutPlan(model) {
-        const profile = buildOsbProfile(model);
         const board = {
           length: 250,
           width: 125,
@@ -1497,34 +1361,111 @@
         };
         const clearBays = [86, 88, 94, 94, 94];
         const beamThickness = 5;
-        const lowerPanel = 147;
+        const lowerHeight = 125;
+        const middleHeight = 22;
         const beamBand = 14;
-        const upperPanel = 33;
-        const sidePanel = lowerPanel + beamBand + upperPanel;
-        const miniRoofWidth = distance(profile.left(194), profile.right(194));
-        const bays = clearBays.map((clear) => ({
-          clear,
-          cutWidth: clear + beamThickness
-        }));
-        const totalCutWidth = bays.reduce((sum, bay) => sum + bay.cutWidth, 0);
-        const boardCount = bays.length * 2;
-        const usedArea = ((totalCutWidth * (2 * sidePanel + miniRoofWidth)) / 10000);
-        const purchaseArea = boardCount * board.area;
+        const topHeight = 33;
+        const panelWidths = clearBays.map((clear) => clear + beamThickness);
+        const totalPanelRun = panelWidths.reduce((sum, width) => sum + width, 0);
+        const totalClearRun = clearBays.reduce((sum, width) => sum + width, 0);
+        const sideHeight = lowerHeight + middleHeight + beamBand + topHeight;
+        const usedArea = 2 * ((totalPanelRun * (lowerHeight + middleHeight + topHeight) + totalClearRun * beamBand) / 10000);
+        const boardsUsed = 7;
+        const purchaseArea = boardsUsed * board.area;
+
+        const p = (x, y, w, h, label, className = "osb-cover", small = false) => ({ x, y, w, h, label, className, small });
+        const waste = (x, y, w, h, label = "offcut") => p(x, y, w, h, label, "osb-waste", true);
+        const lower99Sheet = (title) => ({
+          title,
+          note: "two lower panels; offcut feeds top + beam band",
+          pieces: [
+            p(0, 0, 99, 125, "99x125"),
+            p(99, 0, 99, 125, "99x125"),
+            p(198, 0, 33, 99, "99x33 rot.", "osb-upper"),
+            p(231, 0, 14, 94, "94x14 rot.", "osb-beam-zone", true),
+            waste(245, 0, 5, 125, "")
+          ]
+        });
+        const mixedLowerSheet = (title, topWidth, middleWidth, note) => ({
+          title,
+          note,
+          pieces: [
+            p(0, 0, 91, 125, "91x125"),
+            p(91, 0, 93, 125, "93x125"),
+            p(184, 0, 33, topWidth, `${topWidth}x33 rot.`, "osb-upper"),
+            p(217, 0, 22, middleWidth, `${middleWidth}x22 rot.`),
+            waste(239, 0, 11, 125, "")
+          ]
+        });
+        const sheets = [
+          lower99Sheet("Board 1"),
+          lower99Sheet("Board 2"),
+          lower99Sheet("Board 3"),
+          mixedLowerSheet("Board 4", 91, 91, "91/93 lower panels; offcut gives 91 cm rows"),
+          mixedLowerSheet("Board 5", 93, 93, "91/93 lower panels; offcut gives 93 cm rows"),
+          {
+            title: "Board 6",
+            note: "remaining 33 cm top row + two 22 cm strips",
+            pieces: [
+              p(0, 0, 99, 33, "99x33", "osb-upper"),
+              p(99, 0, 99, 33, "99x33", "osb-upper"),
+              waste(198, 0, 52, 33, ""),
+              p(0, 33, 99, 33, "99x33", "osb-upper"),
+              p(99, 33, 93, 33, "93x33", "osb-upper"),
+              waste(192, 33, 58, 33, ""),
+              p(0, 66, 91, 33, "91x33", "osb-upper"),
+              waste(91, 66, 159, 33, ""),
+              p(0, 99, 99, 22, "99x22"),
+              p(99, 99, 99, 22, "99x22"),
+              waste(198, 99, 52, 22, ""),
+              waste(0, 121, 250, 4, "")
+            ]
+          },
+          {
+            title: "Board 7",
+            note: "remaining 22 cm row + 14 cm beam-band strips",
+            pieces: [
+              p(0, 0, 99, 22, "99x22"),
+              p(99, 0, 99, 22, "99x22"),
+              waste(198, 0, 52, 22, ""),
+              p(0, 22, 99, 22, "99x22"),
+              p(99, 22, 99, 22, "99x22"),
+              waste(198, 22, 52, 22, ""),
+              p(0, 44, 91, 22, "91x22"),
+              p(91, 44, 93, 22, "93x22"),
+              waste(184, 44, 66, 22, ""),
+              p(0, 66, 94, 14, "94x14", "osb-beam-zone", true),
+              p(94, 66, 94, 14, "94x14", "osb-beam-zone", true),
+              waste(188, 66, 62, 14, ""),
+              p(0, 80, 94, 14, "94x14", "osb-beam-zone", true),
+              p(94, 80, 88, 14, "88x14", "osb-beam-zone", true),
+              waste(182, 80, 68, 14, ""),
+              p(0, 94, 88, 14, "88x14", "osb-beam-zone", true),
+              p(88, 94, 86, 14, "86x14", "osb-beam-zone", true),
+              waste(174, 94, 76, 14, ""),
+              p(0, 108, 86, 14, "86x14", "osb-beam-zone", true),
+              waste(86, 108, 164, 14, ""),
+              waste(0, 122, 250, 3, "")
+            ]
+          }
+        ];
 
         return {
           board,
-          bays,
+          clearBays,
+          panelWidths,
           beamThickness,
-          lowerPanel,
+          lowerHeight,
+          middleHeight,
           beamBand,
-          upperPanel,
-          sidePanel,
-          miniRoofWidth,
-          totalCutWidth,
-          boardCount,
+          topHeight,
+          sideHeight,
+          totalPanelRun,
+          boardsUsed,
           purchaseArea,
           usedArea,
-          wasteArea: purchaseArea - usedArea
+          wasteArea: purchaseArea - usedArea,
+          sheets
         };
       }
 
@@ -1728,12 +1669,14 @@
       }
 
       function svgText(parent, x, y, value, className = "dim", anchor = "start") {
-        element("text", {
+        const node = element("text", {
           x,
           y,
           class: className,
           "text-anchor": anchor
-        }, parent).textContent = value;
+        }, parent);
+        node.textContent = value;
+        return node;
       }
 
       function textBlock(parent, x, y, lines, className = "dim", lineHeight = 18) {
