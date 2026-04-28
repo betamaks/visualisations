@@ -546,11 +546,11 @@
             <td>Saunapealse põrand cover boards</td>
             <td>26 boards</td>
             <td>H-type floor board, 28 mm thick, 5.1 m long. Cover face is 11.2 cm; tongue/taper is 8 mm.</td>
-            <td>Run boards along the 476 cm floor length. Across the floor, cover 290 cm because the boards sit partly on the top and bottom beams. 26 x 11.2 cm = 291.2 cm, so the last board has about 1.2 cm theoretical trim.</td>
+            <td>Installed along the 476 cm floor length. Across the floor: 25 full boards plus a 6.9 cm final ripped board, 286.9 cm installed cover.</td>
           </tr>
         </tbody>
       </table>
-      <p class="material-note">Clear width between the side beams is 284 cm; the boarded width is drawn as 290 cm. The 8 mm tongue/taper is joint geometry and is not counted as extra cover width.</p>
+      <p class="material-note">Clear width between the side beams is 284 cm; installed board cover is 286.9 cm. The 8 mm tongue/taper is joint geometry inside the board profile.</p>
     </section>
 
     <section class="drawings">
@@ -890,15 +890,14 @@
       function renderFloorBoardFit(root) {
         root.textContent = "";
 
-        const boardCount = 26;
+        const fullBoardCount = 25;
+        const finalBoardCover = 6.9;
         const boardCover = 11.2;
         const tongue = 0.8;
         const thickness = 2.8;
         const runLength = 476;
         const clearWidth = 284;
-        const coverTarget = 290;
-        const totalBoardCover = boardCount * boardCover;
-        const trim = totalBoardCover - coverTarget;
+        const coverTarget = fullBoardCount * boardCover + finalBoardCover;
         const sideOverlap = (coverTarget - clearWidth) / 2;
         const scale = 1.42;
         const x = 84;
@@ -906,25 +905,26 @@
         const lengthPx = runLength * scale;
         const targetPx = coverTarget * scale;
         const boardPx = boardCover * scale;
+        const finalBoardPx = finalBoardCover * scale;
         const clearY = y + sideOverlap * scale;
         const clearPx = clearWidth * scale;
-        const trimPx = Math.max(trim * scale, 4);
 
-        svgText(root, x, 28, "26 boards across 290 cm cover width", "label");
+        svgText(root, x, 28, "Installed floor boards: 286.9 cm cover width", "label");
         svgText(root, x, 56, "Boards run along the 476 cm floor length. Clear width between beams is still 284 cm.", "dim");
 
-        for (let index = 0; index < boardCount; index += 1) {
+        for (let index = 0; index < fullBoardCount; index += 1) {
           svgRect(root, x, y + index * boardPx, lengthPx, boardPx, index % 2 ? "floor-board-alt" : "floor-board");
           if (index > 0) {
             svgLine(root, x, y + index * boardPx, x + lengthPx, y + index * boardPx, "cutline");
           }
         }
+        svgRect(root, x, y + fullBoardCount * boardPx, lengthPx, finalBoardPx, "floor-board-alt");
+        svgLine(root, x, y + fullBoardCount * boardPx, x + lengthPx, y + fullBoardCount * boardPx, "cutline");
+        svgText(root, x + lengthPx + 30, y + fullBoardCount * boardPx + finalBoardPx / 2 + 4, "6.9 cm final board", "tiny");
 
         svgRect(root, x, y, lengthPx, targetPx, "floor-target");
         svgLine(root, x - 12, clearY, x + lengthPx + 12, clearY, "extension");
         svgLine(root, x - 12, clearY + clearPx, x + lengthPx + 12, clearY + clearPx, "extension");
-        svgRect(root, x + lengthPx + 20, y + targetPx - trimPx, 42, trimPx, "trim-off");
-        svgText(root, x + lengthPx + 70, y + targetPx - trimPx / 2 + 4, `trim about ${round1(trim)} cm from final board`, "tiny");
 
         svgLine(root, x, y - 38, x + lengthPx, y - 38, "dimline");
         svgLine(root, x, y - 26, x, y, "extension");
@@ -934,7 +934,7 @@
         svgLine(root, x + lengthPx + 92, y, x + lengthPx + 92, y + targetPx, "dimline");
         svgLine(root, x + lengthPx + 72, y, x + lengthPx + 92, y, "extension");
         svgLine(root, x + lengthPx + 72, y + targetPx, x + lengthPx + 92, y + targetPx, "extension");
-        svgText(root, x + lengthPx + 118, y + targetPx / 2, "290 cm covered", "dim");
+        svgText(root, x + lengthPx + 118, y + targetPx / 2, "286.9 cm installed cover", "dim");
 
         svgLine(root, x - 44, clearY, x - 44, clearY + clearPx, "dimline");
         svgLine(root, x - 30, clearY, x, clearY, "extension");
@@ -946,8 +946,7 @@
         svgText(root, x - 36, y + (clearY - y) / 2 + 4, "3", "tiny", "middle");
         svgText(root, x - 36, clearY + clearPx + (y + targetPx - clearY - clearPx) / 2 + 4, "3", "tiny", "middle");
 
-        svgText(root, x + lengthPx / 2, y + targetPx + 30, `${boardCount} x ${boardCover} cm = ${round1(totalBoardCover)} cm`, "dim", "middle");
-        svgText(root, x + lengthPx / 2, y + targetPx + 52, "Use the 11.2 cm face as the counting width; the 8 mm tongue seats into the next board.", "tiny", "middle");
+        svgText(root, x + lengthPx / 2, y + targetPx + 30, `${fullBoardCount} x ${boardCover} cm + ${finalBoardCover} cm = ${round1(coverTarget)} cm`, "dim", "middle");
 
         drawFloorBoardProfile(root, 930, 235, {
           face: boardCover,
