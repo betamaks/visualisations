@@ -20,6 +20,10 @@
     --accent-atlassian: #2684ff;
     --accent-rules: #ff7b54;
     --accent-mcp: #f5c542;
+    --accent-mempalace: #c084fc;
+    --accent-ardoq: #06b6d4;
+    --accent-azdo: #f472b6;
+    --accent-skills: #fb923c;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -44,7 +48,7 @@
     color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
     font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px;
   }
-  .wrap { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 24px; }
+  .wrap { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 24px; }
   .legend { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
   .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: var(--text-dim); }
   .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
@@ -106,8 +110,8 @@
 <body>
 <div class="noise"></div>
 <header>
-  <h1>AI Agent Architecture in Cursor IDE</h1>
-  <p>Reference visual language for hosted observability and systems diagrams</p>
+  <h1>AI Agent Architecture</h1>
+  <p>ITOPS observability agent &middot; dual-IDE setup with MCP tool ecosystem</p>
 </header>
 <div class="wrap">
   <div id="legend-container" class="legend anim-section"></div>
@@ -118,11 +122,11 @@
     <div class="section-title" style="color:var(--accent-cursor)">Request Lifecycle</div>
     <div class="section-subtitle">What happens when an ITOPS operator asks the agent a question</div>
     <div class="flow-steps">
-      <div class="flow-step"><div class="flow-step-num">1</div><h5>Operator Prompt</h5><p>User types in Cursor chat: &quot;Why is checkout component slow in prod?&quot;</p><span class="flow-arrow">&#8594;</span></div>
+      <div class="flow-step"><div class="flow-step-num">1</div><h5>Operator Prompt</h5><p>User types in Cursor/VS Code chat: &quot;Why is checkout slow in prod?&quot;</p><span class="flow-arrow">&#8594;</span></div>
       <div class="flow-step"><div class="flow-step-num">2</div><h5>Context Assembly</h5><p>IDE attaches open files, git status, terminal output, linter state</p><span class="flow-arrow">&#8594;</span></div>
-      <div class="flow-step"><div class="flow-step-num">3</div><h5>Rules Applied</h5><p>Agent loads rulesets: response style, NR accounts, investigation protocol</p><span class="flow-arrow">&#8594;</span></div>
-      <div class="flow-step"><div class="flow-step-num">4</div><h5>Tool Selection</h5><p>LLM picks a tool + builds arguments — e.g. nrql_query with a NRQL string and account ID</p><span class="flow-arrow">&#8594;</span></div>
-      <div class="flow-step"><div class="flow-step-num">5</div><h5>MCP Execution</h5><p>MCP server process handles auth, calls NR/Atlassian APIs, transforms response into structured JSON</p><span class="flow-arrow">&#8594;</span></div>
+      <div class="flow-step"><div class="flow-step-num">3</div><h5>Rules + Skills</h5><p>Agent loads rulesets (always-on) and may invoke skills (on-demand investigation protocols)</p><span class="flow-arrow">&#8594;</span></div>
+      <div class="flow-step"><div class="flow-step-num">4</div><h5>Tool Selection</h5><p>LLM picks MCP tool + arguments, or falls back to NerdGraph direct for complex queries</p><span class="flow-arrow">&#8594;</span></div>
+      <div class="flow-step"><div class="flow-step-num">5</div><h5>MCP Execution</h5><p>MCP server handles auth, calls platform APIs, returns structured JSON</p><span class="flow-arrow">&#8594;</span></div>
       <div class="flow-step"><div class="flow-step-num">6</div><h5>Synthesized Answer</h5><p>Agent analyzes results per rules, returns concise root-cause analysis</p></div>
     </div>
   </div>
@@ -130,29 +134,60 @@
   <!-- MCP Server Details -->
   <div class="anim-section">
     <div class="section-title" style="color:var(--accent-mcp)">MCP Server Capabilities</div>
-    <div class="section-subtitle">MCP standardizes how the agent discovers and calls tools (JSON schemas + JSON-RPC). What each server does internally is entirely up to the vendor — from thin API wrappers (Atlassian) to multi-query orchestrators and AI-backed analysis (New Relic). The only universal layer: auth + API call + return structured JSON.</div>
+    <div class="section-subtitle">Five MCP servers provide tool access via JSON-RPC. NerdGraph is accessed directly via instruction-driven GraphQL when MCP queries hit complexity limits or timeout.</div>
     <div class="mcp-grid">
       <div class="mcp-card">
-        <div class="mcp-card-header"><div class="ic" style="background:rgba(28,231,131,0.12)">&#x1F4CA;</div><h4 style="color:#1ce783">New Relic MCP Server — 27 tools</h4></div>
+        <div class="mcp-card-header"><div class="ic" style="background:rgba(28,231,131,0.12)">&#x1F4CA;</div><h4 style="color:#1ce783">New Relic MCP &mdash; 27 tools</h4></div>
         <div class="mcp-card-body">
           <ul class="tool-list">
-            <li><span class="tool-name" style="background:rgba(28,231,131,0.04);color:#6ba87d">execute_nrql_query</span><span class="tool-desc">Thin wrapper — runs NRQL via NerdGraph, returns raw JSON. Auth + call + return.</span></li>
-            <li><span class="tool-name" style="background:rgba(28,231,131,0.04);color:#6ba87d">list_alert_policies</span><span class="tool-desc">Thin wrapper — fetches alert conditions and thresholds. Pure API passthrough.</span></li>
-            <li><span class="tool-name" style="background:rgba(28,231,131,0.08);color:#1ce783">analyze_transactions</span><span class="tool-desc">Orchestrator — runs multiple NRQL queries, identifies slow/error-prone transactions, compiles report.</span></li>
-            <li><span class="tool-name" style="background:rgba(28,231,131,0.08);color:#1ce783">analyze_golden_metrics</span><span class="tool-desc">Orchestrator — fetches throughput/latency/error rate, applies health assessment heuristics.</span></li>
-            <li><span class="tool-name" style="background:rgba(245,197,66,0.1);color:#f5c542">natural_language_to_nrql</span><span class="tool-desc">AI-backed — converts plain English to NRQL. Uses NR AI or embedded LLM call.</span></li>
-            <li><span class="tool-name" style="background:rgba(245,197,66,0.1);color:#f5c542">generate_alert_insights</span><span class="tool-desc">AI-backed — root cause analysis, impact assessment, recommended actions for an issue.</span></li>
+            <li><span class="tool-name" style="background:rgba(28,231,131,0.04);color:#6ba87d">execute_nrql_query</span><span class="tool-desc">Thin wrapper &mdash; runs NRQL via NerdGraph, returns raw JSON.</span></li>
+            <li><span class="tool-name" style="background:rgba(28,231,131,0.08);color:#1ce783">analyze_transactions</span><span class="tool-desc">Orchestrator &mdash; multi-query pipeline, identifies slow transactions.</span></li>
+            <li><span class="tool-name" style="background:rgba(245,197,66,0.1);color:#f5c542">natural_language_to_nrql</span><span class="tool-desc">AI-backed &mdash; converts plain English to NRQL.</span></li>
           </ul>
         </div>
       </div>
       <div class="mcp-card">
-        <div class="mcp-card-header"><div class="ic" style="background:rgba(38,132,255,0.12)">&#x1F537;</div><h4 style="color:#2684ff">Atlassian MCP Server</h4></div>
+        <div class="mcp-card-header"><div class="ic" style="background:rgba(38,132,255,0.12)">&#x1F537;</div><h4 style="color:#2684ff">Atlassian MCP &mdash; 31 tools</h4></div>
         <div class="mcp-card-body">
           <ul class="tool-list">
-            <li><span class="tool-name" style="background:rgba(38,132,255,0.08);color:#2684ff">jira_search</span><span class="tool-desc">Run JQL queries to find issues, incidents, and change requests across projects.</span></li>
-            <li><span class="tool-name" style="background:rgba(38,132,255,0.08);color:#2684ff">jira_get_issue</span><span class="tool-desc">Fetch full issue details — description, comments, status transitions, linked items.</span></li>
-            <li><span class="tool-name" style="background:rgba(38,132,255,0.08);color:#2684ff">jira_create_issue</span><span class="tool-desc">Create new tickets (bug, task, incident) with structured fields and labels.</span></li>
-            <li><span class="tool-name" style="background:rgba(38,132,255,0.08);color:#2684ff">confluence_search</span><span class="tool-desc">Search Confluence pages for runbooks, postmortems, architecture docs.</span></li>
+            <li><span class="tool-name" style="background:rgba(38,132,255,0.08);color:#2684ff">jira_search</span><span class="tool-desc">JQL queries across projects for issues, incidents, changes.</span></li>
+            <li><span class="tool-name" style="background:rgba(38,132,255,0.08);color:#2684ff">confluence_search</span><span class="tool-desc">Search pages for runbooks, postmortems, architecture docs.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mcp-card">
+        <div class="mcp-card-header"><div class="ic" style="background:rgba(192,132,252,0.12)">&#x1F9E0;</div><h4 style="color:#c084fc">MemPalace MCP &mdash; 30+ tools</h4></div>
+        <div class="mcp-card-body">
+          <ul class="tool-list">
+            <li><span class="tool-name" style="background:rgba(192,132,252,0.08);color:#c084fc">mempalace_search</span><span class="tool-desc">Semantic search across prior sessions, code patterns, decisions.</span></li>
+            <li><span class="tool-name" style="background:rgba(192,132,252,0.08);color:#c084fc">mempalace_kg_query</span><span class="tool-desc">Knowledge graph queries &mdash; entities, relations, timelines.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mcp-card">
+        <div class="mcp-card-header"><div class="ic" style="background:rgba(6,182,212,0.12)">&#x1F3DB;</div><h4 style="color:#06b6d4">Ardoq MCP &mdash; 10+ tools</h4></div>
+        <div class="mcp-card-body">
+          <ul class="tool-list">
+            <li><span class="tool-name" style="background:rgba(6,182,212,0.08);color:#06b6d4">search_components</span><span class="tool-desc">Find architecture components by name, type, or relationships.</span></li>
+            <li><span class="tool-name" style="background:rgba(6,182,212,0.08);color:#06b6d4">get_report_data</span><span class="tool-desc">Execute and filter enterprise architecture reports.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mcp-card">
+        <div class="mcp-card-header"><div class="ic" style="background:rgba(244,114,182,0.12)">&#x1F6E0;</div><h4 style="color:#f472b6">Azure DevOps MCP</h4></div>
+        <div class="mcp-card-body">
+          <ul class="tool-list">
+            <li><span class="tool-name" style="background:rgba(244,114,182,0.08);color:#f472b6">work_items</span><span class="tool-desc">Query and manage work items, sprints, and backlogs.</span></li>
+            <li><span class="tool-name" style="background:rgba(244,114,182,0.08);color:#f472b6">pipelines</span><span class="tool-desc">Trigger, monitor, and inspect CI/CD pipeline runs.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mcp-card" style="border-color:rgba(28,231,131,0.3)">
+        <div class="mcp-card-header"><div class="ic" style="background:rgba(28,231,131,0.08)">&#x26A1;</div><h4 style="color:#1ce783">NerdGraph Direct <span style="font-size:0.7rem;color:var(--text-dim);font-weight:400">(not MCP)</span></h4></div>
+        <div class="mcp-card-body">
+          <ul class="tool-list">
+            <li><span class="tool-name" style="background:rgba(28,231,131,0.04);color:#6ba87d">async GraphQL</span><span class="tool-desc">Instruction-driven fallback for queries that exceed MCP timeout (60-70s polling).</span></li>
+            <li><span class="tool-name" style="background:rgba(28,231,131,0.04);color:#6ba87d">schema introspection</span><span class="tool-desc">Agent constructs queries from NerdGraph schema knowledge in rulesets.</span></li>
           </ul>
         </div>
       </div>
@@ -162,7 +197,7 @@
   <!-- Sequence Diagram -->
   <div class="anim-section">
     <div class="section-title" style="color:var(--accent-agent)">Interaction Sequence</div>
-    <div class="section-subtitle">Step-by-step message flow for a typical investigation — from operator prompt to synthesized answer</div>
+    <div class="section-subtitle">Step-by-step message flow for a typical investigation &mdash; from operator prompt to synthesized answer</div>
     <div class="seq-wrap">
       <svg class="seq-svg" viewBox="0 0 1060 580" width="1060" height="580" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">
         <defs>
@@ -170,45 +205,45 @@
           <marker id="sa-l" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#8890a4"/></marker>
         </defs>
         <rect x="20" y="8" width="100" height="28" rx="6" fill="rgba(0,212,170,0.1)"/><text x="70" y="27" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Operator</text>
-        <rect x="175" y="8" width="100" height="28" rx="6" fill="rgba(0,212,170,0.1)"/><text x="225" y="27" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Cursor IDE</text>
-        <rect x="380" y="8" width="120" height="28" rx="6" fill="rgba(124,106,239,0.1)"/><text x="440" y="27" text-anchor="middle" fill="#7c6aef" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Claude 4.6</text>
-        <rect x="580" y="8" width="100" height="28" rx="6" fill="rgba(255,123,84,0.1)"/><text x="630" y="27" text-anchor="middle" fill="#ff7b54" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Rulesets</text>
+        <rect x="175" y="8" width="100" height="28" rx="6" fill="rgba(0,212,170,0.1)"/><text x="225" y="27" text-anchor="middle" fill="#00d4aa" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">IDE</text>
+        <rect x="380" y="8" width="120" height="28" rx="6" fill="rgba(124,106,239,0.1)"/><text x="440" y="27" text-anchor="middle" fill="#7c6aef" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Claude LLM</text>
+        <rect x="580" y="8" width="100" height="28" rx="6" fill="rgba(255,123,84,0.1)"/><text x="630" y="27" text-anchor="middle" fill="#ff7b54" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Rules/Skills</text>
         <rect x="760" y="8" width="100" height="28" rx="6" fill="rgba(28,231,131,0.1)"/><text x="810" y="27" text-anchor="middle" fill="#1ce783" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">NR MCP</text>
         <rect x="930" y="8" width="110" height="28" rx="6" fill="rgba(38,132,255,0.1)"/><text x="985" y="27" text-anchor="middle" fill="#2684ff" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">Jira MCP</text>
         <line x1="70" y1="44" x2="70" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/><line x1="225" y1="44" x2="225" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/><line x1="440" y1="44" x2="440" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/><line x1="630" y1="44" x2="630" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/><line x1="810" y1="44" x2="810" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/><line x1="985" y1="44" x2="985" y2="570" stroke="#2a2f3c" stroke-width="1" stroke-dasharray="4 4"/>
-        <line x1="70" y1="76" x2="225" y2="76" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="147" y="70" text-anchor="middle" fill="#00d4aa" font-size="8.5" font-family="JetBrains Mono, monospace">&quot;Why is checkout component slow?&quot;</text>
+        <line x1="70" y1="76" x2="225" y2="76" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="147" y="70" text-anchor="middle" fill="#00d4aa" font-size="8.5" font-family="JetBrains Mono, monospace">&quot;Why is checkout slow?&quot;</text>
         <line x1="225" y1="116" x2="440" y2="116" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="332" y="110" text-anchor="middle" fill="#8890a4" font-size="8" font-family="JetBrains Mono, monospace">prompt + workspace context + git status</text>
-        <line x1="440" y1="156" x2="630" y2="156" stroke="#7c6aef" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="535" y="150" text-anchor="middle" fill="#8890a4" font-size="8" font-family="JetBrains Mono, monospace">load rulesets (style, NR config, protocols)</text>
-        <line x1="630" y1="196" x2="440" y2="196" stroke="#ff7b54" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="535" y="190" text-anchor="middle" fill="#ff7b54" font-size="8" font-family="JetBrains Mono, monospace">accountId=2222222, start 3h, check sampled</text>
-        <rect x="440" y="222" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/><line x1="440" y1="234" x2="810" y2="234" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="625" y="229" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query(&quot;SELECT avg(duration) FROM Transaction WHERE entityName=...&quot;)</text>
+        <line x1="440" y1="156" x2="630" y2="156" stroke="#7c6aef" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="535" y="150" text-anchor="middle" fill="#8890a4" font-size="8" font-family="JetBrains Mono, monospace">load rulesets + invoke rca-writer skill</text>
+        <line x1="630" y1="196" x2="440" y2="196" stroke="#ff7b54" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="535" y="190" text-anchor="middle" fill="#ff7b54" font-size="8" font-family="JetBrains Mono, monospace">accountId=1457101, start 3h, check sampled</text>
+        <rect x="440" y="222" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/><line x1="440" y1="234" x2="810" y2="234" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="625" y="229" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">execute_nrql_query(&quot;SELECT avg(duration) FROM Transaction...&quot;)</text>
         <line x1="810" y1="270" x2="440" y2="270" stroke="#1ce783" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="625" y="264" text-anchor="middle" fill="#1ce783" font-size="8" font-family="JetBrains Mono, monospace">JSON: avg=2.3s, P99=8.1s, top slow transaction identified</text>
-        <rect x="440" y="292" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/><line x1="440" y1="304" x2="810" y2="304" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="625" y="299" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">nrql_query(&quot;SELECT * FROM Span WHERE traceId=... AND sampled=true&quot;)</text>
-        <line x1="810" y1="340" x2="440" y2="340" stroke="#1ce783" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="625" y="334" text-anchor="middle" fill="#1ce783" font-size="8" font-family="JetBrains Mono, monospace">JSON: DB span = 6.2s bottleneck in checkout component</text>
+        <rect x="440" y="292" width="370" height="24" rx="4" fill="rgba(245,197,66,0.04)"/><line x1="440" y1="304" x2="810" y2="304" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="625" y="299" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">analyze_transactions(entity=&quot;checkout-component&quot;)</text>
+        <line x1="810" y1="340" x2="440" y2="340" stroke="#1ce783" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="625" y="334" text-anchor="middle" fill="#1ce783" font-size="8" font-family="JetBrains Mono, monospace">JSON: DB span = 6.2s bottleneck, trace analysis</text>
         <rect x="440" y="362" width="545" height="24" rx="4" fill="rgba(38,132,255,0.04)"/><line x1="440" y1="374" x2="985" y2="374" stroke="#f5c542" stroke-width="1.5" marker-end="url(#sa-r)"/><text x="712" y="369" text-anchor="middle" fill="#f5c542" font-size="8" font-family="JetBrains Mono, monospace">jira_search(&quot;project=PROJ AND labels=perf-issue AND status!=Done&quot;)</text>
-        <line x1="985" y1="410" x2="440" y2="410" stroke="#2684ff" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="712" y="404" text-anchor="middle" fill="#2684ff" font-size="8" font-family="JetBrains Mono, monospace">JSON: PROJ-1234 — known latency issue, fix planned</text>
-        <rect x="225" y="440" width="215" height="36" rx="4" fill="rgba(124,106,239,0.04)"/><line x1="440" y1="460" x2="225" y2="460" stroke="#7c6aef" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="332" y="452" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Root cause: slow database span in checkout (6.2s)</text><text x="332" y="464" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Tracked: PROJ-1234 — follow-up already planned</text>
+        <line x1="985" y1="410" x2="440" y2="410" stroke="#2684ff" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="712" y="404" text-anchor="middle" fill="#2684ff" font-size="8" font-family="JetBrains Mono, monospace">JSON: PROJ-1234 &mdash; known latency issue, fix planned</text>
+        <rect x="225" y="440" width="215" height="36" rx="4" fill="rgba(124,106,239,0.04)"/><line x1="440" y1="460" x2="225" y2="460" stroke="#7c6aef" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="332" y="452" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Root cause: slow database span in checkout (6.2s)</text><text x="332" y="464" text-anchor="middle" fill="#7c6aef" font-size="8" font-family="JetBrains Mono, monospace">Tracked: PROJ-1234 &mdash; follow-up already planned</text>
         <line x1="225" y1="500" x2="70" y2="500" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#sa-l)"/><text x="147" y="494" text-anchor="middle" fill="#00d4aa" font-size="8" font-family="JetBrains Mono, monospace">Formatted answer in IDE chat panel</text>
         <text x="16" y="79" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">1</text><text x="16" y="119" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">2</text><text x="16" y="159" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">3</text><text x="16" y="199" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">4</text><text x="16" y="237" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">5</text><text x="16" y="273" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">6</text><text x="16" y="307" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">7</text><text x="16" y="343" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">8</text><text x="16" y="377" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">9</text><text x="16" y="413" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">10</text><text x="12" y="463" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">11</text><text x="12" y="503" fill="#2a2f3c" font-size="8" font-family="JetBrains Mono, monospace">12</text>
-        <rect x="435" y="530" width="380" height="28" rx="6" fill="rgba(245,197,66,0.06)" stroke="#f5c542" stroke-width="0.5"/><text x="625" y="549" text-anchor="middle" fill="#f5c542" font-size="9" font-family="JetBrains Mono, monospace">Steps 5-10: Agent chains tool calls; MCP servers handle auth + API plumbing per call</text>
+        <rect x="435" y="530" width="380" height="28" rx="6" fill="rgba(245,197,66,0.06)" stroke="#f5c542" stroke-width="0.5"/><text x="625" y="549" text-anchor="middle" fill="#f5c542" font-size="9" font-family="JetBrains Mono, monospace">Steps 5-10: Agent chains MCP tool calls; NerdGraph used if timeout</text>
       </svg>
     </div>
   </div>
 
   <!-- Agent Rulesets -->
   <div class="anim-section">
-    <div class="section-title" style="color:var(--accent-rules)">Agent Rulesets</div>
-    <div class="section-subtitle">User-defined configuration injected into every LLM prompt. These shape agent behavior — response format, investigation protocols, and safety constraints. Click to expand.</div>
+    <div class="section-title" style="color:var(--accent-rules)">Agent Rulesets &amp; Skills</div>
+    <div class="section-subtitle">Rulesets are always-injected configuration. Skills are on-demand investigative capabilities invoked by the agent when needed (e.g., post-incident RCA, instruction improvement retrospectives).</div>
     <div class="rules-grid">
       <div class="rule-card" onclick="this.classList.toggle('open')"><h4>Response Style</h4><p>Enforces ~5 line outputs, forbidden phrases, one-word answers when possible. No AI boilerplate.</p><div class="rule-detail"><div><span class="rl-cmt"># Example:</span></div><div><span class="rl-kw">User:</span> Is 11 prime?</div><div><span class="rl-kw">Agent:</span> <span class="rl-val">Yes</span></div><div><span class="rl-cmt"># Forbidden: &quot;Based on the information...&quot;</span></div></div></div>
-      <div class="rule-card" onclick="this.classList.toggle('open')"><h4>NR Investigation Protocol</h4><p>Maps accounts (<code>1111111</code> dev, <code>2222222</code> live). Time windows start narrow, expand. Cross-table correlation keys.</p><div class="rule-detail"><div><span class="rl-cmt"># Time window strategy:</span></div><div><span class="rl-kw">1.</span> <span class="rl-val">SINCE 3 hours ago</span></div><div><span class="rl-kw">2.</span> <span class="rl-val">SINCE 1 day ago</span> <span class="rl-cmt">(if empty)</span></div><div><span class="rl-kw">3.</span> <span class="rl-val">SINCE 7 days ago</span> <span class="rl-cmt">(simple only)</span></div></div></div>
+      <div class="rule-card" onclick="this.classList.toggle('open')"><h4>NR Investigation Protocol</h4><p>Maps accounts (<code>1652846</code> dev, <code>1457101</code> live). Time windows start narrow, expand. Cross-table correlation.</p><div class="rule-detail"><div><span class="rl-cmt"># Time window strategy:</span></div><div><span class="rl-kw">1.</span> <span class="rl-val">SINCE 3 hours ago</span></div><div><span class="rl-kw">2.</span> <span class="rl-val">SINCE 1 day ago</span> <span class="rl-cmt">(if empty)</span></div><div><span class="rl-kw">3.</span> <span class="rl-val">SINCE 7 days ago</span> <span class="rl-cmt">(simple only)</span></div></div></div>
+      <div class="rule-card" onclick="this.classList.toggle('open')"><h4>NerdGraph Fallback</h4><p>When MCP times out or hits complexity limits, agent constructs raw GraphQL via NerdGraph async polling (60-70s).</p><div class="rule-detail"><div><span class="rl-kw">IF</span> MCP timeout <span class="rl-kw">OR</span> NRDB:1109</div><div><span class="rl-kw">THEN</span> <span class="rl-val">NerdGraph async query</span></div><div><span class="rl-cmt"># 60-70s polling, chunk if needed</span></div></div></div>
       <div class="rule-card" onclick="this.classList.toggle('open')"><h4>Truth &amp; Verification</h4><p>Labels claims as <code>[Inference]</code>, <code>[Speculation]</code>, <code>[Unverified]</code>. Fetch before reasoning about recent tech.</p><div class="rule-detail"><div><span class="rl-kw">IF</span> date 2025+ <span class="rl-kw">AND</span> recent tech &#x2192; <span class="rl-val">FETCH first</span></div><div><span class="rl-kw">IF</span> unverified &#x2192; <span class="rl-val">label it</span></div><div><span class="rl-cmt"># Never present guesses as fact</span></div></div></div>
-      <div class="rule-card" onclick="this.classList.toggle('open')"><h4>Timestamp &amp; Epoch</h4><p>Default UTC+2. Converts with ms precision, round-trip validates. Critical for time-bounded NR queries.</p><div class="rule-detail"><div><span class="rl-kw">1.</span> Capture TZ <span class="rl-val">Europe/Tallinn</span></div><div><span class="rl-kw">2.</span> Convert to epoch ms</div><div><span class="rl-kw">3.</span> Round-trip verify</div><div><span class="rl-kw">4.</span> Use in NRQL <span class="rl-val">SINCE/UNTIL</span></div></div></div>
-      <div class="rule-card" onclick="this.classList.toggle('open')"><h4>Security &amp; Privacy</h4><p>Never expose secrets. Env vars for config. Never commit credentials. Input validation mandatory.</p><div class="rule-detail"><div><span class="rl-kw">&#x2705;</span> <span class="rl-val">Environment variables for secrets</span></div><div><span class="rl-kw">&#x2705;</span> <span class="rl-val">HTTPS/TLS only</span></div><div><span class="rl-kw">&#x274C;</span> Never hardcode API keys</div><div><span class="rl-kw">&#x274C;</span> Never log sensitive user data</div></div></div>
-      <div class="rule-card" onclick="this.classList.toggle('open')"><h4>MCP Interaction Rules</h4><p>Read tool schema before calling. Correct NR account per env. Handle <code>NRDB:1109</code> via chunking. Max <code>LIMIT 5000</code>.</p><div class="rule-detail"><div><span class="rl-kw">1.</span> Read tool JSON descriptor</div><div><span class="rl-kw">2.</span> Validate required params</div><div><span class="rl-kw">3.</span> <span class="rl-val">CallMcpTool(server, tool, args)</span></div><div><span class="rl-kw">4.</span> Handle errors per ruleset</div><div><span class="rl-cmt"># NRDB:1109 &#x2192; chunk into 7d windows</span></div></div></div>
+      <div class="rule-card" onclick="this.classList.toggle('open')" style="border-color:rgba(251,146,60,0.3)"><h4 style="color:var(--accent-skills)">Skill: RCA Writer</h4><p>Post-incident RCA document generation. Drives data collection, timeline, impact quantification, and root cause analysis.</p><div class="rule-detail"><div><span class="rl-kw">INVOKE WHEN:</span> investigation complete</div><div><span class="rl-val">Produces reviewer-ready RCA</span></div><div><span class="rl-cmt"># Structured, evidence-based</span></div></div></div>
+      <div class="rule-card" onclick="this.classList.toggle('open')" style="border-color:rgba(251,146,60,0.3)"><h4 style="color:var(--accent-skills)">Skill: NR Instruction Review</h4><p>Retrospective after investigations. Reviews output quality, identifies instruction gaps, proposes rule changes.</p><div class="rule-detail"><div><span class="rl-kw">INVOKE WHEN:</span> post-investigation</div><div><span class="rl-val">Improves future investigations</span></div><div><span class="rl-cmt"># Self-improving system</span></div></div></div>
     </div>
   </div>
 </div>
-<footer>AI Agent Architecture Visualization &#xb7; Observability reference visual</footer>
+<footer>AI Agent Architecture Visualization &middot; Observability reference visual</footer>
 
 <script>
 // ===========================================================================
@@ -216,86 +251,84 @@
 // ===========================================================================
 var ARCH = {
   ide: {
-    name: "Cursor IDE",
+    name: "Cursor / VS Code",
     color: "#00d4aa",
-    subtitle: "Desktop IDE",
-    description: ["User interface for", "natural language prompts"],
-    badge: "USER INTERFACE",
+    subtitle: "Dual IDE \u00b7 symlinked config",
+    description: ["Shared rules, extensions,", "and MCP server config"],
+    badge: "DUAL IDE",
     context: ["open files, git status,", "terminals, linter errors"]
   },
   agent: {
-    name: "Claude Opus 4.6",
+    name: "Claude LLM",
     color: "#7c6aef",
-    subtitle: "LLM Reasoning Engine",
-    capabilities: ["Analyzes prompt + context", "Applies rulesets", "Decides tool invocations", "Synthesizes answers"],
+    subtitle: "Sonnet 4 \u00b7 Opus 4",
+    capabilities: ["Analyzes prompt + context", "Applies rulesets & skills", "Decides tool invocations", "Synthesizes answers"],
     badge: "REASONING ENGINE"
   },
   rulesets: {
     name: "Agent Rulesets",
     color: "#ff7b54",
-    subtitle: "User-defined behavior config"
+    subtitle: "Always-injected config"
+  },
+  skills: {
+    name: "Skills",
+    color: "#fb923c",
+    subtitle: "On-demand capabilities"
   },
   mcpServers: [
-    {
-      id: "nr",
-      name: "New Relic MCP",
-      color: "#1ce783",
-      subtitle: "Thin wrappers + orchestrators",
-      subtitle2: "+ AI-backed analysis tools",
-      note: "Vendor choice: multi-query pipelines,",
-      note2: "NR platform AI for some tools",
-      badge: "27 TOOLS \u00b7 3 TIERS"
-    },
-    {
-      id: "atlassian",
-      name: "Atlassian MCP",
-      color: "#2684ff",
-      subtitle: "All thin CRUD wrappers",
-      subtitle2: "Auth + REST call + return",
-      note: "Vendor choice: simple passthrough",
-      note2: null,
-      badge: "31 TOOLS \u00b7 1 TIER"
-    }
+    { id: "nr", name: "New Relic", color: "#1ce783", subtitle: "Observability \u00b7 27 tools", badge: "3 TIERS" },
+    { id: "atlassian", name: "Atlassian", color: "#2684ff", subtitle: "Jira + Confluence \u00b7 31 tools", badge: "CRUD" },
+    { id: "mempalace", name: "MemPalace", color: "#c084fc", subtitle: "Semantic memory \u00b7 30+ tools", badge: "KG + SEARCH" },
+    { id: "ardoq", name: "Ardoq", color: "#06b6d4", subtitle: "Enterprise arch \u00b7 10+ tools", badge: "REPORTS" },
+    { id: "azdo", name: "Azure DevOps", color: "#f472b6", subtitle: "Repos + Pipelines + WI", badge: "CI/CD" }
   ],
-  mcpGroupLabel: "VENDOR-SPECIFIC IMPLEMENTATIONS",
-  mcpFooter: ["Common: auth + API call + structured JSON return", "Everything else = vendor design choice"],
-  protocolLabel: { text: "MCP = PROTOCOL ONLY", subtitle: "Standardizes interface, not internals" },
+  nerdgraph: {
+    name: "NerdGraph",
+    color: "#1ce783",
+    subtitle: "Direct GraphQL fallback",
+    badge: "NOT MCP"
+  },
+  mcpGroupLabel: "MCP PROTOCOL \u00b7 JSON-RPC TOOL DISCOVERY",
   legend: [
-    { color: "#00d4aa", label: "Cursor IDE" },
+    { color: "#00d4aa", label: "IDE" },
     { color: "#7c6aef", label: "LLM Agent" },
-    { color: "#1ce783", label: "New Relic MCP" },
-    { color: "#2684ff", label: "Atlassian MCP" },
-    { color: "#ff7b54", label: "Agent Rules" },
-    { color: "#f5c542", label: "MCP Protocol" }
+    { color: "#f5c542", label: "MCP Protocol" },
+    { color: "#ff7b54", label: "Rules & Skills" },
+    { color: "#1ce783", label: "Direct API" }
   ]
 };
 
 // ===========================================================================
-// RENDERER - generates SVG from ARCH data (zero external dependencies)
+// RENDERER - generates SVG from ARCH data
 // ===========================================================================
 (function() {
   var ns = "http://www.w3.org/2000/svg";
-  var W = 1040, H = 420;
-  var IDE_X = 20, IDE_Y = 130, IDE_W = 200, IDE_H = 160;
-  var AGENT_X = 330, AGENT_Y = 100, AGENT_W = 230, AGENT_H = 220;
-  var RULES_X = 350, RULES_Y = 355, RULES_W = 190, RULES_H = 55;
-  var MCP_GROUP_X = 696, MCP_GROUP_Y = 44, MCP_GROUP_W = 248;
-  var MCP_CARD_X = 706, MCP_CARD_W = 228;
-  var MCP_START_Y = 74, MCP_GAP = 16;
+  var W = 1200, H = 440;
 
-  function mcpH(s) { return s.subtitle2 ? 158 : 130; }
-  var heights = ARCH.mcpServers.map(mcpH);
-  var totalH = heights.reduce(function(a,b){return a+b;},0) + MCP_GAP*(heights.length-1);
-  var MCP_GROUP_H = totalH + (MCP_START_Y - MCP_GROUP_Y) + 40;
+  // Layout constants
+  var IDE_X = 15, IDE_Y = 110, IDE_W = 190, IDE_H = 150;
+  var AGENT_X = 305, AGENT_Y = 55, AGENT_W = 220, AGENT_H = 225;
+  var RULES_X = 300, RULES_Y = 320, RULES_W = 125, RULES_H = 50;
+  var SKILLS_X = 435, SKILLS_Y = 320, SKILLS_W = 125, SKILLS_H = 50;
+  var MCP_GX = 660, MCP_GY = 12;
+  var COL1_X = 675, COL2_X = 925, CARD_W = 235, CARD_H = 75, CARD_GAP = 12;
+  var NERD_X = 675, NERD_Y = 365, NERD_W = 235, NERD_H = 50;
+
+  // Compute MCP group size
+  var col1Count = 3, col2Count = 2;
+  var colH = col1Count * CARD_H + (col1Count-1) * CARD_GAP;
+  var MCP_GW = COL2_X + CARD_W - MCP_GX + 15;
+  var MCP_GH = colH + 55; // header + padding
+  var CARDS_Y = MCP_GY + 38;
 
   function el(tag, attrs) {
     var e = document.createElementNS(ns, tag);
-    if (attrs) { for (var k in attrs) { if (attrs[k] != null) e.setAttribute(k, String(attrs[k])); } }
+    if (attrs) for (var k in attrs) { if (attrs[k] != null) e.setAttribute(k, String(attrs[k])); }
     return e;
   }
   function txt(x, y, str, attrs) {
     var a = {x:x, y:y, "text-anchor":"middle"};
-    if (attrs) { for (var k in attrs) a[k] = attrs[k]; }
+    if (attrs) for (var k in attrs) a[k] = attrs[k];
     var t = el("text", a);
     t.textContent = str;
     return t;
@@ -314,123 +347,153 @@ var ARCH = {
   var defs = el("defs");
 
   // Markers
-  [{id:"arr-cursor",f:ARCH.ide.color},{id:"arr-agent",f:ARCH.agent.color},{id:"arr-mcp",f:"#f5c542"},{id:"arr-rules",f:ARCH.rulesets.color}]
-    .concat(ARCH.mcpServers.map(function(s){return{id:"arr-"+s.id,f:s.color};}))
-    .forEach(function(m){
-      var mk=el("marker",{id:m.id,markerWidth:"8",markerHeight:"6",refX:"8",refY:"3",orient:"auto"});
-      mk.appendChild(el("polygon",{points:"0 0, 8 3, 0 6",fill:m.f}));
-      defs.appendChild(mk);
-    });
+  var markers = [
+    {id:"arr-ide",f:ARCH.ide.color},{id:"arr-agent",f:ARCH.agent.color},
+    {id:"arr-mcp",f:"#f5c542"},{id:"arr-rules",f:ARCH.rulesets.color},
+    {id:"arr-skills",f:ARCH.skills.color},{id:"arr-nerd",f:ARCH.nerdgraph.color},
+    {id:"arr-ret",f:"#8890a4"}
+  ];
+  markers.forEach(function(m){
+    var mk=el("marker",{id:m.id,markerWidth:"8",markerHeight:"6",refX:"8",refY:"3",orient:"auto"});
+    mk.appendChild(el("polygon",{points:"0 0, 8 3, 0 6",fill:m.f}));
+    defs.appendChild(mk);
+  });
 
   // Filters
-  [{id:"glow-c",c:ARCH.ide.color},{id:"glow-a",c:ARCH.agent.color},{id:"glow-r",c:ARCH.rulesets.color}]
+  [{id:"glow-ide",c:ARCH.ide.color},{id:"glow-agent",c:ARCH.agent.color},{id:"glow-rules",c:ARCH.rulesets.color},{id:"glow-skills",c:ARCH.skills.color},{id:"glow-nerd",c:ARCH.nerdgraph.color}]
     .concat(ARCH.mcpServers.map(function(s){return{id:"glow-"+s.id,c:s.color};}))
     .forEach(function(g){
       var f=el("filter",{id:g.id});
-      f.appendChild(el("feDropShadow",{dx:"0",dy:"0",stdDeviation:"6","flood-color":g.c,"flood-opacity":"0.25"}));
+      f.appendChild(el("feDropShadow",{dx:"0",dy:"0",stdDeviation:"5","flood-color":g.c,"flood-opacity":"0.2"}));
       defs.appendChild(f);
     });
   svg.appendChild(defs);
 
-  // Context bubble
-  svg.appendChild(el("rect",{x:IDE_X,y:28,width:184,height:80,rx:10,fill:"#12151c",stroke:"#2a2f3c","stroke-width":1}));
-  svg.appendChild(txt(IDE_X+92,50,"Workspace context attached:",{fill:"#8890a4","font-size":"9.5"}));
-  ARCH.ide.context.forEach(function(line,i){
-    svg.appendChild(txt(IDE_X+92,66+i*16,line,{fill:"#8890a4","font-family":"JetBrains Mono, monospace","font-size":"8.5"}));
+  // Background fill for label occluders
+  var SF = "#12151c";
+
+  // --- Context bubble ---
+  svg.appendChild(el("rect",{x:IDE_X,y:18,width:175,height:65,rx:10,fill:SF,stroke:"#2a2f3c","stroke-width":1}));
+  svg.appendChild(txt(IDE_X+87,38,"Workspace context:",{fill:"#8890a4","font-size":"9"}));
+  ARCH.ide.context.forEach(function(l,i){
+    svg.appendChild(txt(IDE_X+87,54+i*14,l,{fill:"#8890a4","font-family":"JetBrains Mono, monospace","font-size":"8"}));
   });
-  svg.appendChild(el("line",{x1:IDE_X+92,y1:108,x2:IDE_X+92,y2:IDE_Y,stroke:"#2a2f3c","stroke-width":1,"stroke-dasharray":"3 2"}));
+  svg.appendChild(el("line",{x1:IDE_X+87,y1:83,x2:IDE_X+87,y2:IDE_Y,stroke:"#2a2f3c","stroke-width":1,"stroke-dasharray":"3 2"}));
 
-  // IDE box
-  var cx1=IDE_X+IDE_W/2;
-  svg.appendChild(el("rect",{x:IDE_X,y:IDE_Y,width:IDE_W,height:IDE_H,rx:14,fill:"#12151c",stroke:ARCH.ide.color,"stroke-width":"1.5",filter:"url(#glow-c)"}));
-  svg.appendChild(txt(cx1,IDE_Y+40,ARCH.ide.name,{fill:ARCH.ide.color,"font-weight":"700","font-size":"15"}));
-  svg.appendChild(txt(cx1,IDE_Y+62,ARCH.ide.subtitle,{fill:"#8890a4","font-size":"10.5"}));
-  ARCH.ide.description.forEach(function(l,i){svg.appendChild(txt(cx1,IDE_Y+78+i*16,l,{fill:"#8890a4","font-size":"10.5"}));});
-  svg.appendChild(el("rect",{x:IDE_X+32,y:IDE_Y+IDE_H-42,width:136,height:22,rx:4,fill:"rgba(0,212,170,0.08)"}));
-  svg.appendChild(txt(cx1,IDE_Y+IDE_H-27,ARCH.ide.badge,{fill:ARCH.ide.color,"font-family":"JetBrains Mono, monospace","font-size":"9","letter-spacing":"0.5"}));
+  // --- IDE box ---
+  var icx = IDE_X+IDE_W/2;
+  svg.appendChild(el("rect",{x:IDE_X,y:IDE_Y,width:IDE_W,height:IDE_H,rx:14,fill:SF,stroke:ARCH.ide.color,"stroke-width":"1.5",filter:"url(#glow-ide)"}));
+  svg.appendChild(txt(icx,IDE_Y+32,ARCH.ide.name,{fill:ARCH.ide.color,"font-weight":"700","font-size":"14"}));
+  svg.appendChild(txt(icx,IDE_Y+52,ARCH.ide.subtitle,{fill:"#8890a4","font-size":"9.5"}));
+  ARCH.ide.description.forEach(function(l,i){svg.appendChild(txt(icx,IDE_Y+68+i*14,l,{fill:"#8890a4","font-size":"9.5"}));});
+  svg.appendChild(el("rect",{x:IDE_X+30,y:IDE_Y+IDE_H-36,width:130,height:20,rx:4,fill:rgba(ARCH.ide.color,0.08)}));
+  svg.appendChild(txt(icx,IDE_Y+IDE_H-22,ARCH.ide.badge,{fill:ARCH.ide.color,"font-family":"JetBrains Mono, monospace","font-size":"8.5","letter-spacing":"0.5"}));
 
-  // Agent box
-  var cx2=AGENT_X+AGENT_W/2;
-  svg.appendChild(el("rect",{x:AGENT_X,y:AGENT_Y,width:AGENT_W,height:AGENT_H,rx:14,fill:"#12151c",stroke:ARCH.agent.color,"stroke-width":"1.5",filter:"url(#glow-a)"}));
-  svg.appendChild(txt(cx2,AGENT_Y+40,ARCH.agent.name,{fill:ARCH.agent.color,"font-weight":"700","font-size":"15"}));
-  svg.appendChild(txt(cx2,AGENT_Y+62,ARCH.agent.subtitle,{fill:"#8890a4","font-size":"10.5"}));
-  ARCH.agent.capabilities.forEach(function(l,i){svg.appendChild(txt(cx2,AGENT_Y+84+i*16,l,{fill:"#8890a4","font-size":"10.5"}));});
-  svg.appendChild(el("rect",{x:AGENT_X+40,y:AGENT_Y+AGENT_H-46,width:150,height:22,rx:4,fill:"rgba(124,106,239,0.08)"}));
-  svg.appendChild(txt(cx2,AGENT_Y+AGENT_H-31,ARCH.agent.badge,{fill:ARCH.agent.color,"font-family":"JetBrains Mono, monospace","font-size":"9","letter-spacing":"0.5"}));
+  // --- Agent box ---
+  var acx = AGENT_X+AGENT_W/2;
+  svg.appendChild(el("rect",{x:AGENT_X,y:AGENT_Y,width:AGENT_W,height:AGENT_H,rx:14,fill:SF,stroke:ARCH.agent.color,"stroke-width":"1.5",filter:"url(#glow-agent)"}));
+  svg.appendChild(txt(acx,AGENT_Y+35,ARCH.agent.name,{fill:ARCH.agent.color,"font-weight":"700","font-size":"15"}));
+  svg.appendChild(txt(acx,AGENT_Y+55,ARCH.agent.subtitle,{fill:"#8890a4","font-size":"10"}));
+  ARCH.agent.capabilities.forEach(function(l,i){svg.appendChild(txt(acx,AGENT_Y+76+i*16,l,{fill:"#8890a4","font-size":"10"}));});
+  svg.appendChild(el("rect",{x:AGENT_X+35,y:AGENT_Y+AGENT_H-42,width:150,height:20,rx:4,fill:rgba(ARCH.agent.color,0.08)}));
+  svg.appendChild(txt(acx,AGENT_Y+AGENT_H-28,ARCH.agent.badge,{fill:ARCH.agent.color,"font-family":"JetBrains Mono, monospace","font-size":"8.5","letter-spacing":"0.5"}));
 
-  // Rulesets box
-  var cx3=RULES_X+RULES_W/2;
-  svg.appendChild(el("rect",{x:RULES_X,y:RULES_Y,width:RULES_W,height:RULES_H,rx:10,fill:"#12151c",stroke:ARCH.rulesets.color,"stroke-width":"1.5",filter:"url(#glow-r)"}));
-  svg.appendChild(txt(cx3,RULES_Y+25,ARCH.rulesets.name,{fill:ARCH.rulesets.color,"font-weight":"600","font-size":"12"}));
-  svg.appendChild(txt(cx3,RULES_Y+43,ARCH.rulesets.subtitle,{fill:"#8890a4","font-size":"10"}));
+  // --- Rulesets box ---
+  var rcx = RULES_X+RULES_W/2;
+  svg.appendChild(el("rect",{x:RULES_X,y:RULES_Y,width:RULES_W,height:RULES_H,rx:10,fill:SF,stroke:ARCH.rulesets.color,"stroke-width":"1.5",filter:"url(#glow-rules)"}));
+  svg.appendChild(txt(rcx,RULES_Y+22,ARCH.rulesets.name,{fill:ARCH.rulesets.color,"font-weight":"600","font-size":"11"}));
+  svg.appendChild(txt(rcx,RULES_Y+38,ARCH.rulesets.subtitle,{fill:"#8890a4","font-size":"9"}));
 
-  // MCP group
-  svg.appendChild(el("rect",{x:MCP_GROUP_X,y:MCP_GROUP_Y,width:MCP_GROUP_W,height:MCP_GROUP_H,rx:16,fill:"none",stroke:"#f5c542","stroke-width":1,"stroke-dasharray":"4 3",opacity:"0.3"}));
-  svg.appendChild(txt(MCP_GROUP_X+MCP_GROUP_W/2,MCP_GROUP_Y+19,ARCH.mcpGroupLabel,{fill:"#f5c542","font-family":"JetBrains Mono, monospace","font-size":"8",opacity:"0.6"}));
+  // --- Skills box ---
+  var scx = SKILLS_X+SKILLS_W/2;
+  svg.appendChild(el("rect",{x:SKILLS_X,y:SKILLS_Y,width:SKILLS_W,height:SKILLS_H,rx:10,fill:SF,stroke:ARCH.skills.color,"stroke-width":"1.5",filter:"url(#glow-skills)"}));
+  svg.appendChild(txt(scx,SKILLS_Y+22,ARCH.skills.name,{fill:ARCH.skills.color,"font-weight":"600","font-size":"11"}));
+  svg.appendChild(txt(scx,SKILLS_Y+38,ARCH.skills.subtitle,{fill:"#8890a4","font-size":"9"}));
 
-  // MCP cards
-  var my=MCP_START_Y;
-  ARCH.mcpServers.forEach(function(s,idx){
-    var h=heights[idx], cx=MCP_CARD_X+MCP_CARD_W/2;
-    svg.appendChild(el("rect",{x:MCP_CARD_X,y:my,width:MCP_CARD_W,height:h,rx:12,fill:"#12151c",stroke:s.color,"stroke-width":"1.5",filter:"url(#glow-"+s.id+")"}));
-    svg.appendChild(txt(cx,my+22,s.name,{fill:s.color,"font-weight":"700","font-size":"13"}));
-    svg.appendChild(txt(cx,my+40,s.subtitle,{fill:"#8890a4","font-size":"9.5"}));
-    if(s.subtitle2) svg.appendChild(txt(cx,my+56,s.subtitle2,{fill:"#8890a4","font-size":"9.5"}));
-    var sy=s.subtitle2?my+66:my+50;
-    svg.appendChild(el("line",{x1:MCP_CARD_X+14,y1:sy,x2:MCP_CARD_X+MCP_CARD_W-14,y2:sy,stroke:"#2a2f3c","stroke-width":"0.5"}));
-    var ny=sy+16;
-    svg.appendChild(txt(cx,ny,s.note,{fill:"#555b6e","font-size":"8.5","font-style":"italic"}));
-    if(s.note2) svg.appendChild(txt(cx,ny+14,s.note2,{fill:"#555b6e","font-size":"8.5","font-style":"italic"}));
-    var by=my+h-24;
-    svg.appendChild(el("rect",{x:cx-65,y:by,width:130,height:18,rx:4,fill:rgba(s.color,0.08)}));
-    svg.appendChild(txt(cx,by+13,s.badge,{fill:s.color,"font-family":"JetBrains Mono, monospace","font-size":"7.5","letter-spacing":"0.5"}));
-    my+=h+MCP_GAP;
-  });
+  // --- MCP Group border ---
+  svg.appendChild(el("rect",{x:MCP_GX,y:MCP_GY,width:MCP_GW,height:MCP_GH,rx:16,fill:"none",stroke:"#f5c542","stroke-width":1,"stroke-dasharray":"4 3",opacity:"0.35"}));
+  svg.appendChild(txt(MCP_GX+MCP_GW/2,MCP_GY+18,ARCH.mcpGroupLabel,{fill:"#f5c542","font-family":"JetBrains Mono, monospace","font-size":"7.5",opacity:"0.7"}));
 
-  // MCP footer
-  var fy=my+4;
-  ARCH.mcpFooter.forEach(function(l,i){svg.appendChild(txt(MCP_GROUP_X+MCP_GROUP_W/2,fy+i*12,l,{fill:"#555b6e","font-size":"7.5","font-style":"italic"}));});
+  // --- MCP Cards ---
+  var servers = ARCH.mcpServers;
+  function drawCard(s, cx, cy) {
+    var midx = cx + CARD_W/2;
+    svg.appendChild(el("rect",{x:cx,y:cy,width:CARD_W,height:CARD_H,rx:11,fill:SF,stroke:s.color,"stroke-width":"1.5",filter:"url(#glow-"+s.id+")"}));
+    svg.appendChild(txt(midx,cy+22,s.name,{fill:s.color,"font-weight":"700","font-size":"12"}));
+    svg.appendChild(txt(midx,cy+40,s.subtitle,{fill:"#8890a4","font-size":"9"}));
+    svg.appendChild(el("rect",{x:midx-40,y:cy+CARD_H-24,width:80,height:16,rx:4,fill:rgba(s.color,0.08)}));
+    svg.appendChild(txt(midx,cy+CARD_H-12,s.badge,{fill:s.color,"font-family":"JetBrains Mono, monospace","font-size":"7","letter-spacing":"0.5"}));
+  }
+  // Col 1: first 3
+  for (var i=0; i<col1Count; i++) drawCard(servers[i], COL1_X, CARDS_Y + i*(CARD_H+CARD_GAP));
+  // Col 2: next 2
+  for (var j=0; j<col2Count; j++) drawCard(servers[col1Count+j], COL2_X, CARDS_Y + j*(CARD_H+CARD_GAP));
 
-  // Protocol label
-  svg.appendChild(el("rect",{x:580,y:4,width:180,height:24,rx:6,fill:"rgba(245,197,66,0.08)",stroke:"#f5c542","stroke-width":"0.5"}));
-  svg.appendChild(txt(670,20,ARCH.protocolLabel.text,{fill:"#f5c542","font-family":"JetBrains Mono, monospace","font-size":"8.5"}));
-  svg.appendChild(txt(670,36,ARCH.protocolLabel.subtitle,{fill:"#555b6e","font-size":"7.5","font-style":"italic"}));
+  // --- NerdGraph box (outside MCP group) ---
+  var ncx = NERD_X+NERD_W/2;
+  svg.appendChild(el("rect",{x:NERD_X,y:NERD_Y,width:NERD_W,height:NERD_H,rx:10,fill:SF,stroke:ARCH.nerdgraph.color,"stroke-width":"1","stroke-dasharray":"6 3",filter:"url(#glow-nerd)"}));
+  svg.appendChild(txt(ncx,NERD_Y+20,ARCH.nerdgraph.name,{fill:ARCH.nerdgraph.color,"font-weight":"600","font-size":"11"}));
+  svg.appendChild(txt(ncx,NERD_Y+36,ARCH.nerdgraph.subtitle,{fill:"#8890a4","font-size":"8.5"}));
+  svg.appendChild(el("rect",{x:ncx-30,y:NERD_Y+NERD_H-16,width:60,height:13,rx:3,fill:"rgba(255,123,84,0.08)"}));
+  svg.appendChild(txt(ncx,NERD_Y+NERD_H-6,ARCH.nerdgraph.badge,{fill:"#ff7b54","font-family":"JetBrains Mono, monospace","font-size":"6.5"}));
 
-  // Connections
-  var ir=IDE_X+IDE_W, al=AGENT_X, ar=AGENT_X+AGENT_W, amy=AGENT_Y+AGENT_H/2, lmx=(ir+al)/2;
-  svg.appendChild(aLine(ir,amy-15,al,amy-15,ARCH.ide.color,2,"url(#arr-cursor)"));
-  svg.appendChild(el("rect",{x:lmx-25,y:amy-30,width:50,height:16,rx:3,fill:"#0a0c10"}));
-  svg.appendChild(txt(lmx,amy-18,"PROMPT",{fill:ARCH.ide.color,"font-family":"JetBrains Mono, monospace","font-size":"8"}));
-  svg.appendChild(aLine(al,amy+10,ir,amy+10,ARCH.agent.color,2,"url(#arr-agent)"));
-  svg.appendChild(el("rect",{x:lmx-33,y:amy-2,width:66,height:16,rx:3,fill:"#0a0c10"}));
-  svg.appendChild(txt(lmx,amy+10,"RESPONSE",{fill:ARCH.agent.color,"font-family":"JetBrains Mono, monospace","font-size":"8"}));
+  // --- Connections ---
+  var ir = IDE_X+IDE_W, al = AGENT_X, ar = AGENT_X+AGENT_W;
+  var amy = AGENT_Y+AGENT_H/2;
+  var lmx = (ir+al)/2;
 
-  // Agent to MCP calls
-  var cy2=MCP_START_Y;
-  ARCH.mcpServers.forEach(function(s,idx){
-    var h=heights[idx], ty=cy2+h/2, fy2=AGENT_Y+65+idx*75;
-    svg.appendChild(aLine(ar,fy2,MCP_CARD_X,ty,"#f5c542",2,"url(#arr-mcp)","1.2s"));
-    var clx=(ar+MCP_CARD_X)/2, cly=Math.min(fy2,ty)+Math.abs(fy2-ty)/2-6;
-    svg.appendChild(el("rect",{x:clx-36,y:cly-8,width:72,height:16,rx:3,fill:"#0a0c10"}));
-    svg.appendChild(txt(clx,cly+4,"TOOL CALL",{fill:"#f5c542","font-family":"JetBrains Mono, monospace","font-size":"7.5"}));
-    var rl2=aLine(MCP_CARD_X,ty+25,ar,fy2+25,s.color,1.5,"url(#arr-"+s.id+")","1.2s");
-    rl2.setAttribute("opacity","0.6"); svg.appendChild(rl2);
-    cy2+=h+MCP_GAP;
-  });
+  // IDE -> Agent (PROMPT)
+  svg.appendChild(aLine(ir,amy-12,al,amy-12,ARCH.ide.color,2,"url(#arr-ide)"));
+  svg.appendChild(el("rect",{x:lmx-24,y:amy-26,width:48,height:14,rx:3,fill:SF}));
+  svg.appendChild(txt(lmx,amy-15,"PROMPT",{fill:ARCH.ide.color,"font-family":"JetBrains Mono, monospace","font-size":"7.5"}));
 
-  // Rulesets to Agent
-  var rl=aLine(cx3,RULES_Y,cx3,AGENT_Y+AGENT_H,ARCH.rulesets.color,2,"url(#arr-rules)","2s");
+  // Agent -> IDE (RESPONSE)
+  svg.appendChild(aLine(al,amy+12,ir,amy+12,ARCH.agent.color,2,"url(#arr-agent)"));
+  svg.appendChild(el("rect",{x:lmx-30,y:amy+2,width:60,height:14,rx:3,fill:SF}));
+  svg.appendChild(txt(lmx,amy+13,"RESPONSE",{fill:ARCH.agent.color,"font-family":"JetBrains Mono, monospace","font-size":"7.5"}));
+
+  // Agent -> MCP Group (TOOL CALL) - single line to group border
+  var mcpMidY = CARDS_Y + colH/2;
+  svg.appendChild(aLine(ar,mcpMidY-10,MCP_GX,mcpMidY-10,"#f5c542",2,"url(#arr-mcp)","1.2s"));
+  var tlx = (ar+MCP_GX)/2;
+  svg.appendChild(el("rect",{x:tlx-30,y:mcpMidY-24,width:60,height:14,rx:3,fill:SF}));
+  svg.appendChild(txt(tlx,mcpMidY-13,"TOOL CALL",{fill:"#f5c542","font-family":"JetBrains Mono, monospace","font-size":"7"}));
+
+  // MCP Group -> Agent (JSON return)
+  var retLine = aLine(MCP_GX,mcpMidY+10,ar,mcpMidY+10,"#8890a4",1.5,"url(#arr-ret)","1.2s");
+  retLine.setAttribute("opacity","0.5");
+  svg.appendChild(retLine);
+  svg.appendChild(el("rect",{x:tlx-16,y:mcpMidY+2,width:32,height:14,rx:3,fill:SF}));
+  svg.appendChild(txt(tlx,mcpMidY+13,"JSON",{fill:"#8890a4","font-family":"JetBrains Mono, monospace","font-size":"7"}));
+
+  // Agent -> NerdGraph (DIRECT)
+  var nerdMidY = NERD_Y + NERD_H/2;
+  var agentBottomRight_x = ar;
+  var agentBottomRight_y = AGENT_Y + AGENT_H - 30;
+  svg.appendChild(el("line",{x1:agentBottomRight_x,y1:agentBottomRight_y,x2:NERD_X,y2:nerdMidY,stroke:ARCH.nerdgraph.color,"stroke-width":"1.5","stroke-dasharray":"3 5","marker-end":"url(#arr-nerd)",opacity:"0.6"}));
+  var dlx = (agentBottomRight_x+NERD_X)/2, dly = (agentBottomRight_y+nerdMidY)/2;
+  svg.appendChild(el("rect",{x:dlx-22,y:dly-8,width:44,height:14,rx:3,fill:SF}));
+  svg.appendChild(txt(dlx,dly+3,"DIRECT",{fill:ARCH.nerdgraph.color,"font-family":"JetBrains Mono, monospace","font-size":"7",opacity:"0.7"}));
+
+  // Rulesets -> Agent (INJECTED)
+  var rl = aLine(rcx,RULES_Y,rcx,AGENT_Y+AGENT_H,ARCH.rulesets.color,1.5,"url(#arr-rules)","2s");
   rl.setAttribute("stroke-dasharray","5 3"); svg.appendChild(rl);
-  svg.appendChild(el("rect",{x:cx3+8,y:RULES_Y-28,width:62,height:16,rx:3,fill:"#0a0c10"}));
-  svg.appendChild(txt(cx3+39,RULES_Y-16,"INJECTED",{fill:ARCH.rulesets.color,"font-family":"JetBrains Mono, monospace","font-size":"7.5"}));
+  svg.appendChild(el("rect",{x:rcx-28,y:RULES_Y-18,width:56,height:13,rx:3,fill:SF}));
+  svg.appendChild(txt(rcx,RULES_Y-8,"INJECTED",{fill:ARCH.rulesets.color,"font-family":"JetBrains Mono, monospace","font-size":"6.5"}));
+
+  // Skills -> Agent (INVOKED)
+  var sl = aLine(scx,SKILLS_Y,scx,AGENT_Y+AGENT_H,ARCH.skills.color,1.5,"url(#arr-skills)","2s");
+  sl.setAttribute("stroke-dasharray","4 4"); svg.appendChild(sl);
+  svg.appendChild(el("rect",{x:scx-26,y:SKILLS_Y-18,width:52,height:13,rx:3,fill:SF}));
+  svg.appendChild(txt(scx,SKILLS_Y-8,"INVOKED",{fill:ARCH.skills.color,"font-family":"JetBrains Mono, monospace","font-size":"6.5"}));
 
   document.getElementById("arch-diagram").appendChild(svg);
 
   // Legend
-  var leg=document.getElementById("legend-container");
+  var leg = document.getElementById("legend-container");
   ARCH.legend.forEach(function(it){
-    var d=document.createElement("div"); d.className="legend-item";
-    d.innerHTML='<div class="legend-dot" style="background:'+it.color+'"></div>'+it.label;
+    var d = document.createElement("div"); d.className = "legend-item";
+    d.innerHTML = '<div class="legend-dot" style="background:'+it.color+'"></div>'+it.label;
     leg.appendChild(d);
   });
 })();
