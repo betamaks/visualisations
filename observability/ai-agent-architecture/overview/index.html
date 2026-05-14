@@ -392,9 +392,9 @@ var ARCH = {
   ARCH.mcpFooter.forEach(function(l,i){svg.appendChild(txt(MCP_GROUP_X+MCP_GROUP_W/2,fy+i*12,l,{fill:"#555b6e","font-size":"7.5","font-style":"italic"}));});
 
   // Protocol label
-  svg.appendChild(el("rect",{x:580,y:16,width:180,height:24,rx:6,fill:"rgba(245,197,66,0.08)",stroke:"#f5c542","stroke-width":"0.5"}));
-  svg.appendChild(txt(670,32,ARCH.protocolLabel.text,{fill:"#f5c542","font-family":"JetBrains Mono, monospace","font-size":"8.5"}));
-  svg.appendChild(txt(670,48,ARCH.protocolLabel.subtitle,{fill:"#555b6e","font-size":"7.5","font-style":"italic"}));
+  svg.appendChild(el("rect",{x:580,y:4,width:180,height:24,rx:6,fill:"rgba(245,197,66,0.08)",stroke:"#f5c542","stroke-width":"0.5"}));
+  svg.appendChild(txt(670,20,ARCH.protocolLabel.text,{fill:"#f5c542","font-family":"JetBrains Mono, monospace","font-size":"8.5"}));
+  svg.appendChild(txt(670,36,ARCH.protocolLabel.subtitle,{fill:"#555b6e","font-size":"7.5","font-style":"italic"}));
 
   // Connections
   var ir=IDE_X+IDE_W, al=AGENT_X, ar=AGENT_X+AGENT_W, amy=AGENT_Y+AGENT_H/2, lmx=(ir+al)/2;
